@@ -8,8 +8,41 @@
 <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 <script>
 if (window.netlifyIdentity) {
-  window.netlifyIdentity.on("init", u => { if (!u) window.netlifyIdentity.on("login", () => document.location.href = "/admin/"); });
+  // Only the "admin" role may use /admin/. Approved contributors go to the in-site contributor studio; unapproved sign-ups are signed out.
+  const check = async u => {
+    try {
+      const t = await u.jwt();
+      const r = await fetch("/.netlify/identity/user", { headers: { authorization: "Bearer " + t } });
+      const j = await r.json(), ro = (j.app_metadata && j.app_metadata.roles) || [];
+      if (ro.indexOf("admin") >= 0) return;
+      if (ro.indexOf("contributor") >= 0 || j.invited_at) { document.location.replace("/#/contribute"); return; }
+      await window.netlifyIdentity.logout(); alert("Your account is waiting for admin approval."); document.location.replace("/");
+    } catch (e) {}
+  };
+  window.netlifyIdentity.on("init", u => { if (u) check(u); else window.netlifyIdentity.on("login", () => document.location.href = "/admin/"); });
+  window.netlifyIdentity.on("login", check);
 }
+</script>
+<script>
+// Songs saved in the admin are credited automatically to the logged-in person (the "Added by" box is filled when it is empty)
+(function(){
+  function who(author){
+    try{var u=window.netlifyIdentity&&netlifyIdentity.currentUser();if(u){var m=u.user_metadata||{};var n=m.full_name||m.name||(u.email||'').split('@')[0];if(n)return String(n).trim()}}catch(e){}
+    return author&&(author.name||author.login)||'';
+  }
+  function reg(){
+    if(!window.CMS||typeof CMS.registerEventListener!=='function')return setTimeout(reg,300);
+    CMS.registerEventListener({name:'preSave',handler:function(o){
+      try{
+        if(o.entry.get('collection')!=='songs')return o.entry.get('data');
+        var d=o.entry.get('data'),n=who(o.author);
+        if(n&&!String(d.get('added_by')||'').trim())d=d.set('added_by',n);
+        return d;
+      }catch(e){return o.entry.get('data')}
+    }});
+  }
+  reg();
+})();
 </script>
 <script>
 // "Schedule" option in the admin: header link (if supported) plus an always-visible button as a fallback
@@ -18,6 +51,22 @@ if (window.netlifyIdentity) {
     CMS.registerAdditionalLink({id:'schedule',title:'Schedule / షెడ్యూల్',data:'/admin/schedule.html',options:{iconName:'page'}});}catch(e){}
   try{if(window.CMS&&typeof CMS.registerAdditionalLink==='function')
     CMS.registerAdditionalLink({id:'biblenotes',title:'Bible notes / బైబిల్ నోట్స్',data:'/admin/bible-notes.html',options:{iconName:'page'}});}catch(e){}
+  try{if(window.CMS&&typeof CMS.registerAdditionalLink==='function')
+    CMS.registerAdditionalLink({id:'members',title:'Approvals / అనుమతులు',data:'/admin/members.html',options:{iconName:'page'}});}catch(e){}
+  try{if(window.CMS&&typeof CMS.registerAdditionalLink==='function')
+    CMS.registerAdditionalLink({id:'greeting',title:'Greeting / శుభాకాంక్షలు',data:'/admin/greeting.html',options:{iconName:'page'}});}catch(e){}
+  function pill4(){
+    if(document.getElementById('gt-pill'))return;
+    var a=document.createElement('a');a.id='gt-pill';a.href='/admin/greeting.html';a.textContent='🙏 Greeting / శుభాకాంక్షలు';
+    a.style.cssText='position:fixed;right:12px;bottom:156px;z-index:99999;background:#8e3b6b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+    document.body.appendChild(a);
+  }
+  function pill3(){
+    if(document.getElementById('mem-pill'))return;
+    var a=document.createElement('a');a.id='mem-pill';a.href='/admin/members.html';a.textContent='👥 Approvals / అనుమతులు';
+    a.style.cssText='position:fixed;right:12px;bottom:108px;z-index:99999;background:#1b7f3b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+    document.body.appendChild(a);
+  }
   function pill(){
     if(document.getElementById('sched-pill'))return;
     var a=document.createElement('a');a.id='sched-pill';a.href='/admin/schedule.html';a.textContent='📋 Schedule songs / షెడ్యూల్';
@@ -30,7 +79,7 @@ if (window.netlifyIdentity) {
     a.style.cssText='position:fixed;right:12px;bottom:60px;z-index:99999;background:#b8892b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
     document.body.appendChild(a);
   }
-  window.addEventListener('load',function(){setTimeout(function(){pill();pill2()},1500)});
+  window.addEventListener('load',function(){setTimeout(function(){pill();pill2();pill3();pill4()},1500)});
 })();
 </script>
 </body></html>

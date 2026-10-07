@@ -3,6 +3,7 @@
 // changes) instead of asking once a second, so a tap on the phone reaches the screen almost instantly.
 // State and commands live in two separate records so a command can never be overwritten by a state update.
 import { getStore } from "@netlify/blobs";
+import { approvedUser } from "../lib/approved.mjs";
 
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const OK = new Set(["next", "prev", "goto", "blank", "theme", "bg", "sizeup", "sizedown", "nsong", "psong", "start", "song", "bible", "nch", "pch", "madd", "mdel", "tcolor", "bcolor", "creset"]);
@@ -102,6 +103,7 @@ export default async (req) => {
       const d = await store.get(room, { type: "json" });
       if (!d || Date.now() - d.t > TTL) return J({ error: "none" }, 404);
       if (!OK.has(b.cmd)) return J({ error: "bad cmd" }, 400);
+      if ((b.cmd === "madd" || b.cmd === "mdel") && !(await approvedUser(req))) return J({ error: "contributors only" }, 401);   // visitors may drive the screen, not edit the meeting
       const c = (await store.get(ck, { type: "json" })) || { cmds: [], seq: 0 };
       c.cmds = [...(c.cmds || []), { id: ++c.seq, cmd: b.cmd, arg: typeof b.arg === "string" && /^[\w.:\-]{1,60}$/.test(b.arg) ? b.arg : (+b.arg || 0) }].slice(-30);
       await store.setJSON(ck, c);

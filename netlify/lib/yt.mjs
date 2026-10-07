@@ -73,12 +73,12 @@ async function apiVideos(id, key, n, prefix = "UU") {
   const pl = await g(`https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${prefix}${id.slice(2)}&key=${key}`);
   const ids = (pl.items || []).map(i => i.contentDetails && i.contentDetails.videoId).filter(Boolean);
   if (!ids.length) return [];
-  const vs = await g(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.join(",")}&maxResults=50&key=${key}`);
+  const vs = await g(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,liveStreamingDetails&id=${ids.join(",")}&maxResults=50&key=${key}`);
   const by = new Map((vs.items || []).map(v => [v.id, v]));
   // private / deleted videos are missing from videos.list, so ask for 50 and keep the first n that exist
   return ids.map(i => by.get(i)).filter(Boolean).slice(0, n).map(v => ({
     id: v.id, title: v.snippet.title, t: v.snippet.publishedAt, dur: isoSec(v.contentDetails && v.contentDetails.duration),
-    live: v.snippet.liveBroadcastContent === "live" ? "live" : v.snippet.liveBroadcastContent === "upcoming" ? "upcoming" : "",
+    live: v.snippet.liveBroadcastContent === "live" ? "live" : v.snippet.liveBroadcastContent === "upcoming" ? "upcoming" : (v.liveStreamingDetails && v.liveStreamingDetails.actualEndTime ? "ended" : ""),   // "ended" = a finished live stream
   }));
 }
 

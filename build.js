@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path');
 const out = 'dist';
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
-['index.html','admin','uploads','bible','manifest.webmanifest','sw.js','icon.svg','daily-verses.json']
+['index.html','admin','uploads','bible','manifest.webmanifest','sw.js','verse-img.js','icon.svg','daily-verses.json']
   .forEach(f => fs.existsSync(f) && fs.cpSync(f, path.join(out, f), { recursive: true }));
 // A broken file (empty upload, leftover git conflict markers, bad JSON) must not stop the whole deploy: it is reported by name and skipped.
 const BAD = [];
@@ -15,6 +15,9 @@ const settings = (fs.existsSync('content/settings.json') && read('content/settin
 // Admin -> "YouTube & Android App" lives in its own file; merge it so the site sees one settings object.
 const media = (fs.existsSync('content/youtube_app.json') && read('content/youtube_app.json')) || {};
 Object.entries(media).forEach(([k, v]) => { if ((v !== '' && v != null) || !(k in settings)) settings[k] = v; });
+// Admin -> "Daily Verse Image" (content/verse_image.json): merged into the same settings object (keys start with vi_)
+const vimg = (fs.existsSync('content/verse_image.json') && read('content/verse_image.json')) || {};
+Object.entries(vimg).forEach(([k, v]) => { settings[k] = v; });
 // APK uploaded in the admin: the download card shows its size (links to other sites have no size)
 (function apk() {
   const u = String(settings.apk_file || '').replace(/^\/+/, '');
@@ -51,6 +54,17 @@ Object.entries(media).forEach(([k, v]) => { if ((v !== '' && v != null) || !(k i
   console.log('App icon:', shown);
 })();
 
+// small file for the notification image (service worker reads it): pastor / church shown on the daily verse
+const pick = (...v) => { for (const x of v) if (x != null && String(x).trim() !== '') return x; return ''; };   // first non-empty value
+fs.writeFileSync(path.join(out, 'pastor.json'), JSON.stringify({
+  // Daily Verse Image can override the pastor / church details; empty = the General Settings value
+  name: pick(settings.vi_pastor_name, settings.pastor_name), phone: pick(settings.vi_pastor_phone, settings.pastor_phone),
+  church: pick(settings.vi_church_name, settings.church_name), photo: pick(settings.vi_pastor_photo, settings.pastor_photo),
+  ink: settings.ink || '', accent: settings.accent || '',
+  vi: { title: settings.vi_title || '', hlOn: settings.vi_hl_on !== false, hlColor: settings.vi_hl_color || '', showPastor: settings.vi_show_pastor !== false, scale: +settings.vi_pastor_scale || 100,
+    font: settings.vi_font || '', hlFont: settings.vi_hl_font || '', textSize: +settings.vi_text_size || 100, hlSize: +settings.vi_hl_size || 100, hls: settings.vi_hls || [],
+    greetOn: settings.vi_greet_on === true, greet: settings.vi_greet || '', dateOn: settings.vi_date_on === true, dateLang: settings.vi_date_lang === 'te' ? 'te' : 'en',
+    bgs: (settings.vi_bgs || []).filter(x => x && x.image).map(x => ({ image: x.image, theme: x.theme || '' })) } }));
 const dec = s => s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,'&').trim();
 const tag = (b, t) => { const m = b.match(new RegExp(`<${t}>([\\s\\S]*?)</${t}>`, 'i')); return m ? dec(m[1]) : ''; };
 function parseXml(txt) {

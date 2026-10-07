@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="te"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Greeting — Dhaivakrupa Admin</title>
+<style>
+:root{--ink:#17305c;--acc:#b8892b;--bg:#f4f5f8;--line:#d9dde6;--ok:#1b7f3b;--bad:#b3261e}
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,"Noto Sans Telugu",sans-serif;background:var(--bg);color:#1c2333}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:1.1rem;margin:0;flex:1}header a{color:#f6d98b;text-decoration:none;font-size:.9rem}
+main{max-width:860px;margin:0 auto;padding:16px;display:grid;gap:16px}
+.cols{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:760px){.cols{grid-template-columns:1.1fr .9fr;align-items:start}}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+h2{font-size:1rem;margin:0 0 6px}
+label{display:block;margin:12px 0 4px;font-size:.85rem;font-weight:600;color:#445}
+input[type=text],input[type=url],textarea,select{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff}
+textarea{min-height:120px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);outline-offset:0}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;font-weight:400}.chk input{width:20px;height:20px;margin-top:2px;flex:none}
+.chk small{display:block;color:#667}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;min-height:38px}
+button:hover:not(:disabled){border-color:var(--acc)}button:disabled{opacity:.45;cursor:default}
+button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}button.bad{color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.cnt{font-weight:400;color:#889;float:right}
+#st{font-size:.92rem;min-height:1.3em}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:#8a5a00}
+#login{display:none}
+.pv{border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:10px;max-width:340px;margin:8px auto 0}
+.pv img{display:block;width:100%;border-radius:12px}
+.pv .t{margin:10px 4px 2px;text-align:center;font-weight:700;font-size:1.05rem;color:var(--ink)}
+.pv .x{margin:4px 6px;text-align:center;white-space:pre-line;overflow-wrap:anywhere;line-height:1.55}
+.pv .b{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.pv .b span{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.9rem}.pv .b span.d{background:#b8892b;border-color:#b8892b;color:#fff}
+.nt{border:1px solid var(--line);border-radius:14px;background:#eef0f4;padding:10px 12px;max-width:340px;margin:8px auto 0;font-size:.9rem}
+.nt b{display:block}.nt small{color:#667}.nt img{display:block;width:100%;border-radius:8px;margin-top:8px}
+ul{list-style:none;margin:8px 0 0;padding:0}li{padding:9px 2px;border-bottom:1px solid var(--line)}li small{display:block;color:#667}
+.empty{color:#667;padding:6px 0}
+.sm{font-size:.85rem;color:#667;margin:0}
+</style></head><body>
+<header><h1>🙏 Greeting / శుభాకాంక్షలు — Dhaivakrupa</h1><a href="/admin/">← Content admin</a><a href="/" target="_blank">View site ↗</a></header>
+<main>
+  <section id="login"><h2>Log in first</h2><p>Open <a href="/admin/">/admin/</a>, log in as admin, then come back to this page.</p></section>
+  <div id="st"></div>
+  <div class="cols">
+    <section>
+      <h2>Write a message</h2>
+      <p class="sm">Write a greeting or announcement with text, a picture, or both. It can pop up in the app and / or be sent as a notification.</p>
+      <label for="t">Title (optional) <span class="cnt" id="tc">0/80</span></label>
+      <input id="t" type="text" maxlength="80" placeholder="For example: Merry Christmas! / క్రిస్మస్ శుభాకాంక్షలు" autocomplete="off">
+      <label for="m">Message <span class="cnt" id="mc">0/600</span></label>
+      <textarea id="m" maxlength="600" placeholder="Type your greeting here…"></textarea>
+      <label for="f">Picture (optional)</label>
+      <input id="f" type="file" accept="image/*">
+      <div class="row" id="fr" hidden><span class="sm" id="fi"></span><button id="fx" type="button">Remove picture</button></div>
+      <label for="bl">Button text (optional)</label>
+      <input id="bl" type="text" maxlength="30" placeholder="For example: Watch now" autocomplete="off">
+      <label for="bu">Button link (optional)</label>
+      <input id="bu" type="url" placeholder="https://…  or  /#/bible" autocomplete="off">
+      <label class="chk"><input id="po" type="checkbox" checked><span>Show as a popup in the app<small>Everyone sees it once, the next time they open the app.</small></span></label>
+      <label class="chk"><input id="pu" type="checkbox"><span>Also send as a notification now<small>Goes to everyone who allowed notifications. The picture is shown large in the notification.</small></span></label>
+      <label for="d">Keep it available for</label>
+      <select id="d"><option value="1">1 day</option><option value="3" selected>3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select>
+      <p class="sm" style="margin-top:6px">After this time the popup stops showing and the message leaves the Notifications page.</p>
+      <div class="row"><button id="go" class="pri" type="button">Publish</button><button id="rm" class="bad" type="button" hidden>Remove current message</button></div>
+    </section>
+    <section>
+      <h2>Preview</h2>
+      <p class="sm">Popup in the app</p>
+      <div class="pv" id="pv"></div>
+      <p class="sm" style="margin-top:14px">Notification</p>
+      <div class="nt" id="nt"></div>
+    </section>
+  </div>
+  <section>
+    <h2>Current message</h2>
+    <div id="cur"><p class="empty">Loading…</p></div>
+  </section>
+  <section>
+    <h2>Sent before</h2>
+    <ul id="his"></ul>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const status=(t,c)=>{const e=$('#st');e.textContent=t;e.className=c||''};
+let idP=null;
+function idLoad(){if(window.netlifyIdentity)return Promise.resolve(window.netlifyIdentity);
+  return idP||(idP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://identity.netlify.com/v1/netlify-identity-widget.js';sc.onload=()=>window.netlifyIdentity?res(window.netlifyIdentity):rej();sc.onerror=()=>{idP=null;rej()};document.head.appendChild(sc)}))}
+async function token(force){const w=await idLoad();let u=null;for(let i=0;i<30&&!(u=w.currentUser());i++)await new Promise(r=>setTimeout(r,100));return u?await u.jwt(force):null}
+async function api(method,body,qs){
+  const t=await token(false);if(!t){$('#login').style.display='block';throw new Error('Please log in at /admin/ first')}
+  const r=await fetch('/api/greeting'+(qs||''),{method,headers:{authorization:'Bearer '+t,'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
+  let j={};try{j=await r.json()}catch{}
+  if(!r.ok)throw new Error(j.error||('Error '+r.status));return j;
+}
+let IMG='';   // the picture as a JPEG data URL (shrunk on this computer / phone before sending)
+function shrink(file){return new Promise((ok,no)=>{
+  const url=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{
+    URL.revokeObjectURL(url);let s=Math.min(1,1280/Math.max(im.width,im.height)),q=.86,out='';
+    for(let i=0;i<6;i++){
+      const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*s));c.height=Math.max(1,Math.round(im.height*s));
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+      out=c.toDataURL('image/jpeg',q);if(out.length*.75<700*1024)break;s*=.8;q=Math.max(.6,q-.06);
+    }
+    ok(out);
+  };
+  im.onerror=()=>{URL.revokeObjectURL(url);no(new Error('That file is not a picture'))};im.src=url;
+})}
+const safeLink=u=>/^https:\/\/[^\s"'<>]+$/i.test(u)||/^\/[#\w][^\s"'<>]*$/.test(u);
+function preview(){
+  const t=$('#t').value.trim(),m=$('#m').value.trim(),bl=$('#bl').value.trim(),bu=$('#bu').value.trim();
+  $('#tc').textContent=$('#t').value.length+'/80';$('#mc').textContent=$('#m').value.length+'/600';
+  $('#pv').innerHTML=(IMG?'<img alt="" src="'+IMG+'">':'')+(t?'<div class="t">'+esc(t)+'</div>':'')+(m?'<div class="x">'+esc(m)+'</div>':'')+(!IMG&&!t&&!m?'<p class="empty" style="text-align:center">Your message appears here</p>':'')+'<div class="b">'+(bu&&safeLink(bu)?'<span class="d">'+esc(bl||'Open')+'</span>':'')+'<span>Close</span></div>';
+  $('#nt').innerHTML='<small>Dhaivakrupa • now</small><b>'+esc(t||'🙏 Greeting')+'</b>'+esc(m.length>180?m.slice(0,179)+'…':m)+(IMG?'<img alt="" src="'+IMG+'">':'');
+}
+['#t','#m','#bl','#bu'].forEach(s=>$(s).addEventListener('input',preview));
+$('#f').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{IMG=await shrink(f);$('#fr').hidden=false;$('#fi').textContent='Picture ready ('+Math.round(IMG.length*.75/1024)+' KB)';status('')}
+  catch(x){IMG='';$('#fr').hidden=true;status(x.message,'bad')}
+  preview();
+};
+$('#fx').onclick=()=>{IMG='';$('#f').value='';$('#fr').hidden=true;preview()};
+const fmt=t=>t?new Date(t).toLocaleString():'';
+async function load(){
+  try{
+    const j=await api('GET',null,'?history=1'),c=j.current;
+    const live=c&&(!c.until||Date.now()<c.until);
+    $('#rm').hidden=!live;
+    $('#cur').innerHTML=live?`<div class="pv" style="margin:0">${c.image?'<img alt="" src="'+esc(c.image)+'">':''}${c.title?'<div class="t">'+esc(c.title)+'</div>':''}${c.text?'<div class="x">'+esc(c.text)+'</div>':''}</div><p class="sm" style="margin-top:8px">${c.popup?'Shown as a popup':'Not shown as a popup (notification only)'} • published ${esc(fmt(c.at))} • available until ${esc(fmt(c.until))}</p>`:'<p class="empty">No message is active.</p>';
+    $('#his').innerHTML=(j.history||[]).map(h=>`<li><b>${esc(h.title||h.text||'(picture)')}</b><small>${esc(fmt(h.at))} • ${h.popup?'popup':''}${h.popup&&h.push?' + ':''}${h.push?'notification to '+(h.sent||0)+' device(s)':''}${h.hasImage?' • with picture':''}</small></li>`).join('')||'<li class="empty">Nothing sent yet.</li>';
+  }catch(e){status(e.message,'bad');$('#cur').innerHTML='';}
+}
+$('#go').onclick=async()=>{
+  const body={title:$('#t').value.trim(),text:$('#m').value.trim(),image:IMG,btnLabel:$('#bl').value.trim(),btnUrl:$('#bu').value.trim(),popup:$('#po').checked,push:$('#pu').checked,days:+$('#d').value};
+  if(!body.title&&!body.text&&!body.image){status('Write a message or add a picture','bad');return}
+  if(!body.popup&&!body.push){status('Tick “popup”, “notification”, or both','bad');return}
+  if(body.btnUrl&&!safeLink(body.btnUrl)){status('The button link must start with https:// or /','bad');return}
+  if(body.push&&!confirm('Send this as a notification to everyone who allowed notifications?'))return;
+  $('#go').disabled=true;status('Publishing…','warn');
+  try{
+    const r=await api('POST',body);
+    status('Published'+(r.push?(r.note?'. '+r.note:'. Notification sent to '+r.sent+' device(s)'+(r.failed?' ('+r.failed+' failed or unsubscribed)':'')):'')+'.',r.note?'warn':'ok');
+    $('#t').value=$('#m').value=$('#bl').value=$('#bu').value='';IMG='';$('#f').value='';$('#fr').hidden=true;$('#pu').checked=false;preview();load();
+  }catch(e){status(e.message,'bad')}
+  $('#go').disabled=false;
+};
+$('#rm').onclick=async()=>{
+  if(!confirm('Remove the current message? The popup will stop showing.'))return;
+  try{await api('DELETE');status('Removed','ok');load()}catch(e){status(e.message,'bad')}
+};
+preview();load();
+</script>
+</body></html>

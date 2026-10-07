@@ -6,17 +6,14 @@
 // Notes cannot be deleted by visitors; each one disappears by itself after 7 days.
 // Admin check: the request must carry a valid Netlify Identity token (Authorization: Bearer ...), the same login as /admin/.
 import { getStore } from "@netlify/blobs";
+import { adminUser, approvedUser } from "../lib/approved.mjs";
 
 const WEEK = 7 * 864e5, DAY_OFFSET = 5.5 * 36e5;   // "same day" is counted in India time
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const day = t => Math.floor((t + DAY_OFFSET) / 864e5);
 const prune = (a, now) => (Array.isArray(a) ? a : []).filter(x => x && typeof x.t === "number" && now - x.t < WEEK);
 
-const isAdmin = async (req) => {
-  const a = req.headers.get("authorization") || "";
-  if (!/^Bearer\s+\S+/.test(a)) return false;
-  try { return (await fetch(new URL(req.url).origin + "/.netlify/identity/user", { headers: { authorization: a } })).ok; } catch { return false; }
-};
+const isAdmin = async (req) => !!(await adminUser(req));
 
 export default async (req) => {
   const store = getStore({ name: "biblenotes", consistency: "strong" });
@@ -32,6 +29,7 @@ export default async (req) => {
       if (!(await isAdmin(req))) return J({ error: "auth" }, 401);
       list = q.op === "clear" ? [] : list.filter(x => x.id !== String(q.id || ""));
     } else if (q.op === "add") {
+      if (!(await approvedUser(req))) return J({ error: "contributors only" }, 401);   // visitors cannot add notes
       const b = Number(q.b), c = Number(q.c), v = String(q.v || "");
       const l = ["te", "en", "both"].includes(q.l) ? q.l : "te";
       if (!(Number.isInteger(b) && b >= 0 && b <= 65 && Number.isInteger(c) && c >= 1 && c <= 150 && /^[\d,\-]{0,40}$/.test(v))) return J({ error: "bad" }, 400);

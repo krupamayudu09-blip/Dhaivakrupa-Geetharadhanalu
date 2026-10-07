@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="te"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Approvals — Dhaivakrupa Admin</title>
+<style>
+:root{--ink:#17305c;--acc:#b8892b;--bg:#f4f5f8;--line:#d9dde6;--ok:#1b7f3b;--bad:#b3261e}
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,"Noto Sans Telugu",sans-serif;background:var(--bg);color:#1c2333}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:1.1rem;margin:0;flex:1}header a{color:#f6d98b;text-decoration:none;font-size:.9rem}
+main{max-width:760px;margin:0 auto;padding:16px;display:grid;gap:16px}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+h2{font-size:1rem;margin:0 0 6px}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;min-height:36px}
+button:hover:not(:disabled){border-color:var(--acc)}button:disabled{opacity:.4;cursor:default}
+button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}button.bad{color:var(--bad)}
+ul{list-style:none;margin:8px 0 0;padding:0}
+li{display:flex;gap:8px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+li .t{flex:1;min-width:180px;word-break:break-word}li small{display:block;color:#667}
+#st{font-size:.9rem;min-height:1.3em}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:#8a5a00}.empty{color:#667;padding:8px 0}
+#login{display:none}
+</style></head><body>
+<header><h1>👥 Approvals / అనుమతులు — Dhaivakrupa</h1><a href="/admin/">← Content admin</a><a href="/" target="_blank">View site ↗</a></header>
+<main>
+  <section id="login"><h2>Log in first</h2><p>Open <a href="/admin/">/admin/</a>, log in, then come back to this page.</p></section>
+  <div id="st"></div>
+  <section>
+    <h2>Waiting for approval / అనుమతి కోసం వేచి ఉన్నవారు</h2>
+    <p style="margin:0;color:#667;font-size:.9rem">People who signed up on the site. Approve = they can log in and add songs. Reject = the account is deleted.</p>
+    <ul id="pend"></ul>
+    <div style="margin-top:10px"><button id="all" class="pri" hidden>Approve everyone</button></div>
+  </section>
+  <section>
+    <h2>Approved / అనుమతి పొందినవారు</h2>
+    <ul id="ok"></ul>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const status=(t,c)=>{const e=$('#st');e.textContent=t;e.className=c||''};
+let idP=null;
+function idLoad(){if(window.netlifyIdentity)return Promise.resolve(window.netlifyIdentity);
+  return idP||(idP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://identity.netlify.com/v1/netlify-identity-widget.js';sc.onload=()=>window.netlifyIdentity?res(window.netlifyIdentity):rej();sc.onerror=()=>{idP=null;rej()};document.head.appendChild(sc)}))}
+async function token(force){const w=await idLoad();let u=null;for(let i=0;i<30&&!(u=w.currentUser());i++)await new Promise(r=>setTimeout(r,100));return u?await u.jwt(force):null}
+async function api(method,body){
+  const t=await token(false);if(!t){$('#login').style.display='block';throw new Error('Please log in at /admin/ first')}
+  const r=await fetch('/.netlify/functions/members',{method,headers:{authorization:'Bearer '+t,'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
+  let j={};try{j=await r.json()}catch{}
+  if(!r.ok)throw new Error(j.error||('Error '+r.status));return j;
+}
+let U=[];
+const fmt=d=>d?new Date(d).toLocaleDateString():'';
+function row(u,pending){
+  const who=esc(u.name||u.email);
+  const sub=[u.name?esc(u.email):'',pending&&!u.confirmed?'e-mail not confirmed yet':'',u.created_at?'signed up '+fmt(u.created_at):''].filter(Boolean).join(' • ');
+  const btns=pending?`<button class="pri" data-a="approve" data-id="${esc(u.id)}">✓ Approve</button><button class="bad" data-a="remove" data-id="${esc(u.id)}">✕ Reject</button>`
+    :(u.roles.includes('admin')?'<small>admin</small>':`<button class="bad" data-a="remove" data-id="${esc(u.id)}">Remove</button>`);
+  return `<li><span class="t">${who}<small>${sub}${!pending&&u.invited?' • invited':''}${!pending&&u.roles.includes('contributor')?' • contributor':''}</small></span>${btns}</li>`;
+}
+function render(){
+  const p=U.filter(u=>u.status==='pending'),a=U.filter(u=>u.status==='approved');
+  $('#pend').innerHTML=p.length?p.map(u=>row(u,true)).join(''):'<li class="empty">Nobody is waiting.</li>';
+  $('#ok').innerHTML=a.length?a.map(u=>row(u,false)).join(''):'<li class="empty">No approved people yet.</li>';
+  $('#all').hidden=p.length<2;
+}
+async function load(){
+  try{status('Loading…','warn');U=(await api('GET')).users;render();status('','')}
+  catch(e){status(e.message,'bad')}
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const u=U.find(x=>x.id===b.dataset.id);if(!u)return;
+  if(b.dataset.a==='remove'&&!confirm('Delete the account of '+(u.email)+'?'))return;
+  b.disabled=true;
+  try{await api('POST',{action:b.dataset.a,id:u.id});await load();status(b.dataset.a==='approve'?'✓ Approved '+u.email:'✓ Removed '+u.email,'ok')}
+  catch(x){b.disabled=false;status(x.message,'bad')}
+});
+$('#all').onclick=async()=>{
+  const p=U.filter(u=>u.status==='pending');if(!confirm('Approve all '+p.length+' people?'))return;
+  $('#all').disabled=true;
+  try{for(const u of p)await api('POST',{action:'approve',id:u.id});await load();status('✓ Approved '+p.length+' people','ok')}
+  catch(x){status(x.message,'bad')}
+  $('#all').disabled=false;
+};
+load();
+</script>
+</body></html>

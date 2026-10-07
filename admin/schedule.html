@@ -76,12 +76,18 @@ function renderPick(){
 function change(fn){
   fn();dirty=true;render();status('Saving…','warn');clearTimeout(timer);timer=setTimeout(save,250);
 }
+let idP=null;
+function idLoad(){if(window.netlifyIdentity)return Promise.resolve(window.netlifyIdentity);
+  return idP||(idP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://identity.netlify.com/v1/netlify-identity-widget.js';sc.onload=()=>window.netlifyIdentity?res(window.netlifyIdentity):rej();sc.onerror=()=>{idP=null;rej()};document.head.appendChild(sc)}))}
+async function token(force){const w=await idLoad();let u=null;for(let i=0;i<30&&!(u=w.currentUser());i++)await new Promise(r=>setTimeout(r,100));return u?await u.jwt(force):null}
 async function save(){
   if(saving){timer=setTimeout(save,300);return}
   saving=true;const body={name:S.name||'',ids:S.ids};
   try{
-    const r=await fetch('/api/meeting',{method:'POST',body:JSON.stringify(body)});
-    if(!r.ok)status('Could not save','bad');
+    let r=null;
+    for(let k=0;k<2;k++){const t=await token(k===1);if(!t)break;r=await fetch('/api/meeting',{method:'POST',headers:{authorization:'Bearer '+t},body:JSON.stringify(body)});if(r.status!==401)break}
+    if(!r||r.status===401)status('Please log in at /admin/ first, then reload this page','bad');
+    else if(!r.ok)status('Could not save','bad');
     else{const d=await r.json();S.t=d.t;dirty=false;status('✓ Saved — visible on the website','ok')}
   }catch{status('Offline — will retry','bad');timer=setTimeout(save,4000)}
   saving=false;

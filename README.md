@@ -10,6 +10,26 @@ The site menus, buttons and messages are in English. Song lyrics, categories and
 5. Open `https://YOUR-SITE.netlify.app/admin/` and log in.
 6. In `admin/config.yml` replace `YOUR-SITE` with your real Netlify URL.
 
+## Contributors (people who add songs and edit the daily verse image)
+1. Netlify → Identity → Invite users → enter the contributor's email. (An invited user is an approved user.)
+2. They accept the invite email, set a password, and log in on the main site: **About → Contributor login** (or `https://YOUR-SITE.netlify.app/#/contribute`). They can add / edit **Songs** (no delete) and the **Daily Verse Image**.
+3. **Roles:** only users with the role `admin` (Identity → user → Edit → Roles) can use `/admin/`, the Approvals page and clear Bible notes. Everyone else (invited users and approved sign-ups, role `contributor`) is sent from `/admin/` to the in-site contributor studio (`/#/contribute`). Give your own account the `admin` role first.
+4. Admin → Site Settings → General Settings: show or hide the Contributors card on the About page, and list contributor names there.
+The contributor studio is part of the main site (there is no separate `/contribute/` page any more).
+### Sign up + admin approval
+Visitors can create their own account: **About → Contributor login → New here? Sign up** (name, email, password). They confirm their email, then wait. They **cannot log in until you approve them**.
+1. Netlify → Identity → Registration preferences → set to **Open** (with *Invite only* nobody can sign up).
+2. Open `/admin/` → **👥 Approvals** (or `/admin/members.html`). People who signed up are listed under *Waiting for approval*. **Approve** gives them the `contributor` role (and confirms their email); **Reject** deletes the account. *Approve everyone* does them all at once.
+3. After approval they log in on the main site and use the contributor studio. People you invited from Netlify Identity stay approved automatically.
+4. Your own account must have the `admin` role, otherwise the Approvals page says "Admins only".
+5. Recommended for full safety: Netlify → Identity → Services → Git Gateway → Edit settings → Roles: `admin, contributor`. Then Git Gateway itself refuses unapproved accounts (give your invited users one of those roles first, or use *Approve everyone*).
+The meeting list, Bible notes and the admin editor already refuse accounts that are not approved.
+
+Note: the limit is in the editor screens. Netlify Git Gateway gives every logged-in user write access to the repository, so only invite people you trust.
+
+## Meeting list: contributors only
+Only logged-in contributors (any Netlify Identity user, the same login as the contributor studio and `/admin/`) can add songs to the meeting, remove them, reorder, rename or clear the list. Visitors see the list and can Present / use Remote / Share, but the edit controls are hidden and show a **Contributor login** button on the Meeting page. The server (`/api/meeting`) also rejects changes without a valid login token, and `/admin/schedule.html` sends the admin's token automatically (log in at `/admin/` first). Logging in once on a device  also logs in the main site on that device; About → **Log out** signs out. The projector device must be logged in for ＋/✕ sent from the phone remote to change the list.
+
 ## Adding songs
 Admin → Songs → New Song. Type/paste lyrics in the Text box, upload a Photo of the song, or both.
 Each save commits to Git and Netlify rebuilds in about a minute.
@@ -195,3 +215,57 @@ When the channel posts a new YouTube Short, every visitor with notifications on 
 
 ## All Shorts / only 15 showing
 Without `YOUTUBE_API_KEY`, YouTube only gives the newest 15 Shorts (its RSS limit) and scraping the full list often fails from Netlify's servers. To show every Short: Google Cloud Console → enable **YouTube Data API v3** → create an API key (no HTTP-referrer restriction, since it is used server-side) → Netlify → Site settings → Environment variables → add `YOUTUBE_API_KEY` → **Clear cache and deploy**. The Shorts tab then reads the full Shorts playlist (up to 500). If the key is set but wrong, the Shorts tab now shows the API error under the title.
+
+## Liquid glass look
+The whole app uses frosted-glass layers over a soft colour backdrop (light and dark). All colours, blur and radii are variables at the end of the `<style>` block in `index.html` (search for **LIQUID GLASS**). Symbols are kept to a minimum: line icons in the top bar and the floating tab bar (only the open tab shows its name), and plain text instead of emoji elsewhere. Blur is used only on floating layers; long lists use a translucent fill so scrolling stays smooth on budget phones.
+
+## Daily verse picture
+`verse-img.js` draws the verse as a picture: a scenery photo from the internet, a frosted-glass panel with the verse, the reference, and a small pastor / church strip. The same picture is used on the home screen, on the Notifications page (Save / Share), and as the large image in the daily notification.
+- **Photos:** edit the `VERSE_BGS` list at the top of `verse-img.js` (one photo per day, in rotation). Use direct image links from Unsplash / Pexels (both allow free use). If a photo cannot be loaded, the next one is tried, then a painted scenery is used, so the picture never fails.
+- **Fonts:** Noto Serif Telugu (verse, headings) and Noto Sans Telugu (text) give complete Unicode Telugu; Manrope is used for English letters and digits. A font chosen in Site Settings still takes priority.
+- Pastor photo, name, phone and church name come from Site Settings as before.
+
+## Contributor studio (add songs and edit the daily verse from the main site)
+Logged-in contributors open **About → Add songs / verse** (or `https://YOUR-SITE/#/contribute`). No separate admin page is needed.
+- **Songs tab:** add a new song (Telugu title, English title, category, writer, scale, lyrics text or a photo, YouTube link) or search an existing song and edit it. There is no delete.
+- **Daily verse picture tab:** title, verse text size, highlight on/off, colour and size, pastor bar and photo size, chosen highlights (book picker, chapter, verse, words) and background photos.
+- Saves go straight to the repository with the contributor's login (Netlify Identity + Git Gateway, ), and the site rebuilds in about a minute. Photos are shrunk on the phone before upload. Fonts and other verse-picture settings that the studio does not show are kept as they are.
+- Songs that came from an XML upload cannot be edited here (use `/admin/`).
+- Contributors page (`#/contributors`) shows the team in liquid glass; each person can have a photo in Admin → Site Settings → Contributors.
+- **Login on the main site** uses its own glass login form (email + password sent straight to Netlify Identity at `/.netlify/identity`), not the popup widget. It keeps the contributor logged in, refreshes the token by itself, and has a Forgot password link. Invite / password-reset emails still open `/admin/` for the first password.
+
+## v30 – Themed verse pictures, greeting + date, pastor details, admin greeting popup
+
+### Themed daily verse pictures
+Every verse in `daily-verses.json` has a theme (love, peace, strength, faith, praise, guidance, hope, creation, salvation, prayer, wisdom, provision), defined in `verse-img.js` (`VT` table; verses not listed fall back to their book). The picture follows the theme:
+1. a photo you tagged with that theme, 2. a photo tagged "Any verse", 3. a built-in photo that suits the theme (only a few themes), 4. a painted scene in the theme's colours.
+Tag photos in the contributor studio (Daily verse picture → Background photos) or in Admin → Daily Verse Image → Background photos → "Theme of this photo". The studio preview shows the verse's theme and which photo is used.
+
+### Greeting, date, pastor and church (Daily verse picture)
+In the contributor studio and in Admin → Daily Verse Image:
+- **Greeting** (preset or your own text): drawn at the top of the picture and used as the daily notification title.
+- **Date**: today's date under the reference, English or Telugu.
+- **Pastor photo / name / phone / church name**: override the General Settings values for the verse picture only; empty = use General Settings.
+`content/verse_image.json` ships with greeting (శుభోదయం) and date switched on; turn them off in the studio if not wanted.
+
+### Admin greeting / custom popup
+Admin → **🙏 Greeting** (`/admin/greeting.html`, admin role only). Write a title, message, optional picture and optional button (https:// link or a site path like `/#/bible`). Choose:
+- **Show as a popup in the app**: each person sees it once on their next visit (never on projector/remote screens). It also stays on the Notifications page until it expires.
+- **Also send as a notification now**: sent to everyone who allowed notifications; the picture is shown large.
+- **Keep available for** 1–30 days. "Remove current message" stops the popup.
+Files: `netlify/functions/greeting.mjs` (`/api/greeting`, stored in Netlify Blobs), `admin/greeting.html`, `netlify/functions/push.mjs` (new `greet` topic), `sw.js` (cache v45), `index.html`, `verse-img.js`, `build.js`, `admin/config.yml`. Deploy all together. Notifications need the same `VAPID_*` variables as the daily verse. For very many subscribers raise the function timeout in Netlify.
+
+## v31 – Bible notes in the Meeting tab, verse picker on the remote, full-screen preview
+
+**Bible notes in the Meeting tab (7 days).** The Meeting page (and the phone remote's **Meeting** tab) now has **📖 Bible notes – last 7 days**: every verse sent to the projector this week, grouped Today / Yesterday / date, with the full verse text. Tap a row to open it in the Bible, or **📽** to project it again (one verse is projected alone, a range or several verses only those verses). The list is the same shared list as the 📝 Bible notes sheet and refreshes by itself every few seconds.
+
+**Phone remote – choose book, chapter and verse number.** Bible tab → book → chapter → a grid of verse numbers (with the verse text shown as you tap):
+- one verse → **📽 Verse N only**, or **From verse N ›** (the chapter, starting at that verse);
+- tap several numbers, or use **Range** (tap the first then the last verse), → **📽 Verses 16-18**;
+- **Whole chapter** projects the full chapter. Telugu / English / Both is respected.
+
+**Remote stays on the Presenting tab.** After you send something the remote moves to **Presenting** and now stays there, including when the presentation ends (it no longer jumps back to the Meeting tab).
+
+**Meeting page – full-screen preview.** The **📺 Live preview** box is now on the Meeting page for everyone (on the projector device the code is filled in). Tap **Watch**, then **⛶ Full screen** (or **⛶ Full-screen preview** in the Remote panel). The buttons hide after 3 s; **Esc** or **✕ Exit full screen** leaves. iPhone Safari has no element full screen, so a full-window view is used there.
+
+Files changed: `index.html`, `sw.js` (cache v46). No server changes. Deploy both together.
