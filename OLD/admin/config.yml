@@ -1,0 +1,127 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+publish_mode: simple
+media_folder: "uploads"
+public_folder: "/uploads"
+site_url: https://YOUR-SITE.netlify.app
+display_url: https://YOUR-SITE.netlify.app
+
+collections:
+  - name: songs
+    label: "Songs / పాటలు"
+    label_singular: "Song"
+    folder: "content/songs"
+    extension: "json"
+    format: "json"
+    create: true
+    slug: "{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: title
+    summary: "{{title}} {{category}}"
+    sortable_fields: ["date", "title", "category"]
+    fields:
+      - { label: "Title (Telugu) / పాట పేరు", name: "title", widget: "string", required: false, hint: "Required unless you upload an XML file that contains titles." }
+      - { label: "Title (English, optional)", name: "title_en", widget: "string", required: false }
+      - label: "Category / విభాగం"
+        name: "category"
+        widget: "relation"
+        collection: "categories"
+        search_fields: ["name"]
+        value_field: "name"
+        display_fields: ["name"]
+        required: false
+        hint: "Pick a category. Add new ones under Categories in the left menu."
+      - { label: "Writer / రచయిత", name: "writer", widget: "string", required: false }
+      - { label: "Scale (e.g. C, Dm)", name: "scale", widget: "string", required: false }
+      - { label: "Lyrics as TEXT (type or paste)", name: "lyrics", widget: "text", required: false, hint: "Leave a blank line between verses. Use text, photo, or both." }
+      - { label: "Lyrics as PHOTO (upload image of the song)", name: "lyrics_image", widget: "image", required: false, choose_url: false }
+      - { label: "XML file upload (one or many songs)", name: "xml_file", widget: "file", required: false, choose_url: false, hint: "See sample-songs.xml. Every <song> inside the file is added to the site automatically." }
+      - { label: "Presentation background (optional, overrides default)", name: "bg_image", widget: "image", required: false, choose_url: false }
+      - { label: "Audio file (optional)", name: "audio", widget: "file", required: false, choose_url: false }
+      - { label: "YouTube link (optional)", name: "youtube", widget: "string", required: false }
+      - { label: "Featured on home page", name: "featured", widget: "boolean", default: false }
+      - { label: "Published", name: "published", widget: "boolean", default: true }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+
+  - name: categories
+    label: "Categories / విభాగాలు"
+    label_singular: "Category"
+    folder: "content/categories"
+    extension: "json"
+    format: "json"
+    create: true
+    slug: "cat-{{fields.order}}-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    identifier_field: name
+    summary: "{{order}}. {{name}}"
+    sortable_fields: ["order", "name"]
+    fields:
+      - { label: "Category name / విభాగం పేరు", name: "name", widget: "string" }
+      - { label: "Order on the site (1 = first)", name: "order", widget: "number", value_type: "int", min: 1, default: 50 }
+
+  - name: settings
+    label: "Site Settings"
+    files:
+      - label: "General Settings"
+        name: "general"
+        file: "content/settings.json"
+        format: "json"
+        fields:
+          - { label: "Site name", name: "site_name", widget: "string", default: "Dhaivakrupa Ujjeevakeerthanalu" }
+          - { label: "Site name (Telugu)", name: "site_name_te", widget: "string", default: "దైవకృప ఉజ్జీవకీర్తనలు" }
+          - { label: "Tagline", name: "tagline", widget: "string", required: false }
+          - { label: "Logo (optional)", name: "logo", widget: "image", required: false, choose_url: false }
+          - { label: "App icon (upload a square PNG, 512x512 or larger)", name: "app_icon", widget: "image", required: false, choose_url: false, hint: "The icon on the phone home screen / installed app, and in notifications. Keep it square with the logo in the middle." }
+          - { label: "App icon – maskable version (optional)", name: "app_icon_maskable", widget: "image", required: false, choose_url: false, hint: "Optional full-bleed version for Android round/rounded icons: fill the whole square with your background colour and keep the logo inside the centre 60%. If empty, the App icon above is used." }
+          - { label: "App name under the icon (short, optional)", name: "app_short_name", widget: "string", required: false, hint: "Shown under the icon on the home screen. Leave empty to use the Telugu site name." }
+          - { label: "Favicon image (upload PNG, SVG, ICO or JPG, square, at least 192x192)", name: "favicon_image", widget: "image", required: false, choose_url: false, hint: "Shown in the browser tab and as the home-screen icon. If uploaded, it is used instead of the emoji below." }
+          - { label: "Favicon emoji (used only when no favicon image is uploaded)", name: "favicon", widget: "string", default: "✝️", required: false }
+          - { label: "Hero Bible verse", name: "verse", widget: "text", required: false }
+          - { label: "Hero verse reference", name: "verse_ref", widget: "string", required: false }
+          - { label: "Accent colour", name: "accent", widget: "color", default: "#B8892B" }
+          - { label: "Main colour", name: "ink", widget: "color", default: "#17305C" }
+          - { label: "About text", name: "about", widget: "text", required: false }
+          - { label: "Contact email", name: "email", widget: "string", required: false }
+          - { label: "WhatsApp number (with country code, e.g. 919876543210)", name: "whatsapp", widget: "string", required: false }
+          - { label: "Facebook URL", name: "facebook", widget: "string", required: false }
+          - { label: "Footer text", name: "footer", widget: "string", default: "To God alone be the glory", required: false }
+          - label: "Presentation backgrounds"
+            name: "pj_backgrounds"
+            widget: "list"
+            required: false
+            summary: "{{fields.label}}"
+            hint: "Images shown behind the projector slides. The first one is used by default."
+            fields:
+              - { label: "Name", name: "label", widget: "string" }
+              - { label: "Image", name: "image", widget: "image", choose_url: false }
+          - { label: "Background darkness (0-90%) so text stays readable", name: "pj_overlay", widget: "number", value_type: "int", min: 0, max: 90, default: 45, required: false }
+          - label: "Telugu font (Google Fonts)"
+            name: "font_te"
+            widget: "select"
+            required: false
+            default: ""
+            options: [{ label: "Default (Noto Telugu)", value: "" }, { label: "Noto Sans Telugu", value: "Noto Sans Telugu" }, { label: "Noto Serif Telugu", value: "Noto Serif Telugu" }, { label: "Anek Telugu", value: "Anek Telugu" }, { label: "Hind Guntur", value: "Hind Guntur" }, { label: "Mandali", value: "Mandali" }, { label: "NTR", value: "NTR" }, { label: "Ramabhadra", value: "Ramabhadra" }, { label: "Suranna", value: "Suranna" }, { label: "Gidugu", value: "Gidugu" }, { label: "Gurajada", value: "Gurajada" }, { label: "Lakki Reddy", value: "Lakki Reddy" }, { label: "Mallanna", value: "Mallanna" }, { label: "Peddana", value: "Peddana" }, { label: "Ponnala", value: "Ponnala" }, { label: "Ravi Prakash", value: "Ravi Prakash" }, { label: "Sree Krushnadevaraya", value: "Sree Krushnadevaraya" }, { label: "Tenali Ramakrishna", value: "Tenali Ramakrishna" }, { label: "Timmana", value: "Timmana" }, { label: "Dhurjati", value: "Dhurjati" }, { label: "Suravaram", value: "Suravaram" }, { label: "Tiro Telugu", value: "Tiro Telugu" }]
+            hint: "Used for all Telugu text (songs, Bible, menus, projector)."
+          - { label: "Telugu font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_te_file", widget: "file", required: false, choose_url: false, hint: "If a file is uploaded it is used instead of the Google font chosen above." }
+          - label: "English font (Google Fonts)"
+            name: "font_en"
+            widget: "select"
+            required: false
+            default: ""
+            options: [{ label: "Default (same as Telugu font)", value: "" }, { label: "Inter", value: "Inter" }, { label: "Roboto", value: "Roboto" }, { label: "Open Sans", value: "Open Sans" }, { label: "Lato", value: "Lato" }, { label: "Poppins", value: "Poppins" }, { label: "Montserrat", value: "Montserrat" }, { label: "Nunito", value: "Nunito" }, { label: "Raleway", value: "Raleway" }, { label: "Merriweather", value: "Merriweather" }, { label: "Lora", value: "Lora" }, { label: "Playfair Display", value: "Playfair Display" }, { label: "PT Serif", value: "PT Serif" }, { label: "Libre Baskerville", value: "Libre Baskerville" }, { label: "EB Garamond", value: "EB Garamond" }, { label: "Crimson Text", value: "Crimson Text" }, { label: "Noto Sans", value: "Noto Sans" }, { label: "Noto Serif", value: "Noto Serif" }]
+            hint: "Used for English letters and numbers (English titles, Bible KJV, numbers)."
+          - { label: "English font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_en_file", widget: "file", required: false, choose_url: false, hint: "If a file is uploaded it is used instead of the Google font chosen above." }
+          - { label: "SEO description", name: "seo_description", widget: "text", required: false }
+
+      - label: "YouTube & Android App"
+        name: "media"
+        file: "content/youtube_app.json"
+        format: "json"
+        fields:
+          - { label: "YouTube channel link", name: "youtube", widget: "string", required: false, hint: "Paste the channel link, for example https://www.youtube.com/@yourchannel or https://www.youtube.com/channel/UC... (or just @yourchannel). It drives the Sermons tab, the Latest videos on the home screen and the live alerts." }
+          - { label: "YouTube channel ID (optional)", name: "youtube_channel_id", widget: "string", required: false, hint: "Only needed if the link above is not recognised. Starts with UC and is 24 characters long (youtube.com/account_advanced)." }
+          - { label: "Send an alert when the channel goes live", name: "live_alerts", widget: "boolean", default: true, hint: "Visitors who tapped 'Alert me when we go live' get a notification, and everyone sees a red LIVE bar in the app." }
+          - { label: "Android app (APK) – upload", name: "apk_file", widget: "file", required: false, choose_url: true, hint: "Upload the .apk file; visitors download it from the home screen and the About tab. Very large files (over about 50 MB) may not upload here: host it elsewhere (for example a GitHub Release) and paste its https link." }
+          - { label: "App version (shown to visitors, e.g. 1.0.3)", name: "apk_version", widget: "string", required: false }
+          - { label: "Short note for visitors (optional)", name: "apk_notes", widget: "string", required: false, hint: "For example: What's new in this version." }

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Bible notes — Dhaivakrupa Admin</title>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+:root{--ink:#17305c;--acc:#b8892b;--bg:#f4f5f8;--line:#d9dde6;--ok:#1b7f3b;--bad:#b3261e}
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,"Noto Sans Telugu",sans-serif;background:var(--bg);color:#1c2333}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:1.1rem;margin:0;flex:1}header a{color:#f6d98b;text-decoration:none;font-size:.9rem}
+main{max-width:760px;margin:0 auto;padding:16px}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+h2{font-size:1rem;margin:0 0 6px}p{margin:4px 0;color:#445}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;min-height:36px}
+button:hover:not(:disabled){border-color:var(--acc)}button:disabled{opacity:.35;cursor:default}
+button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+button.danger{background:var(--bad);color:#fff;border-color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#st{font-size:.9rem;min-height:1.3em;margin-top:8px}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:#8a5a00}
+ul{list-style:none;margin:10px 0 0;padding:0}
+li{display:flex;gap:8px;align-items:flex-start;padding:9px 2px;border-bottom:1px solid var(--line)}
+li .t{flex:1}li small{display:block;color:#667}li b{display:block}
+.empty{color:#667;padding:10px 0}
+</style></head><body>
+<header><h1>📖 Bible notes — Dhaivakrupa</h1><a href="/admin/">← Content admin</a><a href="/" target="_blank">View site ↗</a></header>
+<main>
+  <section id="login" hidden>
+    <h2>Admin login needed</h2>
+    <p>Log in with the same account you use for the content admin.</p>
+    <div class="row"><button class="pri" id="lg">Log in</button></div>
+  </section>
+  <section id="box" hidden>
+    <h2>Bible references sent to the projector</h2>
+    <p>Everyone sees these in the 📖 Bible notes bar on the website. Each note disappears by itself after 7 days. Here you can remove them sooner.</p>
+    <div class="row"><span id="cnt"></span><button id="rf">↻ Refresh</button><button class="danger" id="clr">🗑 Clear all notes</button></div>
+    <div id="st"></div>
+    <ul id="ls"></ul>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const status=(t,c)=>{const e=$('#st');e.textContent=t;e.className=c||''};
+let books=[],list=[];
+const idn=window.netlifyIdentity;
+async function token(){const u=idn&&idn.currentUser();if(!u)return null;try{return await u.jwt()}catch{return null}}
+async function api(body){
+  const tk=await token();if(!tk)throw new Error('login');
+  const r=await fetch('/api/bible-notes',{method:'POST',headers:{authorization:'Bearer '+tk},body:JSON.stringify(body)});
+  if(r.status===401)throw new Error('login');
+  const d=await r.json().catch(()=>null);if(!r.ok||!d||!Array.isArray(d.list))throw new Error('fail');return d.list;
+}
+async function load(){
+  try{books=await (await fetch('/bible/books.json')).json()}catch{}
+  try{const d=await (await fetch('/api/bible-notes',{cache:'no-store'})).json();list=d.list||[];status('')}catch{status('Could not load the notes','bad')}
+  render();
+}
+function render(){
+  $('#cnt').textContent=list.length+' note'+(list.length===1?'':'s');$('#clr').disabled=!list.length;
+  const clock=t=>new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+  $('#ls').innerHTML=list.length?list.map(x=>{const bk=books[x.b];const ref=(bk?(x.l==='en'?bk.en:bk.te):'Book '+x.b)+' '+x.c+(x.v?':'+x.v:'');
+    return `<li><span class="t"><b>${esc(ref)}</b><small>${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</small></span><button data-del="${esc(x.id)}" aria-label="Remove note">✕</button></li>`}).join(''):'<li class="empty">No Bible notes right now.</li>';
+}
+async function run(body,msg){
+  status('Working…','warn');
+  try{list=await api(body);render();status(msg,'ok')}
+  catch(e){if(e.message==='login'){status('Please log in again','bad');gate()}else status('Could not do that','bad')}
+}
+$('#ls').onclick=e=>{const b=e.target.closest('button[data-del]');if(b)run({op:'delete',id:b.dataset.del},'✓ Note removed')};
+$('#clr').onclick=()=>{if(list.length&&confirm('Remove ALL Bible notes for everyone? This cannot be undone.'))run({op:'clear'},'✓ All notes cleared — the website updates within a minute')};
+$('#rf').onclick=load;
+$('#lg').onclick=()=>idn&&idn.open('login');
+function gate(){const on=!!(idn&&idn.currentUser());$('#login').hidden=on;$('#box').hidden=!on;if(on)load()}
+if(idn){idn.on('init',gate);idn.on('login',()=>{idn.close();gate()});idn.on('logout',gate);idn.init()}else{$('#login').hidden=false}
+</script></body></html>

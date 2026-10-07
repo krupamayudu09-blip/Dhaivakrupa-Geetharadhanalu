@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<songs>
+  <song>
+    <title>పాట పేరు ఇక్కడ</title>
+    <title_en>Song name in English (optional)</title_en>
+    <category>ఆరాధన గీతాలు</category>
+    <writer>రచయిత పేరు</writer>
+    <scale>C</scale>
+    <lyrics><![CDATA[పల్లవి లైన్ 1
+పల్లవి లైన్ 2
+
+చరణం 1 లైన్ 1
+చరణం 1 లైన్ 2]]></lyrics>
+    <youtube></youtube>
+  </song>
+  <song>
+    <title>రెండవ పాట</title>
+    <lyrics><![CDATA[ఇక్కడ లిరిక్స్ రాయండి]]></lyrics>
+  </song>
+</songs>
