@@ -197,6 +197,7 @@ collections:
             options: [{ label: "English", value: "en" }, { label: "Telugu", value: "te" }]
           - { label: "Show pastor / church bar at the bottom", name: "vi_show_pastor", widget: "boolean", default: true, hint: "Pastor photo, name, church and phone come from the boxes below; an empty box uses General Settings." }
           - { label: "Pastor photo on the verse picture", name: "vi_pastor_photo", widget: "image", required: false, choose_url: false, hint: "Leave empty to use the pastor photo from General Settings." }
+          - { label: "Show pastor phone number on the verse picture", name: "vi_show_phone", widget: "boolean", default: true, hint: "Turn off to hide the phone number from the daily verse picture and notification." }
           - { label: "Pastor name on the verse picture", name: "vi_pastor_name", widget: "string", required: false, hint: "Leave empty to use General Settings." }
           - { label: "Phone number on the verse picture", name: "vi_pastor_phone", widget: "string", required: false, hint: "Leave empty to use General Settings." }
           - { label: "Church name on the verse picture", name: "vi_church_name", widget: "string", required: false, hint: "Leave empty to use General Settings." }

@@ -1503,14 +1503,14 @@ async function verseImgUrl(te,ref,b,sz,hl,S0,cv){try{
   const bg=await verseBgFor(T.key,n,S.vi_bgs);               // photo added for this theme (or for any verse); else a built-in one that suits it; else null -> painted scene in the theme's colours
   return verseCanvas(document.createElement('canvas'),te,ref,{w:(sz&&sz.w)||1080,h:(sz&&sz.h)||1350,theme:T.shape,pal:T.pal,bg,hl,font:vf?'"'+vf+'","Ramabhadra","Noto Serif Telugu",serif':undefined,hfont:hf?'"'+hf+'","Ponnala","Ramabhadra",serif':undefined,fscale:(+S.vi_text_size||100)/100,hscale:(+S.vi_hl_size||100)/100,title:S.vi_title||undefined,hlColor:S.vi_hl_color||undefined,pscale:(+S.vi_pastor_scale||100)/100,accent:S.accent,photo,
     greet:S.vi_greet_on===true&&S.vi_greet?S.vi_greet:undefined,date:S.vi_date_on===true?verseDate(S.vi_date_lang):undefined,
-    pastor:S.vi_show_pastor===false?null:{name:viv(S,'vi_pastor_name','pastor_name'),phone:viv(S,'vi_pastor_phone','pastor_phone'),church:viv(S,'vi_church_name','church_name')}}).toDataURL('image/jpeg',.9)}catch{return ''}}
+    pastor:S.vi_show_pastor===false?null:{name:viv(S,'vi_pastor_name','pastor_name'),phone:S.vi_show_phone===false?'':viv(S,'vi_pastor_phone','pastor_phone'),church:viv(S,'vi_church_name','church_name')}}).toDataURL('image/jpeg',.9)}catch{return ''}}
 /* the picture on the home screen: today's verse, same as the notification */
 let HV=null;
 async function homeVerse(){
   try{
     const v=await dailyVerse();if(!v||!$('#vc'))return;
     const te=(await load('te',v[0]))[v[1]-1][v[2]-1],bk=books[v[0]-1];if(!bk)return;
-    const ref=bk.te+' '+v[1]+':'+v[2],key=todayKey()+'|'+v.join('.')+'|'+[D.settings.accent,D.settings.pastor_name,D.settings.pastor_phone,D.settings.church_name,D.settings.pastor_photo,JSON.stringify([D.settings.vi_font,D.settings.vi_hl_font,D.settings.vi_text_size,D.settings.vi_hl_size,D.settings.vi_title,D.settings.vi_hl_on,D.settings.vi_hl_color,D.settings.vi_hls,D.settings.vi_show_pastor,D.settings.vi_pastor_scale,D.settings.vi_bgs,D.settings.vi_pastor_photo,D.settings.vi_pastor_name,D.settings.vi_pastor_phone,D.settings.vi_church_name,D.settings.vi_greet_on,D.settings.vi_greet,D.settings.vi_date_on,D.settings.vi_date_lang])].join('|');
+    const ref=bk.te+' '+v[1]+':'+v[2],key=todayKey()+'|'+v.join('.')+'|'+[D.settings.accent,D.settings.pastor_name,D.settings.pastor_phone,D.settings.church_name,D.settings.pastor_photo,JSON.stringify([D.settings.vi_font,D.settings.vi_hl_font,D.settings.vi_text_size,D.settings.vi_hl_size,D.settings.vi_title,D.settings.vi_hl_on,D.settings.vi_hl_color,D.settings.vi_hls,D.settings.vi_show_pastor,D.settings.vi_show_phone,D.settings.vi_pastor_scale,D.settings.vi_bgs,D.settings.vi_pastor_photo,D.settings.vi_pastor_name,D.settings.vi_pastor_phone,D.settings.vi_church_name,D.settings.vi_greet_on,D.settings.vi_greet,D.settings.vi_date_on,D.settings.vi_date_lang])].join('|');
     const u=(HV&&HV.key===key)?HV.u:await verseImgUrl(te,ref,v[0],{w:1200,h:760},hlFor(v),undefined,[v[1],v[2]]),box=$('#vc');
     if(!u||!box)return;HV={key,u};
     box.href='#/bible/'+(v[0]-1)+'/'+v[1];box.setAttribute('aria-label',ref);
@@ -3343,6 +3343,7 @@ async function csVerse(){
     <div class="cs-col"><input type="color" id="v_hlc" value="${esc(o.vi_hl_color||'#FFC93C')}"><span class="sub">Highlight colour</span></div>
     <label for="v_hs">Highlight text size</label>${sel('v_hs',o.vi_hl_size||'100',[['100','Same as the verse'],['112','A little bigger'],['125','Bigger']])}
     <div class="cs-sw"><span>Show the pastor / church bar</span><input type="checkbox" id="v_ps"${o.vi_show_pastor!==false?' checked':''}></div>
+    <div class="cs-sw"><span>Show the pastor phone number</span><input type="checkbox" id="v_phs"${o.vi_show_phone!==false?' checked':''}></div>
     <label for="v_psc">Pastor photo size: <b id="v_pscv">${+o.vi_pastor_scale||100}</b>%</label><input class="cs-rng" id="v_psc" type="range" min="70" max="150" step="5" value="${+o.vi_pastor_scale||100}"></div>
     <div class="cs-card"><h3>Greeting and date</h3><p class="sub" style="margin:0 0 12px">The greeting is written at the top of the picture (and is the title of the daily notification). The date is written under the verse reference.</p>
     <div class="cs-sw"><span>Show a greeting</span><input type="checkbox" id="v_gon"${o.vi_greet_on===true?' checked':''}></div>
@@ -3396,7 +3397,7 @@ async function csVerse(){
   const grab=()=>{
     if(!$('#v_title'))return;
     o.vi_title=$('#v_title').value.trim();o.vi_text_size=$('#v_ts').value;o.vi_hl_on=$('#v_hlon').checked;o.vi_hl_color=$('#v_hlc').value;o.vi_hl_size=$('#v_hs').value;
-    o.vi_show_pastor=$('#v_ps').checked;o.vi_pastor_scale=+$('#v_psc').value;
+    o.vi_show_pastor=$('#v_ps').checked;o.vi_show_phone=$('#v_phs').checked;o.vi_pastor_scale=+$('#v_psc').value;
     o.vi_greet_on=$('#v_gon').checked;o.vi_greet=$('#v_gt').value.trim();o.vi_date_on=$('#v_don').checked;o.vi_date_lang=$('#v_dl').value;
     o.vi_pastor_name=$('#v_pn').value.trim();o.vi_pastor_phone=$('#v_pp').value.trim();o.vi_church_name=$('#v_cn').value.trim();
     box.querySelectorAll('[data-th]').forEach(x=>{if(bgs[+x.dataset.th])bgs[+x.dataset.th].theme=x.value});

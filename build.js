@@ -58,10 +58,10 @@ Object.entries(vimg).forEach(([k, v]) => { settings[k] = v; });
 const pick = (...v) => { for (const x of v) if (x != null && String(x).trim() !== '') return x; return ''; };   // first non-empty value
 fs.writeFileSync(path.join(out, 'pastor.json'), JSON.stringify({
   // Daily Verse Image can override the pastor / church details; empty = the General Settings value
-  name: pick(settings.vi_pastor_name, settings.pastor_name), phone: pick(settings.vi_pastor_phone, settings.pastor_phone),
+  name: pick(settings.vi_pastor_name, settings.pastor_name), phone: settings.vi_show_phone === false ? '' : pick(settings.vi_pastor_phone, settings.pastor_phone),
   church: pick(settings.vi_church_name, settings.church_name), photo: pick(settings.vi_pastor_photo, settings.pastor_photo),
   ink: settings.ink || '', accent: settings.accent || '',
-  vi: { title: settings.vi_title || '', hlOn: settings.vi_hl_on !== false, hlColor: settings.vi_hl_color || '', showPastor: settings.vi_show_pastor !== false, scale: +settings.vi_pastor_scale || 100,
+  vi: { title: settings.vi_title || '', hlOn: settings.vi_hl_on !== false, hlColor: settings.vi_hl_color || '', showPastor: settings.vi_show_pastor !== false, showPhone: settings.vi_show_phone !== false, scale: +settings.vi_pastor_scale || 100,
     font: settings.vi_font || '', hlFont: settings.vi_hl_font || '', textSize: +settings.vi_text_size || 100, hlSize: +settings.vi_hl_size || 100, hls: settings.vi_hls || [],
     greetOn: settings.vi_greet_on === true, greet: settings.vi_greet || '', dateOn: settings.vi_date_on === true, dateLang: settings.vi_date_lang === 'te' ? 'te' : 'en',
     bgs: (settings.vi_bgs || []).filter(x => x && x.image).map(x => ({ image: x.image, theme: x.theme || '' })) } }));
