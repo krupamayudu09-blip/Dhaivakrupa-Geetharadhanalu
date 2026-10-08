@@ -896,6 +896,51 @@ img,video,svg{max-width:100%}
 .mpvd .mpvr{flex-wrap:wrap}.mpvd .mpvr .search{flex:1 1 150px}
 .mtinfo{margin:14px 0 0;text-align:center}
 .mtg .mnote{margin:0 0 12px}
+/* ===== v33 fixes: Bible chapter reader + menu icons ===== */
+/* header round icon buttons only (the generic .ib rule used to squash the reader's text buttons into 40px circles) */
+.bar .ib{display:grid;place-items:center;width:40px;min-width:40px;height:40px;padding:0;flex:none}
+.bar .ib .ic{width:20px;height:20px;vertical-align:0}
+.bar{gap:8px}
+.bar h1{min-width:0}
+/* reader buttons: normal pill buttons with icon + text */
+.tb .ib,.tb a.ib{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;min-width:0;height:auto;min-height:40px;padding:6px 14px;border-radius:999px;font:600 .88rem var(--sans);white-space:nowrap}
+.rd .rdh{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.rd .rdback{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font:600 .86rem var(--sans)}
+.rd .rdt{flex:1;min-width:0;text-align:center}
+.rd .rdt h2{margin:0;font:700 1.2rem/1.3 var(--serif);overflow-wrap:anywhere}
+.rd .rdt .meta{margin:2px 0 0}
+.rd .rdpn{flex:none;display:flex;gap:6px}
+.rd .rdpn a{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font:600 1.5rem/1 var(--sans);padding-bottom:3px;box-sizing:border-box}
+.rd .rdpn a.off{opacity:.3;pointer-events:none}
+.rd .rdtools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.rd .rdtools .seg{flex-wrap:nowrap}
+.rd .rdfs{margin:0;gap:6px;flex-wrap:nowrap}
+.rd .rdfs button{min-width:46px;padding:0 12px;font-weight:700}
+.rd .rdacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin:0 0 14px}
+.rd .rdacts>*{justify-content:center;text-align:center;min-width:0}
+.rd .rdacts .ixi{width:18px;height:18px;vertical-align:0;flex:none}
+.rd #vs{margin-top:4px}
+.rd .v{padding:10px 12px;margin:2px 0;-webkit-tap-highlight-color:transparent}
+.rd .v .te{line-height:1.95}
+.rd .v sup{display:inline-block;min-width:1.4em}
+.rd .pn a{display:flex;flex-direction:column;gap:2px;line-height:1.3}
+.rd .pn a small{font:600 .72rem var(--sans);color:var(--muted)}
+.rd .pn a b{font:700 .95rem var(--serif)}
+.rd .pn a:first-child{align-items:flex-start;text-align:left}.rd .pn a:last-child{align-items:flex-end;text-align:right}
+#mnbar .vc{box-shadow:none;overflow:visible}
+/* bottom menu: six equal tabs, icon above label, labels always visible */
+:root{--nav:84px}
+.nav{padding:0 10px}
+.nav div{max-width:520px;gap:0;padding:6px}
+.nav a,.nav a[aria-current=page]{flex:1 1 0;flex-grow:1;min-width:0;height:54px;flex-direction:column;justify-content:center;align-items:center;gap:3px;border-radius:22px;font-size:.66rem;font-weight:600;letter-spacing:.01em;line-height:1;transition:color .25s}
+.nav a[aria-current=page]{flex-grow:1;gap:3px;background:transparent;box-shadow:none;color:var(--pilltx);font-weight:700}
+.nav svg{width:23px;height:23px;stroke-width:1.7}
+.nav .nl,.nav a[aria-current=page] .nl{display:block;max-width:100%;opacity:1;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:none}
+.nvp{top:6px;height:54px;border-radius:22px}
+@media (max-width:340px){.nav a{font-size:.6rem}.nav svg{width:21px;height:21px}}
+@media (max-height:480px) and (orientation:landscape){.nav a,.nav a[aria-current=page]{flex-direction:row;gap:6px;height:44px;font-size:.72rem}.nvp{height:44px}}
+.mpvd.mpvtop{margin:4px 0 16px}
+.mtg>h2{margin-bottom:10px}
 </style></head>
 <body>
 <div class="app">
@@ -2028,12 +2073,15 @@ async function read(b,c,hv){
   try{if(blang!=='en')te=(await load('te',b+1))[c-1]||[];if(blang!=='te')en=(await load('en',b+1))[c-1]||[]}catch(e){M.innerHTML='<p class="empty">This chapter could not be loaded. Check your internet connection and try again.</p>';return}
   const n=Math.max(te.length,en.length);
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
-  M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
-  <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp" class="ib">${BI.copy}Copy</button><a class="mhe ib" href="#/bible/mynotes" id="mynb" style="min-height:36px">${BI.star}My notes</a><button id="lsr" class="pjonly ib">${BI.plus}Meeting Verses</button><button id="pj1" class="pjonly ib">${BI.screen}Projector</button></div>
-  
+  const bnm=x=>blang==='en'?x.en:x.te;
+  const pl=prev?`${bnm(books[c>1?b:b-1])} ${c>1?c-1:books[b-1].ch}`:'',nl=next?`${bnm(books[c<bk.ch?b:b+1])} ${c<bk.ch?c+1:1}`:'';
+  M.innerHTML=`<div class="view rd"><div class="rdh"><a class="rdback" href="#/bible/${b}" aria-label="All chapters of ${esc(bk.en)}">‹ <span>Chapters</span></a>
+  <div class="rdt"><h2>${esc(bnm(bk))} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}</div>
+  <div class="rdpn"><a class="${prev?'':'off'}" href="${prev||'#'}" aria-label="Previous chapter">‹</a><a class="${next?'':'off'}" href="${next||'#'}" aria-label="Next chapter">›</a></div></div>
+  <div class="rdtools">${langSeg()}<div class="tb rdfs"><button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button></div></div>
+  <div class="tb rdacts"><button id="cp" class="ib">${BI.copy}<span>Copy</span></button><a class="mhe ib" href="#/bible/mynotes" id="mynb">${BI.star}<span>My notes</span></a><button id="lsr" class="pjonly ib">${BI.plus}<span>Meeting Verses</span></button><button id="pj1" class="pjonly ib">${BI.screen}<span>Projector</span></button></div>
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
-  <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
+  <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}"><small>‹ Previous</small><b>${esc(pl)}</b></a><a class="${next?'':'off'}" href="${next||'#'}"><small>Next ›</small><b>${esc(nl)}</b></a></div></div>`;
   window.scrollTo(0,0);
   if(hv){const [h1,h2]=String(hv).split('-').map(Number);let f=null;for(let k=h1;k<=(h2>h1?h2:h1);k++){const el=document.querySelector(`.v[data-i="${k-1}"]`);if(el){el.classList.add('sel');f=f||el}}if(f)setTimeout(()=>f.scrollIntoView({block:'center'}),50)}
   /* click = select a verse; double-click (or double-tap) = send to the presentation.
@@ -2741,17 +2789,17 @@ function meeting(ids,name){
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
   M.innerHTML=`<div class="view mtg"><h2>This meeting</h2>
+  <details class="mpvd mpvtop" id="mpvd" open><summary>📺 Live preview<small>Enter the 6-digit code and tap Watch</small></summary><div id="mpvbody"></div></details>
   <div class="mthead"><div class="mtmeta"><p class="mtn" id="mtn" hidden></p><p class="mtt" id="mtt"></p></div><span class="mtcount" id="mcnt"></span></div>
   <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
   <div class="mnote" id="mnote" hidden></div>
-  <div class="tb mtact"><button id="mp" class="mtp">▶ Present</button><button id="mr">📱 Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button><a class="mhe vonly" href="#/remote">Remote control</a></div>
+  <div class="tb mtact"><button id="mp" class="mtp">▶ Present</button><button id="mr">📱 Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
   ${lkRow()}
   <div id="mrc"></div>
   <h3 class="mtsec">Songs</h3>
   <ol class="ml" id="ml"></ol>
   <div class="mgate"><h3 class="mtsec">Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div>
   <div class="mbn"><h3 class="mtsec">📖 Meeting Verses</h3><div id="mbnl"></div></div>
-  <details class="mpvd" id="mpvd"><summary>📺 Live preview<small>Watch what the projector shows</small></summary><div id="mpvbody"></div></details>
   <p class="sub mtinfo" id="mpi"></p></div>`;
   const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
   if(!canEdit())$('#mn').hidden=true;
