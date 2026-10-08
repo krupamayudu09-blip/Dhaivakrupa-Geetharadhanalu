@@ -272,9 +272,17 @@ Files changed: `index.html`, `sw.js` (cache v46). No server changes. Deploy both
 
 ## v50 – visitor restrictions, My notes, Bible word search, meeting date, all sermons
 - **Visitors (not logged in)** see no projection at all: no Projector / Present / Remote buttons, no double-tap-to-project on Bible verses, no Live-preview box, no remote page (the Meeting page keeps the Contributor login button). Only **admin and contributors** can project.
-- **Last Sunday Reference** (was "Bible notes"): the shared list of verses (kept 7 days). Only admin and contributors can **add** (＋ Last Sunday Reference button in the Bible reader, or by projecting a verse) and **remove** (✕ on each entry). Visitors can only read it. `bible-notes.mjs`: `delete` now accepts admin + contributor; `clear` stays admin-only.
+- **Sunday Reference** (was "Bible notes"): the shared list of verses (kept 7 days). Only admin and contributors can **add** (＋ Sunday Reference button in the Bible reader, or by projecting a verse) and **remove** (✕ on each entry). Visitors can only read it. `bible-notes.mjs`: `delete` now accepts admin + contributor; `clear` stays admin-only.
 - **Bible → ☆ My notes**: tap verses, then **☆ My notes** to save them as important verses; open them from the Bible home (☆ My notes). Private: stored only on that device for that login (key `mynotes:<email>`), never shared.
 - **Bible word search**: type a word (Telugu word → Telugu Bible, other words → English Bible) in the Bible search box; matching verses are listed with the word highlighted. References like `jn 3:16` still work.
 - **Meeting**: has a date (date picker on the Meeting page and in `/admin/schedule.html`). Date and name are always shown together ("Sun, 12 Oct 2026 – Sunday worship") on the Meeting page, the home screen and the presentation title. `meeting.mjs` stores `date`.
 - **Home → Song index → By category** lists every category (also empty ones); tapping one shows its songs, with the full category list as chips so you can switch. "Uncategorised" now works.
 - **Sermons** shows ALL live-stream videos and ALL uploaded videos (Show more button). With `YOUTUBE_API_KEY` the whole channel is read (cached 30 min); without it, as many as YouTube's public pages give. Files: `netlify/lib/yt.mjs`, `index.html`, `sw.js` (cache v50), `netlify/functions/meeting.mjs`, `netlify/functions/bible-notes.mjs`, `admin/schedule.html`, `admin/bible-notes.html`. Deploy all together.
+
+## v51 – Sunday Reference, My notes colours, automatic meeting title, Tenglish Bible search, responsive alerts
+- **Sunday Reference**: renamed from "Last Sunday Reference".
+- **My notes**: tap a verse in the Bible reader and a bar appears with **☆ Add to My notes** and colour dots (yellow, green, blue, pink, orange, ⊘ to remove). Highlights are saved in My notes and shown on the verse (★ marks saved verses). Private to that device/login.
+- **Meeting**: the title is the **day and date**, filled in automatically (e.g. "Thursday, 8 October 2026"), shown as a heading, not a pill (Meeting page and home screen). Only admin and contributors see the name box; the name shows under the title only when one is set, so visitors see nothing when it is empty. The manual date picker was removed.
+- **Bible search with Tenglish**: type Telugu words in English letters (`prema`, `rakshana`, `yesu`, `devudu`); matches are found in the Telugu Bible by sound, and the English word is searched in the English Bible.
+- **Alerts** (toast, new-song card, live bar, daily-verse / greeting popups, login and help dialogs) resize for small phones, tablets, landscape and desktop, and respect the notch / safe areas.
+Files: `index.html`, `sw.js` (cache v51), `admin/schedule.html`, `admin/bible-notes.html`.

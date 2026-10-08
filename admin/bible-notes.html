@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Last Sunday Reference — Dhaivakrupa Admin</title>
+<title>Sunday Reference — Dhaivakrupa Admin</title>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 :root{--ink:#17305c;--acc:#b8892b;--bg:#f4f5f8;--line:#d9dde6;--ok:#1b7f3b;--bad:#b3261e}
@@ -23,7 +23,7 @@ li{display:flex;gap:8px;align-items:flex-start;padding:9px 2px;border-bottom:1px
 li .t{flex:1}li small{display:block;color:#667}li b{display:block}
 .empty{color:#667;padding:10px 0}
 </style></head><body>
-<header><h1>📖 Last Sunday Reference — Dhaivakrupa</h1><a href="/admin/">← Content admin</a><a href="/" target="_blank">View site ↗</a></header>
+<header><h1>📖 Sunday Reference — Dhaivakrupa</h1><a href="/admin/">← Content admin</a><a href="/" target="_blank">View site ↗</a></header>
 <main>
   <section id="login" hidden>
     <h2>Admin login needed</h2>
@@ -32,7 +32,7 @@ li .t{flex:1}li small{display:block;color:#667}li b{display:block}
   </section>
   <section id="box" hidden>
     <h2>Bible references sent to the projector</h2>
-    <p>Everyone sees these in the 📖 Last Sunday Reference bar on the website. Each note disappears by itself after 7 days. Here you can remove them sooner.</p>
+    <p>Everyone sees these in the 📖 Sunday Reference bar on the website. Each note disappears by itself after 7 days. Here you can remove them sooner.</p>
     <div class="row"><span id="cnt"></span><button id="rf">↻ Refresh</button><button class="danger" id="clr">🗑 Clear all notes</button></div>
     <div id="st"></div>
     <ul id="ls"></ul>
@@ -68,7 +68,7 @@ async function run(body,msg){
   catch(e){if(e.message==='login'){status('Please log in again','bad');gate()}else status('Could not do that','bad')}
 }
 $('#ls').onclick=e=>{const b=e.target.closest('button[data-del]');if(b)run({op:'delete',id:b.dataset.del},'✓ Note removed')};
-$('#clr').onclick=()=>{if(list.length&&confirm('Remove ALL Last Sunday Reference entries for everyone? This cannot be undone.'))run({op:'clear'},'✓ All notes cleared — the website updates within a minute')};
+$('#clr').onclick=()=>{if(list.length&&confirm('Remove ALL Sunday Reference entries for everyone? This cannot be undone.'))run({op:'clear'},'✓ All notes cleared — the website updates within a minute')};
 $('#rf').onclick=load;
 $('#lg').onclick=()=>idn&&idn.open('login');
 function gate(){const on=!!(idn&&idn.currentUser());$('#login').hidden=on;$('#box').hidden=!on;if(on)load()}

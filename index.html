@@ -663,6 +663,32 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 .nscard .nst b{font:700 1rem/1.35 var(--serif);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nscard .nst small{font:500 .78rem var(--sans);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nscard .nsx{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--muted)}
+/* ---- RESPONSIVE ALERTS: toast, new-song card, live bar, popups, login/help dialogs fit every screen (small phones, tablets, landscape, desktop) ---- */
+.toast{max-width:min(92vw,460px);width:max-content;text-align:center;font-size:clamp(.82rem,2.6vw,.95rem);line-height:1.4;padding:9px clamp(14px,4vw,22px);border-radius:18px;bottom:calc(var(--nav) + 52px + env(safe-area-inset-bottom));overflow-wrap:anywhere}
+.nscard{width:min(94vw,440px);top:calc(62px + env(safe-area-inset-top));padding:9px 10px 9px 12px;gap:10px}
+.nscard .nsi{width:clamp(32px,9vw,40px);height:clamp(32px,9vw,40px)}
+.nscard .nst b{font-size:clamp(.88rem,3.6vw,1rem)}
+.livebar{font-size:clamp(.82rem,3.2vw,.95rem);padding:9px clamp(10px,3vw,16px);gap:8px}
+#dvpop,#gtpop{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+.dvbox{width:min(94vw,520px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overscroll-behavior:contain}
+.dvb{flex-wrap:wrap}.dvb .mhe{flex:1 1 130px;text-align:center}
+.lgs{overflow:auto;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}.lgs .cs-card{max-height:calc(100dvh - 28px);overflow:auto}
+#a2hsm div{max-height:calc(100dvh - 32px);overflow:auto}
+@media (min-width:900px){.toast{bottom:calc(var(--nav) + 40px)}.nscard{top:78px;width:460px}.dvbox{width:min(80vw,560px)}}
+@media (max-width:360px){.nscard .nst small{display:none}.dvbox{border-radius:16px;padding:8px 8px 10px}.dvt{font-size:.92rem}}
+@media (max-height:480px) and (orientation:landscape){.toast{bottom:calc(var(--nav) + 8px)}.nscard{top:calc(8px + env(safe-area-inset-top))}.dvbox{width:min(70vw,460px)}.dvbox img{max-height:62dvh;width:auto;margin:0 auto}}
+/* ---- My notes: verse action bar, star and highlight colours ---- */
+#vbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + 36px + env(safe-area-inset-bottom));z-index:33;display:none;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:min(94vw,520px);padding:8px 12px;border-radius:22px;background:var(--gfill,var(--surface));-webkit-backdrop-filter:var(--blur,none);backdrop-filter:var(--blur,none);border:1px solid var(--gline,var(--line));box-shadow:0 10px 30px rgba(0,0,0,.28)}
+#vbar.on{display:flex}
+#vbar button{border:0;cursor:pointer;font:600 .9rem var(--sans);color:var(--text)}
+#vbar .vstar{min-height:40px;padding:0 14px;border-radius:999px;background:var(--pill,var(--accent));color:var(--pilltx,#fff)}
+#vbar .vstar.on{background:#E0A800;color:#222}
+#vbar .vc{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.25);background:var(--c)}
+#vbar .vc.none{background:transparent;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
+#vbar .vx{min-height:36px;padding:0 10px;background:transparent;color:var(--muted)}
+.v.hl{background:color-mix(in srgb,var(--hl) 62%,transparent)}.v.hl.sel{outline:2px solid var(--accent)}
+.v.mnv sup::after{content:" ★"}
+.sr.hl{background:color-mix(in srgb,var(--hl) 55%,transparent)}
 </style></head>
 <body>
 <div class="app">
@@ -680,8 +706,8 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
  <a href="#/about" data-t="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span class="nl">About</span></a>
 </div></nav>
 <div id="bnback"></div>
-<aside id="bnsheet" aria-label="Last Sunday Reference" aria-hidden="true"><div id="bnhd"><i></i><h2>Last Sunday Reference</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
-<div id="bnbar" role="button" tabindex="0" aria-label="Last Sunday Reference: swipe up or tap to open"><i></i><span>Last Sunday Reference</span><b id="bncnt"></b></div>
+<aside id="bnsheet" aria-label="Sunday Reference" aria-hidden="true"><div id="bnhd"><i></i><h2>Sunday Reference</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
+<div id="bnbar" role="button" tabindex="0" aria-label="Sunday Reference: swipe up or tap to open"><i></i><span>Sunday Reference</span><b id="bncnt"></b></div>
 <div id="pj" role="dialog" aria-modal="true" aria-label="Projector presentation" data-th="dark">
  <div class="bgi" id="pjbg"></div>
  <img class="pjlogo" id="pjlogo" alt="">
@@ -837,8 +863,9 @@ const schedName=()=>meetList().length?MT.name:PUB.name;
 const schedDate=()=>meetList().length?MT.date:PUB.date;
 const isoToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fmtMDate=iso=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||'');if(!m)return '';return new Date(+m[1],+m[2]-1,+m[3]).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})};
-/* the meeting date and its name are always shown together: "Sun, 12 Oct 2026 – Sunday worship" */
-const meetTitle=(date,name)=>[fmtMDate(date),String(name||'').trim()].filter(Boolean).join(' – ')||'This meeting';
+/* the meeting title is the day and date, filled in automatically (today); the optional name (set only by admin/contributors) follows it */
+const dayTitle=()=>new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const meetTitle=(date,name)=>[dayTitle(),String(name||'').trim()].filter(Boolean).join(' – ');
 const schedTitle=()=>meetTitle(schedDate(),schedName());
 async function fetchPub(){
   try{const r=await fetch('/api/meeting',{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -1410,8 +1437,8 @@ function indexGrid(host){
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
-  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(schedTitle())}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
-  e.innerHTML=`<section class="mh"><div class="mhh"><b>${esc(schedTitle())}</b><span class="sub">${l.length} songs</span></div>
+  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(dayTitle())}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
+  e.innerHTML=`<section class="mh"><div class="mhh"><div><b class="mtit">${esc(dayTitle())}</b>${String(schedName()||'').trim()?`<div class="sub">${esc(String(schedName()).trim())}</div>`:''}</div><span class="sub">${l.length} songs</span></div>
   <ul class="mhpills">${l.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul></section>`;
 }
 function songView(id){
@@ -1529,7 +1556,7 @@ function bnDraw(){
       +`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`;
   };
   const top=box.scrollTop;
-  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Last Sunday Reference yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
+  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* v31: the last 7 days of Bible notes as a list of full verses, with a Present button (Meeting page + phone remote's Meeting tab) */
@@ -1545,13 +1572,13 @@ function bnMeetDraw(box){
   const row=x=>{const L=['te','en','both'].includes(x.l)?x.l:'te',ref=`${L==='en'?books[x.b].en:books[x.b].te} ${x.c}${x.v?':'+x.v:''}`;
     return `<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}${vsExpand(x.v)[0]?'/'+vsExpand(x.v)[0]:''}" style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></a><button class="add" data-bnp="${esc(x.id)}" aria-label="Present ${esc(ref)}">📽</button><button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`};
   const top=box.scrollTop;
-  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Last Sunday Reference yet.</p>';
+  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.</p>';
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* keep a Bible-notes list fresh while its page is open */
 async function bnRemove(id){
   if(!canEdit()){needLogin();return}
-  if(!confirm('Remove this from Last Sunday Reference?'))return;
+  if(!confirm('Remove this from Sunday Reference?'))return;
   const keep=BN.list;bnSet(bpPrune().filter(x=>x.id!==id));
   try{await bnApi({op:'delete',id});toast('Removed')}catch{bnSet(keep);toast('Could not remove – please log in again')}
 }
@@ -1656,33 +1683,52 @@ async function wordSearch(q,out){
   const ws=[...new Set(q.toLowerCase().split(/\s+/).filter(Boolean))];
   if(q.length<2||!ws.length)return;
   const pr=parseRef(q);if(pr&&pr.c&&findBooks(pr.name).length)return;   // it is a reference such as jn 3:16
-  const lang=isTe(q)?'te':'en',MAX=80;
-  out.insertAdjacentHTML('beforeend','<li class="empty" id="wsh">Searching the Bible for the word…</li>');
-  const hits=[];let total=0;
+  /* Telugu letters -> Telugu Bible. English letters -> the English Bible (the word itself) AND the Telugu Bible by sound (Tenglish: prema, yesu, rakshana …) */
+  const teQ=isTe(q),langs=teQ?['te']:['en','te'],MAX=80,fq=teQ?[]:fz(q).split(' ').filter(t=>t.length>1);
+  const useSound=!teQ&&q.replace(/[^a-z]/gi,'').length>=3&&fq.length>0;
+  out.insertAdjacentHTML('beforeend','<li class="empty" id="wsh">Searching the Bible…</li>');
+  const hits=new Map();let total=0;
   for(let i=0;i<books.length&&id===WSID;i+=6){
-    let part;try{part=await Promise.all(books.slice(i,i+6).map((_,k)=>load(lang,i+k+1)))}catch{part=null}
+    let part;try{part=await Promise.all(books.slice(i,i+6).map((_,k)=>Promise.all(langs.map(l=>load(l,i+k+1)))))}catch{part=null}
     if(id!==WSID)return;
     if(!part){const h=out.querySelector('#wsh');if(h)h.textContent='Could not load the Bible text. Check your connection and try again.';return}
-    part.forEach((bk,k)=>bk.forEach((ch,ci)=>ch.forEach((tx,vi)=>{const low=String(tx).toLowerCase();if(ws.every(w=>low.includes(w))){total++;if(hits.length<MAX)hits.push([i+k,ci+1,vi+1,tx])}})));
+    part.forEach((byLang,k)=>langs.forEach((l,li)=>byLang[li].forEach((ch,ci)=>ch.forEach((tx,vi)=>{
+      const low=String(tx).toLowerCase();let ok,hl=true;
+      if(l==='te'&&!teQ){ok=useSound&&(()=>{const f=fz(tx);return fq.every(t=>f.includes(t))})();hl=false}
+      else ok=ws.every(w=>low.includes(w));
+      if(!ok)return;
+      const key=(i+k)+':'+(ci+1)+':'+(vi+1);let h=hits.get(key);
+      if(!h){total++;h={b:i+k,c:ci+1,v:vi+1,te:'',en:'',hl:false};hits.set(key,h)}
+      h[l]=tx;if(hl)h.hl=true;
+    }))));
     const h=out.querySelector('#wsh');if(h)h.textContent=`Searching… ${Math.min(i+6,books.length)}/${books.length} books • ${total} found`;
   }
   if(id!==WSID)return;
-  const h=out.querySelector('#wsh');if(h)h.remove();
+  const h0=out.querySelector('#wsh');if(h0)h0.remove();
   out.querySelectorAll('.wsr').forEach(e=>e.remove());
-  const nm=bi=>blang==='en'||lang==='en'?books[bi].en:books[bi].te;
-  out.insertAdjacentHTML('beforeend',`<li class="wsr ixh" style="list-style:none;padding:8px 0 0;margin:0"><b>${total?`${total} verse${total>1?'s':''} with “${esc(q)}”${total>MAX?` – showing the first ${MAX}`:''}`:`No verse has “${esc(q)}”`}</b></li>`
-    +hits.map(([b,c,v,tx])=>`<li class="sr wsr"><a href="#/bible/${b}/${c}/${v}"><div style="min-width:0"><div class="t">${esc(nm(b))} ${c}:${v}</div><div class="sub" style="white-space:normal">${wsHl(tx,ws)}</div></div></a></li>`).join(''));
+  const list=[...hits.values()].sort((x,y)=>x.b-y.b||x.c-y.c||x.v-y.v).slice(0,MAX);
+  const nm=bi=>blang==='en'?books[bi].en:books[bi].te;
+  const body=x=>{const parts=[];
+    if(x.te)parts.push(`<div class="sub" style="white-space:normal">${teQ?wsHl(x.te,ws):esc(x.te)}</div>`);
+    if(x.en)parts.push(`<div class="sub" style="white-space:normal">${wsHl(x.en,ws)}</div>`);
+    return parts.join('')};
+  out.insertAdjacentHTML('beforeend',`<li class="wsr ixh" style="list-style:none;padding:8px 0 0;margin:0"><b>${total?`${total} verse${total>1?'s':''} found for “${esc(q)}”${total>MAX?` – showing the first ${MAX}`:''}`:`No verse found for “${esc(q)}”`}</b></li>`
+    +list.map(x=>`<li class="sr wsr"><a href="#/bible/${x.b}/${x.c}/${x.v}"><div style="min-width:0"><div class="t">${esc(nm(x.b))} ${x.c}:${x.v}</div>${body(x)}</div></a></li>`).join(''));
 }
 /* ----- My notes: verses a person marks as important; kept only on their own device/login, never shared ----- */
 const mnKey=()=>'mynotes:'+((idUser()&&idUser().email)||'guest').toLowerCase();
 const mnList=()=>{const a=LS.get(mnKey(),[]);return Array.isArray(a)?a.filter(x=>x&&books[x.b]&&x.c>=1&&x.v>=1):[]};
-function mnAdd(b,c,vs){const a=mnList();let n=0;vs.forEach(v=>{if(!a.some(x=>x.b===b&&x.c===c&&x.v===v)){a.unshift({b,c,v,t:Date.now()});n++}});LS.set(mnKey(),a.slice(0,500));return n}
-function mnDel(b,c,v){LS.set(mnKey(),mnList().filter(x=>!(x.b===b&&x.c===c&&x.v===v)))}
+const MN_COLS=[['Yellow','#FFD54A'],['Green','#7ED957'],['Blue','#5BB8FF'],['Pink','#FF8FB8'],['Orange','#FFA94D']];
+const mnSave=a=>LS.set(mnKey(),a.slice(0,500));
+function mnAdd(b,c,vs){const a=mnList();let n=0;vs.forEach(v=>{if(!a.some(x=>x.b===b&&x.c===c&&x.v===v)){a.unshift({b,c,v,t:Date.now()});n++}});mnSave(a);return n}
+const mnHas=(b,c,v)=>mnList().some(x=>x.b===b&&x.c===c&&x.v===v);
+function mnColor(b,c,vs,col){const a=mnList();vs.forEach(v=>{let x=a.find(y=>y.b===b&&y.c===c&&y.v===v);if(!x){x={b,c,v,t:Date.now()};a.unshift(x)}if(col)x.col=col;else delete x.col});mnSave(a)}
+function mnDel(b,c,v){mnSave(mnList().filter(x=>!(x.b===b&&x.c===c&&x.v===v)))}
 function myNotes(){
   nav('bible');title('My notes');
   const l=mnList();
   M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Bible</a><h2>My notes</h2><p class="meta">Your important verses. Only you can see this list (it is kept on this device${idUser()?' for your login':''}).</p><div style="margin-top:10px">${langSeg()}</div>
-  <ul class="list" style="padding:0;margin-top:10px">${l.length?l.map(x=>`<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}/${x.v}" style="flex:1;min-width:0"><div class="bnv" data-bv="${x.b}:${x.c}:${x.v}:${blang}"></div></a><button class="add" data-mndel="${x.b}:${x.c}:${x.v}" aria-label="Remove from My notes">✕</button></li>`).join(''):'<li class="empty">No verses yet.<br><small>Open a chapter, tap the verses that matter to you, then tap “☆ My notes”.</small></li>'}</ul></div>`;
+  <ul class="list" style="padding:0;margin-top:10px">${l.length?l.map(x=>`<li class="sr bnr${x.col?' hl':''}"${x.col?` style="--hl:${esc(x.col)}"`:''}><a href="#/bible/${x.b}/${x.c}/${x.v}" style="flex:1;min-width:0"><div class="bnv" data-bv="${x.b}:${x.c}:${x.v}:${blang}"></div></a><button class="add" data-mndel="${x.b}:${x.c}:${x.v}" aria-label="Remove from My notes">✕</button></li>`).join(''):'<li class="empty">No verses yet.<br><small>Open a chapter, tap the verses that matter to you, then tap “☆ My notes”.</small></li>'}</ul></div>`;
   bindSeg(myNotes);fillNoteVerses(M);
   M.querySelectorAll('[data-mndel]').forEach(b=>b.onclick=()=>{const [x,y,z]=b.dataset.mndel.split(':').map(Number);mnDel(x,y,z);toast('Removed from My notes');myNotes()});
 }
@@ -1699,7 +1745,7 @@ function bibleHome(){
   if(!books.length){M.innerHTML='<p class="empty">Bible data could not be loaded. Please refresh the page.</p>';return}
   const last=LS.get('last',null);
   const list=books.map((b,i)=>({b,i})).filter(o=>ot?o.i<39:o.i>=39);
-  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, faith, jn 3:16, ps 23, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
+  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
   <a class="mhe" href="#/bible/mynotes" style="margin-top:10px;display:inline-flex">☆ My notes (${mnList().length})</a>
   <div class="seg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">Old Testament</button><button data-t="0" aria-pressed="${!ot}">New Testament</button></div>
   <div style="margin-top:12px">${langSeg()}</div>
@@ -1722,8 +1768,8 @@ async function read(b,c,hv){
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
   M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
   <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><button id="mynb">☆ My notes</button><button id="lsr" class="pjonly">＋ Last Sunday Reference</button><button id="pj1" class="pjonly">Projector</button></div>
-  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap verses to select them, then ☆ My notes saves them as important verses (only you can see them).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
+  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Sunday Reference</button><button id="pj1" class="pjonly">Projector</button></div>
+  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap a verse, then use ☆ to save it to My notes or pick a colour to highlight it (only you can see this).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
   <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
   window.scrollTo(0,0);
@@ -1756,11 +1802,20 @@ async function read(b,c,hv){
     noteProj(b,c,sel.length?vsCompact(sel.map(i=>i+1)):'',blang);
     present(idx.map(i=>({h:`<div class="pj-ref">${esc(ref)}:${i+1}</div>${te[i]?`<div class="pj-l">${esc(te[i])}</div>`:''}${en[i]?`<div class="${te[i]?'pj-e':'pj-l'}">${esc(en[i])}</div>`:''}`})),0,{title:ref,bible:sel.length?null:{b,c,lang:blang}});
   };
-  const mark=()=>{const my=mnList();document.querySelectorAll('#vs .v').forEach(el=>el.classList.toggle('mnv',my.some(x=>x.b===b&&x.c===c&&x.v===+el.dataset.i+1)))};mark();
-  $('#mynb').onclick=()=>{const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);if(!sel.length){toast('Tap the verses you want to keep, then tap My notes');return}
-    const n=mnAdd(b,c,sel);mark();toast(n?`Saved to My notes (${n})`:'Already in My notes')};
+  const mark=()=>{const my=mnList();document.querySelectorAll('#vs .v').forEach(el=>{const x=my.find(y=>y.b===b&&y.c===c&&y.v===+el.dataset.i+1);el.classList.toggle('mnv',!!x);el.classList.toggle('hl',!!(x&&x.col));if(x&&x.col)el.style.setProperty('--hl',x.col);else el.style.removeProperty('--hl')})};mark();
+  /* action bar: appears when a verse is tapped – ☆ saves it to My notes, a colour highlights it, ✕ clears the selection */
+  let vb=document.getElementById('vbar');if(!vb){vb=document.createElement('div');vb.id='vbar';document.body.appendChild(vb)}
+  const selV=()=>[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
+  const bar=()=>{const sv=selV();if(!sv.length){vb.classList.remove('on');return}const all=sv.every(v=>mnHas(b,c,v));
+    vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}">${all?'★ In My notes':'☆ Add to My notes'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on')};
+  vb.onclick=e=>{const sv=selV();if(!sv.length)return;
+    if(e.target.closest('#vst')){if(sv.every(v=>mnHas(b,c,v))){sv.forEach(v=>mnDel(b,c,v));toast('Removed from My notes')}else{mnAdd(b,c,sv);toast('Saved to My notes')}mark();bar();return}
+    const cb=e.target.closest('[data-col]');if(cb){mnColor(b,c,sv,cb.dataset.col);mark();bar();toast(cb.dataset.col?'Highlighted – saved in My notes':'Highlight removed');return}
+    if(e.target.closest('#vcl')){document.querySelectorAll('.v.sel').forEach(v=>v.classList.remove('sel'));bar()}};
+  const vsEl=$('#vs'),prevClick=vsEl.onclick;vsEl.onclick=e=>{prevClick&&prevClick.call(vsEl,e);bar()};
+  addEventListener('hashchange',()=>vb.classList.remove('on'),{once:true});
   $('#lsr').onclick=()=>{if(!canEdit()){needLogin();return}const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
-    noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Last Sunday Reference')};
+    noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Sunday Reference')};
   bindSeg(()=>read(b,c));
 }
 
@@ -2121,7 +2176,7 @@ function remote(code){
     const l=mids.map(byId).filter(Boolean);
     T.innerHTML=`<p class="meta">${esc(ttl||'This meeting')} — ${l.length} songs</p>`+(l.length?`<div class="tb"><button data-ms="0">Present from the start</button></div>
     <ol class="ml">${l.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><button class="mrow" data-ms="${i}">${esc(x.title)}</button><button class="add" data-m="${esc(x.id)}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="empty">No songs in the meeting. Tap ＋ on the “Songs” tab to add.</p>')
-      +`<div class="mbn"><h3>📖 Last Sunday Reference</h3><p class="sub">Tap 📽 to project a verse again. Choose book, chapter and verse in the Bible tab.</p><div id="rbn"></div></div>`;
+      +`<div class="mbn"><h3>📖 Sunday Reference</h3><p class="sub">Tap 📽 to project a verse again. Choose book, chapter and verse in the Bible tab.</p><div id="rbn"></div></div>`;
     bnWatch(()=>{if(tab==='meet'&&$('#rbn'))bnMeetDraw($('#rbn'))});bnMeetDraw($('#rbn'));
   };
   const listSongs=()=>{
@@ -2422,18 +2477,19 @@ function meeting(ids,name){
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
   M.innerHTML=`<div class="view"><h2>This meeting</h2>
-  <p class="mtt" id="mtt" style="font:700 1.05rem var(--serif);margin:6px 0 8px"></p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="search" id="md" type="date" value="${esc(MT.date||'')}" aria-label="Meeting date" style="flex:0 0 170px;margin:0"><input class="search" id="mn" placeholder="Meeting name (e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name" style="flex:1;min-width:160px;margin:0"></div>
+  <p class="mtt" id="mtt" style="font:700 1.15rem/1.4 var(--serif);margin:6px 0 2px"></p><p class="sub" id="mtn" style="margin:0 0 8px" hidden></p>
+  <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
   <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
   <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
   <p class="sub" id="mpi"></p>
   ${lkRow()}
   <div id="mrc"></div><ol class="ml" id="ml"></ol>
-  <div class="mbn"><h3>📖 Last Sunday Reference</h3><p class="sub">Verses sent to the projector this week, shown in full. Tap 📽 to project one again.</p><div id="mbnl"></div></div>
+  <div class="mbn"><h3>📖 Sunday Reference</h3><p class="sub">Verses sent to the projector this week, shown in full. Tap 📽 to project one again.</p><div id="mbnl"></div></div>
   <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
-  if(!canEdit()){$('#mn').readOnly=true;$('#md').disabled=true}
-  const tt=()=>{$('#mtt').textContent=meetTitle(MT.date,MT.name)};tt();
+  const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
+  if(!canEdit())$('#mn').hidden=true;
+  tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
   $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit preview code to watch the presentation here, then tap ⛶ for full screen.'}</p>
       <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
@@ -2459,15 +2515,14 @@ function meeting(ids,name){
   $('#ml').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
     if(d.up!==undefined)mv(+d.up,+d.up-1);else if(d.dn!==undefined)mv(+d.dn,+d.dn+1);else if(d.play!==undefined)startMeeting(+d.play)};
   $('#mn').oninput=e=>{if(!canEdit())return;MT.name=e.target.value;mSave();tt()};
-  $('#md').onchange=e=>{if(!canEdit())return;MT.date=e.target.value;mSave();tt()};
   $('#mq').oninput=renderPick;
-  const info=()=>{const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${meetTitle(PUB.date,PUB.name)} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
+  const info=()=>{tt();const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${meetTitle(PUB.date,PUB.name)} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
   info();afterPub=info;
   $('#mp').onclick=()=>startMeeting(0);
   $('#mr').onclick=()=>{if(!PJ.rm)rmStart();else $('#mrc').scrollIntoView({block:'nearest'});mrc()};
   $('#ms').onclick=async()=>{const u=`${location.origin}/#/meeting/${MT.ids.join(',')}/${encodeURIComponent(MT.name||'')}`,mtl=meetTitle(MT.date,MT.name);
     if(navigator.share)navigator.share({title:mtl,url:u}).catch(()=>{});else{try{await navigator.clipboard.writeText(u);toast('Link copied')}catch{toast('Could not copy')}}};
-  $('#mc').onclick=()=>{if(!canEdit()){needLogin();return}if(MT.ids.length&&confirm('Remove the whole list?')){MT.ids=[];MT.date='';mSave();afterMeet();tt();$('#md').value=''}};
+  $('#mc').onclick=()=>{if(!canEdit()){needLogin();return}if(MT.ids.length&&confirm('Remove the whole list?')){MT.ids=[];mSave();afterMeet();tt()}};
   renderML();renderPick();mrc();
 }
 
