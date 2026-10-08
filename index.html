@@ -2789,7 +2789,7 @@ function meeting(ids,name){
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
   M.innerHTML=`<div class="view mtg"><h2>This meeting</h2>
-  <details class="mpvd mpvtop" id="mpvd" open><summary>📺 Live preview<small>Enter the 6-digit code and tap Watch</small></summary><div id="mpvbody"></div></details>
+  <details class="mpvd mpvtop" id="mpvd" open><summary>📺 Live preview</summary><div id="mpvbody"></div></details>
   <div class="mthead"><div class="mtmeta"><p class="mtn" id="mtn" hidden></p><p class="mtt" id="mtt"></p></div><span class="mtcount" id="mcnt"></span></div>
   <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
   <div class="mnote" id="mnote" hidden></div>
@@ -2805,8 +2805,7 @@ function meeting(ids,name){
   if(!canEdit())$('#mn').hidden=true;
   tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
-  $('#mpvbody').innerHTML=`<div class="mpv"><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
-      <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
+  $('#mpvbody').innerHTML=`<div class="mpv"><div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
       <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`;
   const stopP=()=>{mpFullOff();svStop&&svStop();$('#mpvs').hidden=true;$('#mpx').hidden=true;$('#mpg').hidden=false};
   const watchP=code=>{$('#mpvd').open=true;LS.set('mpcode',code);svStop&&svStop();$('#mpvs').hidden=false;$('#mpx').hidden=false;$('#mpg').hidden=true;miniPreview(code,$('#mpvs'))};
