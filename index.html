@@ -1457,10 +1457,10 @@ function indexGrid(host){
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<input class="search" id="iq" type="search" placeholder="Search songs – Telugu or English letters (e.g. yesu, stuthi)…" aria-label="Search songs">
-  <div class="seg" id="ixm" style="margin-top:10px"><button data-m="letter" aria-pressed="${mode==='letter'}">Index</button><button data-m="cat" aria-pressed="${mode==='cat'}">Category</button></div>
+  <div class="seg" id="ixm" style="margin-top:10px"><button data-ixm="letter" aria-pressed="${mode==='letter'}">Index</button><button data-ixm="cat" aria-pressed="${mode==='cat'}">Category</button></div>
   <p class="meta">${mode==='cat'?'Tap a category to see its songs.':'Tap a letter to see the songs that start with it.'}</p>
   <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${esc(c)}</b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
-  host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.m);indexGrid(host)});
+  host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.ixm);indexGrid(host)});
   $('#iq').oninput=e=>{const q=fz(e.target.value);
     $('#ig').style.display=q?'none':'';
     const r=q?songSearch(D.songs,e.target.value):[];
