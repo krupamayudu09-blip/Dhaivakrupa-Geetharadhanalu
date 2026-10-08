@@ -1491,6 +1491,7 @@ async function notifAll(on){
 const loadImg=u=>new Promise(ok=>{if(!u)return ok(null);const i=new Image();i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=u});
 const hlFor=(v,S0)=>{const S=S0||D.settings||{};if(S.vi_hl_on===false)return false;const m=(S.vi_hls||[]).find(h=>h&&+h.book===v[0]&&+h.chapter===v[1]&&+h.verse===v[2]&&h.phrase);return m?m.phrase:(v[3]||undefined)};
 /* Daily Verse Image can override the pastor / church details; an empty value falls back to General Settings */
+const jparse=t=>{t=String(t||'').replace(/^\uFEFF/,'');try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,(\s*[}\]])/g,'$1'))}};   /* hand-edited file with a trailing comma still loads */
 const viv=(S,k,k2)=>{const a=S[k];return (a!=null&&String(a).trim()!=='')?a:S[k2]};
 /* cv = [chapter, verse]: the verse decides the theme, and the theme decides the photo / painted scene */
 async function verseImgUrl(te,ref,b,sz,hl,S0,cv){try{
@@ -3323,7 +3324,7 @@ function csSongForm(box){
 async function csVerse(){
   const box=$('#csb');box.innerHTML='<div class="cs-card"><p class="sub" style="margin:0;text-align:center">Loading…</p></div>';
   let g,o;
-  try{g=await ggGet('content/verse_image.json');o=g?JSON.parse(g.text.replace(/^\uFEFF/,'')):{}}
+  try{g=await ggGet('content/verse_image.json');o=g?jparse(g.text):{}}
   catch(e){box.innerHTML=`<div class="cs-card"><p class="sub" style="margin:0;text-align:center">${esc(errMsg(e))}</p></div>`;return}
   if(!$('#csb')||CS.tab!=='verse')return;
   const hls=(o.vi_hls||[]).map(x=>({...x})),bgs=(o.vi_bgs||[]).map(x=>({...x}));
@@ -3428,7 +3429,7 @@ async function csVerse(){
     csBusy(true,'Saving…');
     try{
       const cur=await ggGet('content/verse_image.json');   // newest copy, so nothing another contributor changed is lost
-      const base=cur?JSON.parse(cur.text.replace(/^\uFEFF/,'')):{};
+      const base=cur?jparse(cur.text):{};
       const res=await ggPut('content/verse_image.json',b64(JSON.stringify({...base,...out},null,2)),'Edit daily verse picture',cur&&cur.sha);
       g=cur;Object.assign(o,out);
       Object.assign(D.settings,out);HV=null;     // this device shows the new picture / background straight away
