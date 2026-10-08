@@ -3,7 +3,8 @@
 //   POST /.netlify/functions/signup-otp {op:"verify", email, name, password, code} -> checks the code, then creates the account
 //                                                                                    already confirmed and with the "contributor" role
 // The code proves the person owns the e-mail address; after that the account is approved at once.
-// Needs these Netlify environment variables:
+// Needs these Netlify environment variables (use EITHER the Gmail pair, which needs no domain, OR the Resend pair):
+//   GMAIL_USER, GMAIL_APP_PASSWORD  - a Gmail address and a Google App Password (2-Step Verification must be on)
 //   RESEND_API_KEY  – API key from resend.com (free plan is enough)
 //   OTP_FROM        – sender, e.g.  Dhaivakrupa <noreply@your-verified-domain.com>
 // Codes are stored only as a hash (Netlify Blobs store "signup-otp"), expire after 10 minutes, allow 5 wrong tries and
@@ -19,16 +20,26 @@ const same = (a, b) => { const x = Buffer.from(a), y = Buffer.from(b); return x.
 const clean = (v, n) => String(v == null ? "" : v).replace(/[\r\n<>]/g, " ").trim().slice(0, n);
 
 async function sendMail(to, code, name) {
+  const subject = `Your verification code: ${code}`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:420px"><p>${name ? "Hello " + name.replace(/[&<>"]/g, "") + "," : "Hello,"}</p><p>Your contributor sign-up code is</p><p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:8px 0">${code}</p><p>It works for 10 minutes. If you did not ask for it, ignore this e-mail.</p></div>`;
+  const text = `Your contributor sign-up code is ${code}. It works for 10 minutes.`;
+  // Option 1 (no domain needed): a Gmail account with an App Password
+  const gu = process.env.GMAIL_USER, gp = process.env.GMAIL_APP_PASSWORD;
+  if (gu && gp) {
+    try {
+      const nodemailer = (await import("nodemailer")).default;
+      const tr = nodemailer.createTransport({ host: "smtp.gmail.com", port: 465, secure: true, auth: { user: gu, pass: String(gp).replace(/\s+/g, "") } });
+      await tr.sendMail({ from: process.env.OTP_FROM || `Dhaivakrupa <${gu}>`, to, subject, html, text });
+      return;
+    } catch (e) { console.log("gmail send failed", e.message); throw Object.assign(new Error("Could not send the e-mail with Gmail. Check GMAIL_USER and GMAIL_APP_PASSWORD in Netlify (it must be an App Password, not the normal password)."), { status: 502 }); }
+  }
+  // Option 2: Resend with a verified domain
   const key = process.env.RESEND_API_KEY, from = process.env.OTP_FROM;
-  if (!key || !from) throw Object.assign(new Error("E-mail sending is not set up yet. The admin must add RESEND_API_KEY and OTP_FROM in Netlify."), { status: 503 });
+  if (!key || !from) throw Object.assign(new Error("E-mail sending is not set up yet. The admin must add GMAIL_USER and GMAIL_APP_PASSWORD (or RESEND_API_KEY and OTP_FROM) in Netlify."), { status: 503 });
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + key, "content-type": "application/json" },
-    body: JSON.stringify({
-      from, to: [to], subject: `Your verification code: ${code}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:420px"><p>${name ? "Hello " + name.replace(/[&<>"]/g, "") + "," : "Hello,"}</p><p>Your contributor sign-up code is</p><p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:8px 0">${code}</p><p>It works for 10 minutes. If you did not ask for it, ignore this e-mail.</p></div>`,
-      text: `Your contributor sign-up code is ${code}. It works for 10 minutes.`,
-    }),
+    body: JSON.stringify({ from, to: [to], subject, html, text }),
   });
   if (!r.ok) throw Object.assign(new Error("Could not send the e-mail (" + r.status + "). Check the OTP_FROM address / domain in Resend."), { status: 502 });
 }

@@ -313,3 +313,10 @@ When a new song is added (admin / contributor studio), everyone with notificatio
 - It follows the existing notification switch: on while any notification is on, off when all are off. No new setting.
 - Real background push needs these once: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` in Netlify, a redeploy, and on iPhone "Add to Home Screen" (iOS 16.4+). Without the keys, alerts only appear when the app is opened.
 - Files: new `netlify/functions/song-check.mjs`, `netlify/functions/push.mjs` (new `songs` topic), `sw.js` (cache v62).
+
+### Sending the OTP e-mail without a domain (Gmail)
+If you do not own a domain, use a Gmail account instead of Resend:
+1. In that Google account turn on **2-Step Verification**, then open myaccount.google.com/apppasswords and create an **App Password** (16 letters).
+2. Netlify -> Site settings -> Environment variables: `GMAIL_USER` = the Gmail address, `GMAIL_APP_PASSWORD` = the 16-letter App Password (the normal Gmail password will not work). Optional `OTP_FROM` (default: `Dhaivakrupa <your gmail>`).
+3. Redeploy. When the Gmail pair is set it is used first; otherwise Resend is used. Gmail allows about 500 e-mails a day, plenty for sign-ups.
+Files: `netlify/functions/signup-otp.mjs`, `package.json` (adds `nodemailer`).
