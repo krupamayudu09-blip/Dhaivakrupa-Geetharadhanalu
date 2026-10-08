@@ -641,6 +641,11 @@ input.cs-in{margin:14px 0 0}
 .lgs a{color:var(--muted)}
 
 /* v32: scheduled songs on the home screen as pills; Bible notes in the Meeting tab line up; Sermons tabs */
+.cpg{margin:8px 0;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.cpg summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px;padding:6px 16px;cursor:pointer;font:700 1.02rem var(--serif);color:var(--hd,var(--ink))}
+.cpg summary::-webkit-details-marker{display:none}.cpg summary::after{content:"▾";margin-left:8px;transition:transform .2s;color:var(--muted)}.cpg[open] summary::after{transform:rotate(180deg)}
+.cpg summary span{margin-left:auto;font:600 .8rem var(--sans);color:var(--muted)}.cpg summary b{min-width:0;overflow-wrap:anywhere}
+.cpg .list{border-top:1px solid var(--line)}
 .mhpills{list-style:none;margin:10px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .mhpills li{padding:0}
 .mhpill{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));text-decoration:none;color:var(--ink)}
@@ -1106,10 +1111,11 @@ function songsHome(){
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
   <div class="pad"><h3 class="ixh">Song index</h3><div id="ixh"></div></div>
+  <div class="pad" id="cph"></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
-  indexGrid($('#ixh'));homeVerse();videosHome();apkHome();recentViewed();
+  indexGrid($('#ixh'));catHome();homeVerse();videosHome();apkHome();recentViewed();
   afterMeet=mhome;afterPub=mhome;mhome();newSongHome();
 }
 const songRow=x=>{const on=inMeet(x.id);return `<li class="sr"><a href="#/song/${encodeURIComponent(x.id)}"><div><div class="t">${x.featured?'<span class="star" aria-label="Featured">★</span> ':''}${esc(x.title)}</div><div class="sub">${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</div></div><span class="tag">${esc(x.category||'')}</span></a><button class="add" data-add="${esc(x.id)}" aria-label="Add to this meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`};
@@ -1448,6 +1454,16 @@ function indexGrid(host){
     $('#ig').style.display=q?'none':'';
     const r=q?songSearch(D.songs,e.target.value):[];
     $('#ir').innerHTML=q?(r.length?r.map(songRow).join(''):'<li class="empty">No songs found.</li>'):''};
+}
+/* home screen: every category with its songs (tap a category to open or close it) */
+function catHome(){
+  const host=$('#cph');if(!host)return;
+  const groups=catList().map(c=>[c,D.songs.filter(x=>x.category===c)]);
+  const unc=D.songs.filter(x=>!x.category);if(unc.length)groups.push(['Uncategorised',unc]);
+  const open=LS.get('cphopen',[]);
+  host.innerHTML=groups.length?`<h3 class="ixh">Songs by category</h3>`+groups.filter(g=>g[1].length).map(([c,l])=>`<details class="cpg" data-c="${esc(c)}"${open.includes(c)?' open':''}><summary><b>${esc(c)}</b><span>${l.length}</span></summary><ul class="list" style="padding:0"></ul></details>`).join(''):'';
+  const fill=d=>{const u=d.querySelector('ul');if(u.childElementCount)return;const c=d.dataset.c,l=c==='Uncategorised'?unc:D.songs.filter(x=>x.category===c);u.innerHTML=l.map(songRow).join('')};
+  host.querySelectorAll('details').forEach(d=>{if(d.open)fill(d);d.addEventListener('toggle',()=>{if(d.open)fill(d);const a=[...host.querySelectorAll('details[open]')].map(x=>x.dataset.c);LS.set('cphopen',a)})});
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
@@ -2270,7 +2286,7 @@ function remote(code){
     const b=e.target.closest('button');if(!b)return;const d=b.dataset;
     if(d.c)send(d.c);
     else if(d.g!==undefined)send('goto',+d.g);
-    else if(d.tab)setTab(d.tab);
+    else if(d.tab){if(d.tab==='bible'){R.b=null;R.c=null;R.vs=new Set();R.rng=false;R.anc=null;R.last=0}setTab(d.tab)}
     else if(d.ms!==undefined){send('start',+d.ms);toast('Sent to the projector')}
     else if(d.song){send('song',d.song);toast('Sent to the projector')}
     else if(d.m){const on=mids.includes(d.m);send(on?'mdel':'madd',d.m);mids=on?mids.filter(x=>x!==d.m):[...mids,d.m];midHold=Date.now()+5000;tab==='meet'?tabMeet():listSongs()}
