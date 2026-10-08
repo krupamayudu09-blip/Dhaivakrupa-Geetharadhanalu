@@ -127,6 +127,7 @@ ul.cbl{list-style:none;margin:6px 0 0;padding:0}.cbl li{padding:4px 0;border-top
 .rl{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;margin-top:6px}
 .rl button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;min-height:44px}
 .rl button.cur{background:color-mix(in srgb,var(--accent) 25%,transparent);border-color:var(--accent)}
+.ixrow{display:flex;gap:8px;align-items:center;margin-bottom:10px}.ixrow .search{flex:1;min-width:0;width:auto}.ixrow .seg{flex:none;flex-wrap:nowrap}.ixrow .seg button{padding:0;width:44px;min-height:44px;font-size:1.25rem;line-height:1}
 .ixh{font:700 1.2rem var(--serif);color:var(--ink);margin:18px 0 4px}
 .ixg{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;padding:10px 0}
 .ix{position:relative;height:68px;display:grid;place-items:center;border-radius:14px;border:1px solid var(--line);background:var(--surface);text-decoration:none}
@@ -704,6 +705,15 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 .v.hl{background:color-mix(in srgb,var(--hl) 62%,transparent)}.v.hl.sel{outline:2px solid var(--accent)}
 .v.mnv sup::after{content:" ★"}
 .sr.hl{background:color-mix(in srgb,var(--hl) 55%,transparent)}
+
+/* index / category icons */
+.ixi{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-5px}
+.ixrow .seg button{display:grid;place-items:center}
+.ixrow .seg button .ixi{width:22px;height:22px;vertical-align:0}
+.ixh .ixi{width:22px;height:22px;margin-right:8px;color:var(--accent);vertical-align:-4px}
+.cat b{display:flex;align-items:center;gap:10px;min-width:0}
+.cat b .ixi{width:20px;height:20px;color:var(--accent)}
+.view h2 .ixi{width:24px;height:24px;margin-right:8px;color:var(--accent);vertical-align:-4px}
 </style></head>
 <body>
 <div class="app">
@@ -721,8 +731,8 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
  <a href="#/about" data-t="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span class="nl">About</span></a>
 </div></nav>
 <div id="bnback"></div>
-<aside id="bnsheet" aria-label="Sunday Reference" aria-hidden="true"><div id="bnhd"><i></i><h2>Sunday Reference</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
-<div id="bnbar" role="button" tabindex="0" aria-label="Sunday Reference: swipe up or tap to open"><i></i><span>Sunday Reference</span><b id="bncnt"></b></div>
+<aside id="bnsheet" aria-label="Meeting Verses" aria-hidden="true"><div id="bnhd"><i></i><h2>Meeting Verses</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
+<div id="bnbar" role="button" tabindex="0" aria-label="Meeting Verses: swipe up or tap to open"><i></i><span>Meeting Verses</span><b id="bncnt"></b></div>
 <div id="pj" role="dialog" aria-modal="true" aria-label="Projector presentation" data-th="dark">
  <div class="bgi" id="pjbg"></div>
  <img class="pjlogo" id="pjlogo" alt="">
@@ -1117,12 +1127,16 @@ function newSongHome(){
   LS.set('nsPop',addedAt(l[0]));
   setTimeout(()=>{if(location.hash===''||location.hash==='#/'||location.hash==='#')newSongCard(l)},700);
 }
+const IXI={
+ idx:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18l4-11 4 11M5 14h5"/><path d="M14.5 7h6M14.5 12h6M14.5 17h6"/></svg>',
+ cat:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
+};
 function songsHome(){
   nav('songs');title();
   const s=D.settings;
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
-  <div class="pad"><h3 class="ixh">Song index</h3><div id="ixh"></div></div>
+  <div class="pad"><h3 class="ixh">${IXI.idx}Song index</h3><div id="ixh"></div></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
@@ -1198,7 +1212,7 @@ function songsIndex(letter){
     M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none">‹ Home</a><h2>${esc(letter)}</h2><p class="meta">Songs starting with “${esc(letter)}”: ${l.length}</p></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs start with this letter.</p>');
     return;
   }
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none">‹ Home</a><h2>Song index</h2></div><div class="pad" id="ixh"></div>`;
+  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none">‹ Home</a><h2>${IXI.idx}Song index</h2></div><div class="pad" id="ixh"></div>`;
   indexGrid($('#ixh'));
 }
 /* newest songs first (by the song's Date in the admin; falls back to the time in its file name) */
@@ -1446,7 +1460,7 @@ function catPage(name){
   nav('songs');title(label);const l=D.songs.filter(x=>(x.category||'')===name);
   const all=catList();if(D.songs.some(x=>!x.category))all.push('');
   const chips=all.map(c=>`<a class="cat" style="padding:8px 12px;font-size:.9rem${c===name?';border-color:var(--accent);color:var(--accent)':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}><b>${esc(c||'Uncategorised')}</b><span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
+  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${IXI.cat}${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
 }
 /* alphabet grid + search, used directly on the home screen */
 function indexGrid(host){
@@ -1456,10 +1470,8 @@ function indexGrid(host){
   const cc=catList().map(c=>[c,D.songs.filter(x=>x.category===c).length]);
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
-  host.innerHTML=`<input class="search" id="iq" type="search" placeholder="Search songs – Telugu or English letters (e.g. yesu, stuthi)…" aria-label="Search songs">
-  <div class="seg" id="ixm" style="margin-top:10px"><button data-ixm="letter" aria-pressed="${mode==='letter'}">Index</button><button data-ixm="cat" aria-pressed="${mode==='cat'}">Category</button></div>
-  <p class="meta">${mode==='cat'?'Tap a category to see its songs.':'Tap a letter to see the songs that start with it.'}</p>
-  <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${esc(c)}</b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
+  host.innerHTML=`<div class="ixrow"><input class="search" id="iq" type="search" placeholder="Search songs…" aria-label="Search songs"><div class="seg" id="ixm"><button data-ixm="letter" aria-pressed="${mode==='letter'}" aria-label="Index" title="Index">${IXI.idx}</button><button data-ixm="cat" aria-pressed="${mode==='cat'}" aria-label="Category" title="Category">${IXI.cat}</button></div></div>
+  <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${IXI.cat}<span style="color:inherit;font:inherit">${esc(c)}</span></b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
   host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.ixm);indexGrid(host)});
   $('#iq').oninput=e=>{const q=fz(e.target.value);
     $('#ig').style.display=q?'none':'';
@@ -1586,7 +1598,7 @@ function bnDraw(){
       +(canEdit()?`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button>`:'')+`</li>`;
   };
   const top=box.scrollTop;
-  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
+  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Meeting Verses yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* v31: the last 7 days of Bible notes as a list of full verses, with a Present button (Meeting page + phone remote's Meeting tab) */
@@ -1602,13 +1614,13 @@ function bnMeetDraw(box){
   const row=x=>{const L=['te','en','both'].includes(x.l)?x.l:'te',ref=`${L==='en'?books[x.b].en:books[x.b].te} ${x.c}${x.v?':'+x.v:''}`;
     return `<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}${vsExpand(x.v)[0]?'/'+vsExpand(x.v)[0]:''}" style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></a><button class="add" data-bnp="${esc(x.id)}" aria-label="Present ${esc(ref)}">📽</button><button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`};
   const top=box.scrollTop;
-  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.</p>';
+  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Meeting Verses yet.</p>';
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* keep a Bible-notes list fresh while its page is open */
 async function bnRemove(id){
   if(!canEdit()){needLogin();return}
-  if(!confirm('Remove this from Sunday Reference?'))return;
+  if(!confirm('Remove this from Meeting Verses?'))return;
   const keep=BN.list;bnSet(bpPrune().filter(x=>x.id!==id));
   try{await bnApi({op:'delete',id});toast('Removed')}catch{bnSet(keep);toast('Could not remove – please log in again')}
 }
@@ -1800,8 +1812,8 @@ async function read(b,c,hv){
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
   M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
   <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Sunday Reference</button><button id="pj1" class="pjonly">Projector</button></div>
-  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap a verse – ☆ saves it to My notes, a colour only highlights it (only you can see this).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
+  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Meeting Verses</button><button id="pj1" class="pjonly">Projector</button></div>
+  
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
   <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
   window.scrollTo(0,0);
@@ -1851,7 +1863,7 @@ async function read(b,c,hv){
   const vsEl=$('#vs'),prevClick=vsEl.onclick;vsEl.onclick=e=>{prevClick&&prevClick.call(vsEl,e);bar()};
   addEventListener('hashchange',()=>vb.classList.remove('on'),{once:true});
   $('#lsr').onclick=()=>{if(!canEdit()){needLogin();return}const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
-    noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Sunday Reference')};
+    noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Meeting Verses')};
   bindSeg(()=>read(b,c));
 }
 
@@ -2212,7 +2224,7 @@ function remote(code){
     const l=mids.map(byId).filter(Boolean);
     T.innerHTML=`<p class="meta">${esc(ttl||'This meeting')} — ${l.length} songs</p>`+(l.length?`<div class="tb"><button data-ms="0">Present from the start</button></div>
     <ol class="ml">${l.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><button class="mrow" data-ms="${i}">${esc(x.title)}</button><button class="add" data-m="${esc(x.id)}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="empty">No songs in the meeting. Tap ＋ on the “Songs” tab to add.</p>')
-      +`<div class="mbn"><h3>📖 Sunday Reference</h3><p class="sub">Tap 📽 to project a verse again. Choose book, chapter and verse in the Bible tab.</p><div id="rbn"></div></div>`;
+      +`<div class="mbn"><h3>📖 Meeting Verses</h3><div id="rbn"></div></div>`;
     bnWatch(()=>{if(tab==='meet'&&$('#rbn'))bnMeetDraw($('#rbn'))});bnMeetDraw($('#rbn'));
   };
   const listSongs=()=>{
@@ -2223,7 +2235,7 @@ function remote(code){
     const rows=(R.l?g.get(R.l)||[]:base);
     $('#rsl').innerHTML=rows.length?rows.map(x=>{const on=mids.includes(x.id);return `<li class="sr"><button class="mrow" data-song="${esc(x.id)}">${esc(x.title)}<small>${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</small></button><button class="add" data-m="${esc(x.id)}" aria-label="Add to meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`}).join(''):'<li class="empty">No songs found.</li>';
   };
-  const tabSongs=()=>{T.innerHTML=`<input class="search" id="rq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" value="${esc(R.q)}" aria-label="Search songs"><div class="letters" id="rls"></div><p class="sub">Tap a song to project it • use ＋ to add it to the meeting</p><ul class="list" id="rsl" style="padding:0"></ul>`;
+  const tabSongs=()=>{T.innerHTML=`<input class="search" id="rq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" value="${esc(R.q)}" aria-label="Search songs"><div class="letters" id="rls"></div><ul class="list" id="rsl" style="padding:0"></ul>`;
     $('#rq').oninput=e=>{R.q=e.target.value;listSongs()};listSongs()};
   const tabBible=()=>{
     if(!books.length){T.innerHTML='<p class="empty">Bible data could not be loaded.</p>';return}
@@ -2236,7 +2248,7 @@ function remote(code){
     }else{
       const b=books[R.b],nm=blang==='en'?b.en:b.te;
       if(R.c==null){
-        T.innerHTML=`${seg}<button class="chip" data-bk="">‹ Books</button><h3 style="margin:10px 0 0;font:700 1.3rem var(--serif)">${esc(nm)}</h3><p class="sub">Choose a chapter, then a verse number</p>
+        T.innerHTML=`${seg}<button class="chip" data-bk="">‹ Books</button><h3 style="margin:10px 0 0;font:700 1.3rem var(--serif)">${esc(nm)}</h3>
         <div class="chs">${Array.from({length:b.ch},(_,i)=>`<button data-chp="${i+1}">${i+1}</button>`).join('')}</div>`;
       }else tabVerses(b,nm);
     }
@@ -2258,7 +2270,7 @@ function remote(code){
     pv.hidden=!last;
   };
   const tabVerses=(b,nm)=>{
-    T.innerHTML=`${seg0()}<button class="chip" data-chp="">‹ Chapters</button><h3 style="margin:10px 0 0;font:700 1.3rem var(--serif)">${esc(nm)} ${R.c}</h3><p class="sub">Tap a verse number. One verse can be projected alone or with the rest of the chapter after it; tap several, or use Range, for a set of verses.</p>
+    T.innerHTML=`${seg0()}<button class="chip" data-chp="">‹ Chapters</button><h3 style="margin:10px 0 0;font:700 1.3rem var(--serif)">${esc(nm)} ${R.c}</h3>
       <div class="vpv" id="vpv" hidden></div><div class="chs" id="vgrid"><p class="empty">Loading verses…</p></div><div class="vbar" id="vbar"></div>`;
     const bi=R.b,ci=R.c;
     (async()=>{
@@ -2492,8 +2504,7 @@ function miniPreview(code,box){
 function mrc(){
   const e=$('#mrc');if(!e)return;
   e.innerHTML=PJ.rm?`<div class="rpanel"><b>Remote control ready</b><div class="code2">${PJ.room}</div><p>Open this link on your phone:<br>${esc(rmLink())}</p><p>Preview link (shows the projection on any screen):<br>${esc(scLink())}</p><p class="sub" id="mrs"></p>
-  <div class="tb"><button id="mrcp">Copy link</button><button id="mrsh">Share</button><button id="mrfs">⛶ Full-screen preview</button><button id="mrpc">Copy preview link</button><button id="mroff">Stop</button></div>
-  <p class="sub">Tap a song in the list on your phone to start presenting on this screen. Keep this app/page open.</p></div>`:'';
+  <div class="tb"><button id="mrcp">Copy link</button><button id="mrsh">Share</button><button id="mrfs">⛶ Full-screen preview</button><button id="mrpc">Copy preview link</button><button id="mroff">Stop</button></div></div>`:'';
   if(PJ.rm){$('#mrfs').onclick=()=>{if(mpGo)mpGo(PJ.room,true);else location.hash='#/screen/'+PJ.room};$('#mrpc').onclick=()=>$('#pjpc').click();$('#mrcp').onclick=()=>$('#pjcl').click();$('#mrsh').onclick=()=>$('#pjsh').click();$('#mroff').onclick=rmStop}
 }
 async function startMeeting(from=0){
@@ -2520,7 +2531,7 @@ function meeting(ids,name){
   <p class="sub" id="mpi"></p>
   ${lkRow()}
   <div id="mrc"></div><ol class="ml" id="ml"></ol>
-  <div class="mbn"><h3>📖 Sunday Reference</h3><p class="sub">Verses sent to the projector this week, shown in full. Tap 📽 to project one again.</p><div id="mbnl"></div></div>
+  <div class="mbn"><h3>📖 Meeting Verses</h3><div id="mbnl"></div></div>
   <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
   const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
   if(!canEdit())$('#mn').hidden=true;
@@ -2646,7 +2657,7 @@ function sermons(){
   nav('sermons');title('Sermons');
   if(!ytSet()){M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2></div><p class="empty">The YouTube channel has not been added yet.<br><small>Admin → YouTube &amp; Android App → YouTube channel link</small></p>`;return}
   const link=D.settings.youtube||(YT&&YT.channelUrl)||'';
-  M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2><p class="meta" id="smm">Videos from our YouTube channel</p>
+  M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2>
   <div class="tb">${/^https?:\/\//i.test(link)?`<a class="mhe" href="${esc(link)}" target="_blank" rel="noopener">▶ Open channel</a>`:''}</div>
   <div class="seg" id="smt" role="tablist" style="margin-top:12px"></div></div><div id="lvc" class="pad"></div><div id="sml"></div>`;
   const draw=(done)=>{
@@ -2721,7 +2732,7 @@ function shortsHome(){
   nav('shorts');title('Shorts');
   if(!ytSet()){M.innerHTML=`<div class="view"><h2>Shorts</h2></div><p class="empty">The YouTube channel has not been added yet.<br><small>Admin → YouTube &amp; Android App → YouTube channel link</small></p>`;return}
   const cid=(SH&&SH.channelId)||(YT&&YT.channelId)||D.settings.youtube_channel_id||'',link=/^UC[\w-]{22}$/.test(cid)?`https://www.youtube.com/channel/${cid}/shorts`:'';
-  M.innerHTML=`<div class="view"><h2>Shorts</h2><p class="meta" id="shm">Short videos from our YouTube channel</p>
+  M.innerHTML=`<div class="view"><h2>Shorts</h2>
   <div class="tb">${link?`<a class="mhe" href="${link}" target="_blank" rel="noopener">▶ Open Shorts on YouTube</a>`:''}</div></div><div id="shl"></div>`;
   const draw=done=>{
     if(!$('#shl'))return;const v=shVids();
@@ -2785,8 +2796,7 @@ function shortView(id){
   const build=()=>{
     obs&&obs.disconnect();clearTimeout(tm);
     L=order();if(!L.some(x=>x.id===cur))L.unshift({id:cur,title:'',t:0});
-    R.innerHTML=`<button class="rlback" aria-label="All Shorts (grid)">▦</button><div class="rltabs"><button data-md="latest" aria-pressed="${rlMode==='latest'}">Latest</button><button data-md="shuffle" aria-pressed="${rlMode==='shuffle'}">Shuffle</button></div><div class="rlnav"><button data-d="-1" aria-label="Previous Short">⌃</button><button data-d="1" aria-label="Next Short">⌄</button></div><div id="rlfeed">${L.map(slide).join('')}</div>`
-      +(LS.get('rlhint',0)?'':'<div class="rlhint"><span>⬆ Swipe up for the next Short</span></div>');
+    R.innerHTML=`<button class="rlback" aria-label="All Shorts (grid)">▦</button><div class="rltabs"><button data-md="latest" aria-pressed="${rlMode==='latest'}">Latest</button><button data-md="shuffle" aria-pressed="${rlMode==='shuffle'}">Shuffle</button></div><div class="rlnav"><button data-d="-1" aria-label="Previous Short">⌃</button><button data-d="1" aria-label="Next Short">⌄</button></div><div id="rlfeed">${L.map(slide).join('')}</div>`;
     LS.set('rlhint',1);muteUI();
     const feed=$('#rlfeed'),i=Math.max(0,L.findIndex(x=>x.id===cur));
     feed.scrollTop=i*feed.clientHeight;

@@ -272,7 +272,7 @@ Files changed: `index.html`, `sw.js` (cache v46). No server changes. Deploy both
 
 ## v50 – visitor restrictions, My notes, Bible word search, meeting date, all sermons
 - **Visitors (not logged in)** see no projection at all: no Projector / Present / Remote buttons, no double-tap-to-project on Bible verses, no Live-preview box, no remote page (the Meeting page keeps the Contributor login button). Only **admin and contributors** can project.
-- **Sunday Reference** (was "Bible notes"): the shared list of verses (kept 7 days). Only admin and contributors can **add** (＋ Sunday Reference button in the Bible reader, or by projecting a verse) and **remove** (✕ on each entry). Visitors can only read it. `bible-notes.mjs`: `delete` now accepts admin + contributor; `clear` stays admin-only.
+- **Meeting Verses** (was "Sunday Reference", originally "Bible notes"): the shared list of verses (kept 7 days). Only admin and contributors can **add** (＋ Meeting Verses button in the Bible reader, or by projecting a verse) and **remove** (✕ on each entry). Visitors can only read it. `bible-notes.mjs`: `delete` now accepts admin + contributor; `clear` stays admin-only.
 - **Bible → ☆ My notes**: tap verses, then **☆ My notes** to save them as important verses; open them from the Bible home (☆ My notes). Private: stored only on that device for that login (key `mynotes:<email>`), never shared.
 - **Bible word search**: type a word (Telugu word → Telugu Bible, other words → English Bible) in the Bible search box; matching verses are listed with the word highlighted. References like `jn 3:16` still work.
 - **Meeting**: has a date (date picker on the Meeting page and in `/admin/schedule.html`). Date and name are always shown together ("Sun, 12 Oct 2026 – Sunday worship") on the Meeting page, the home screen and the presentation title. `meeting.mjs` stores `date`.
@@ -290,7 +290,7 @@ Files: `index.html`, `sw.js` (cache v51), `admin/schedule.html`, `admin/bible-no
 ## v52 – My notes split, bar above the verse, projected verse for everyone, language symbols, visitor preview + remote
 - **My notes** lists only verses saved with ☆. A colour highlight only colours the verse in the chapter and is not listed in My notes.
 - The ☆ / colour bar now appears **above the tapped verse** (underneath it when the verse is at the top of the screen).
-- **Projected verse**: the verses admin/contributors project are shown to everyone, including visitors, in a "Projected verse" card on the home screen and in the Sunday Reference sheet.
+- **Projected verse**: the verses admin/contributors project are shown to everyone, including visitors, in a "Projected verse" card on the home screen and in the Meeting Verses sheet.
 - **Bible language** buttons are symbols: **తె** (Telugu), **A** (English), **తె+A** (both).
 - **Visitors** can again use the **Live preview** on the Meeting page (enter the 6-digit code, ⛶ Full screen) and the **phone remote** (Meeting page → Remote control, or About → Remote control). They still cannot project from their own device (no Projector / Present buttons, no double-tap).
 Files: `index.html`, `sw.js` (cache v52).
