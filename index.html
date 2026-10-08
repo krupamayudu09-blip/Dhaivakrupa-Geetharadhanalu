@@ -647,6 +647,18 @@ input.cs-in{margin:14px 0 0}
 .mhpill:active{opacity:.8}
 .mhn{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font:700 .75rem var(--sans)}
 .mht{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 .98rem/1.4 var(--serif)}
+/* meeting list on the home screen: adapts to phone, tablet, laptop and wide screens */
+.mh{container-type:inline-size;max-width:100%}
+.mhh{flex-wrap:wrap;row-gap:2px}.mhh .mtit{overflow-wrap:anywhere}
+.mhpills{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:8px}
+.mhpill{display:flex;width:100%;min-height:44px;box-sizing:border-box}
+.mhpill .mht{flex:1;font-size:clamp(.92rem,.85rem + .3vw,1.08rem)}
+@media (max-width:480px){.mh{padding:12px 12px}.mhpills{grid-template-columns:1fr;gap:6px;max-height:42vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px}.mhh{font-size:1rem}}
+@media (min-width:481px) and (max-width:899px){.mhpills{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){.mhpills{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.mh{padding:16px 20px}}
+@media (min-width:1400px){.mhpill{padding:8px 18px 8px 8px}.mhn{width:28px;height:28px;font-size:.85rem}}
+@media (max-height:480px) and (orientation:landscape){.mhpills{max-height:50vh;overflow-y:auto}}
+@media (max-width:360px){.mhs{padding:6px 8px 6px 12px}.mhst b{font-size:.92rem}.mhp{width:34px;height:34px}}
 .bnr>a{display:block!important;flex:1;min-width:0;padding:12px 2px}
 .bnr>a .t{display:block;font:700 1rem/1.4 var(--serif);color:var(--ink);text-align:left}
 .bnr .bnv{display:block;text-align:left;margin-top:6px}
@@ -1513,17 +1525,16 @@ function bnBar(){
 async function bnSync(){
   if(BN.busy)return BN.busy;
   BN.busy=(async()=>{
-    try{
-      let q=BNpend(),list=null;
-      while(q.length){list=await bnApi({op:'add',...q[0]});q=q.slice(1);LS.set('bnpend',q)}
-      bnSet(list||await bnApi());
-    }catch{}
+    // visitors never add notes; queued notes older than 10 minutes are dropped so one failed send can never block reading the shared list
+    let q=canEdit()?BNpend().filter(x=>Date.now()-(x.q||0)<6e5):[],list=null;LS.set('bnpend',q);
+    while(q.length){try{list=await bnApi({op:'add',...q[0]})}catch{break}q=q.slice(1);LS.set('bnpend',q)}
+    try{bnSet(list||await bnApi())}catch{}
     BN.busy=null;
   })();
   return BN.busy;
 }
 function noteProj(b,c,v,l){
-  if(!(b>=0&&c>=1))return;
+  if(!(b>=0&&c>=1)||!canEdit())return;   // only the logged-in projector device records notes; everyone else just reads the shared list
   v=String(v||'').replace(/[^\d,\-]/g,'');l=l||blang;
   // show it at once on this device (the server then adds the shared copy; the same send reported by two screens is merged there)
   const now=Date.now(),a=bpPrune(),same=x=>x.b===b&&x.c===c&&x.v===v,k=a.findIndex(same);
@@ -1531,7 +1542,7 @@ function noteProj(b,c,v,l){
   const j=a.findIndex(x=>same(x)&&new Date(x.t).toDateString()===new Date(now).toDateString());
   if(j>=0){const e=a.splice(j,1)[0];e.t=now;e.n=(e.n||1)+1;a.unshift(e)}else a.unshift({id:'l'+now,b,c,v,l,t:now,n:1});
   bnSet(a);
-  LS.set('bnpend',[...BNpend(),{b,c,v,l}].slice(-30));bnSync();
+  LS.set('bnpend',[...BNpend(),{b,c,v,l,q:Date.now()}].slice(-30));bnSync();
 }
 /* Bible notes: show every projected verse in full, each with its full reference (Book chapter:verse) */
 async function fillNoteVerses(root){
@@ -1617,7 +1628,7 @@ function bnOpen(on){
     if(e.target.closest('[data-bnclose]'))setTimeout(()=>bnOpen(false),0);
     const g=e.target.closest('.seg button[data-l]');if(g){blang=g.dataset.l;LS.set('blang',blang);bnDraw()}
   });
-  setInterval(()=>{if(!document.hidden&&!BN.open)bnSync()},60000);
+  setInterval(()=>{if(!document.hidden&&!BN.open)bnSync()},20000);
   setTimeout(bnSync,1500);
 })();
 
@@ -1985,7 +1996,7 @@ function pjExec(c,a){
   if(c==='start'){startMeeting(+a||0);return}
   if(c==='song'){const go=()=>{const x=D.songs.find(s=>s.id===String(a));if(x){present(songSlides(x),0,{title:x.title,bg:x.bg_image});return true}return false};
     if(!go())refreshData(true).then(go);else refreshData(true);return}   // known song: project at once, check for newer data afterwards
-  if(c==='bible'){const [b,ch,l,vv]=String(a).split(':');startBible(+b,+ch,l,vv);return}
+  if(c==='bible'){const [b,ch,l,vv]=String(a).split(':');startBible(+b,+ch,l,String(vv||'').replace(/_/g,','));return}   // the remote sends "," as "_" (the server only accepts letters, digits and _ . : -)
   if(c==='madd'||c==='mdel'){if(!canEdit()){toast('Log in as a contributor on this device to change the meeting');return}if(!MT.ids.length&&PUB.ids.length){MT.ids=[...PUB.ids];MT.name=PUB.name;MT.date=PUB.date||''}const id=String(a),k=MT.ids.indexOf(id);
     if(c==='madd'&&k<0&&D.songs.some(s=>s.id===id))MT.ids.push(id);else if(c==='mdel'&&k>=0)MT.ids.splice(k,1);else return;
     mSave();afterMeet&&afterMeet();return}
@@ -2161,7 +2172,7 @@ function remote(code){
   <div id="rtab"></div></div>`;
   let lastN=0,ctc='',cbc='',rev=0,tot=0,ihold=0,slides=[],lastV=null,full=true,closed=true,mids=[],midKey='',ttl='',cur=0,tab=null,midHold=0,got=false;
   const R={q:'',l:'',ot:true,b:null,c:null,vs:new Set(),rng:false,anc:null,last:0,nv:0,vt:[],ve:[]},byId=id=>D.songs.find(x=>x.id===id);
-  const send=(cmd,arg)=>{navigator.vibrate?.(12);
+  const send=(cmd,arg)=>{navigator.vibrate?.(12);if(cmd==='bible')arg=String(arg).replace(/,/g,'_');
     if(!closed&&(cmd==='next'||cmd==='prev'||cmd==='goto')){cur=cmd==='goto'?+arg:Math.max(0,Math.min(tot-1,cur+(cmd==='next'?1:-1)));ihold=Date.now()+700;$('#rcn2').textContent=`${cur+1} / ${tot}`;if(tab==='now')hl()}   // show the move at once
     if(rmP&&rmP.send({c:cmd,a:arg}))return;   // direct channel: arrives in milliseconds
     (async()=>{const h={};if(cmd==='madd'||cmd==='mdel'){const t=await idToken().catch(()=>null);if(!t){toast('Log in as a contributor to change the meeting');return}h.authorization='Bearer '+t}
