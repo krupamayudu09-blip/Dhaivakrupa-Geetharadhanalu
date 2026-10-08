@@ -305,3 +305,11 @@ One-time setup (Netlify → Site settings → Environment variables), then redep
 4. Netlify Identity must stay enabled. Set Registration to **Invite only** so nobody can bypass the OTP using Netlify's own sign-up form; the OTP function creates accounts through the admin API and works with Invite only.
 
 Codes expire after 10 minutes, allow 5 wrong tries, work once, and can be re-sent once a minute. Files: `netlify/functions/signup-otp.mjs`, `index.html`.
+
+## New song alerts (notification with the app and browser closed)
+When a new song is added (admin / contributor studio), everyone with notifications on gets a push notification (title + category); tapping it opens the song. Several new songs are grouped as "N new songs" and open the Notifications page.
+- `netlify/functions/song-check.mjs` runs every 10 minutes (production deploy only), reads `/data.json` from your site, and sends ONE notification per check. The first run only remembers the songs that already exist. Only songs with a date from the last 3 days are announced (imported `ref-` songs never are).
+- Uses the same `VAPID_*` variables as the daily verse. If the function cannot find your site address, add an environment variable `SITE_URL` (for example `https://your-site.netlify.app`).
+- It follows the existing notification switch: on while any notification is on, off when all are off. No new setting.
+- Real background push needs these once: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` in Netlify, a redeploy, and on iPhone "Add to Home Screen" (iOS 16.4+). Without the keys, alerts only appear when the app is opened.
+- Files: new `netlify/functions/song-check.mjs`, `netlify/functions/push.mjs` (new `songs` topic), `sw.js` (cache v62).

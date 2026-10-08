@@ -1,4 +1,4 @@
-// Stores browser push subscriptions. Each subscription has topics: { verse, live, shorts, greet } (daily Bible verse, YouTube live alerts, new YouTube Shorts, admin greetings).
+// Stores browser push subscriptions. Each subscription has topics: { verse, live, shorts, greet, songs } (daily Bible verse, YouTube live alerts, new YouTube Shorts, admin greetings, new songs).
 // Needs env var VAPID_PUBLIC_KEY (see README). GET returns the public key; POST subscribes / updates topics; DELETE unsubscribes.
 import { getStore } from "@netlify/blobs";
 import { createHash } from "node:crypto";
@@ -18,7 +18,8 @@ export default async (req) => {
     // greet = messages sent by the admin (Admin -> Greeting). It follows the other switches: on while any notification is on, unless the app says otherwise.
     const topics = b.topics && typeof b.topics === "object" ? { verse: !!b.topics.verse, live: !!b.topics.live, shorts: b.topics.shorts !== false } : { verse: true, live: false, shorts: true };
     topics.greet = b.topics && typeof b.topics === "object" && typeof b.topics.greet === "boolean" ? b.topics.greet : (topics.verse || topics.live || topics.shorts);
-    if (!topics.verse && !topics.live && !topics.shorts && !topics.greet) { await store.delete(id(sub.endpoint)); return J({ ok: true }); }
+    topics.songs = b.topics && typeof b.topics === "object" && typeof b.topics.songs === "boolean" ? b.topics.songs : (topics.verse || topics.live || topics.shorts);   // new-song alerts follow the other switches
+    if (!topics.verse && !topics.live && !topics.shorts && !topics.greet && !topics.songs) { await store.delete(id(sub.endpoint)); return J({ ok: true }); }
     const old = await store.get(id(sub.endpoint), { type: "json" }).catch(() => null);
     await store.setJSON(id(sub.endpoint), { sub, tz, topics, last: (old && old.last) || "" });
     return J({ ok: true });

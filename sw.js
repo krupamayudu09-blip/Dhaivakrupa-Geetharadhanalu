@@ -1,4 +1,4 @@
-const V='dk-v61';
+const V='dk-v62';
 try{importScripts('/verse-img.js')}catch(e){}
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(['/','/icon.svg'])));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>clients.claim()))});
@@ -23,6 +23,10 @@ self.addEventListener('push',e=>{
   }
   if(d.type==='short'&&/^[\w-]{11}$/.test(d.id||'')){
     e.waitUntil(self.registration.showNotification(d.count>1?'\uD83C\uDFAC '+d.count+' new Shorts':'\uD83C\uDFAC New Short',{body:d.title||'Tap to watch',icon:'/icon.svg',badge:'/icon.svg',image:'https://i.ytimg.com/vi/'+d.id+'/hqdefault.jpg',tag:'new-short',renotify:true,data:{url:'/#/short/'+d.id}}));
+    return;
+  }
+  if(d.type==='song'&&/^[\w-]{4,80}$/.test(d.id||'')){
+    e.waitUntil(self.registration.showNotification(d.count>1?'\uD83C\uDFB5 '+d.count+' new songs':'\uD83C\uDFB5 New song added',{body:(d.title||'Tap to open')+(d.count>1?' (+'+(d.count-1)+' more)':d.cat?' \u2022 '+d.cat:''),icon:'/icon.svg',badge:'/icon.svg',tag:'new-song',renotify:true,data:{url:d.count>1?'/#/notifications':'/#/song/'+encodeURIComponent(d.id)}}));
     return;
   }
   if(d.type==='greeting'&&/^[\w-]{4,40}$/.test(d.id||'')){        // message from the admin (text and/or picture); the app also shows it as a popup
