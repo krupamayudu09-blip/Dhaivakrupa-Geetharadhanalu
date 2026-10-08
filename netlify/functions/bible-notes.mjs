@@ -2,8 +2,8 @@
 //   GET  /api/bible-notes                      -> { list:[{id,b,c,v,l,t,n}], t }
 //   POST /api/bible-notes {op:"add",b,c,v,l}   -> adds (the same reference sent again the same day is counted, not repeated)
 //   POST /api/bible-notes {op:"clear"}         -> ADMIN ONLY: removes every note
-//   POST /api/bible-notes {op:"delete",id}     -> ADMIN ONLY: removes one note
-// Notes cannot be deleted by visitors; each one disappears by itself after 7 days.
+//   POST /api/bible-notes {op:"delete",id}     -> ADMIN or CONTRIBUTOR: removes one note
+// Visitors can only read the list (they cannot add or remove); each one disappears by itself after 7 days.
 // Admin check: the request must carry a valid Netlify Identity token (Authorization: Bearer ...), the same login as /admin/.
 import { getStore } from "@netlify/blobs";
 import { adminUser, approvedUser } from "../lib/approved.mjs";
@@ -26,7 +26,7 @@ export default async (req) => {
     let q; try { q = await req.json(); } catch { return J({ error: "bad" }, 400); }
 
     if (q.op === "clear" || q.op === "delete") {
-      if (!(await isAdmin(req))) return J({ error: "auth" }, 401);
+      if (!(q.op === "clear" ? await isAdmin(req) : await approvedUser(req))) return J({ error: "auth" }, 401);
       list = q.op === "clear" ? [] : list.filter(x => x.id !== String(q.id || ""));
     } else if (q.op === "add") {
       if (!(await approvedUser(req))) return J({ error: "contributors only" }, 401);   // visitors cannot add notes

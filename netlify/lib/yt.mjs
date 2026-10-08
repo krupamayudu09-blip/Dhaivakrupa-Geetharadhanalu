@@ -83,7 +83,7 @@ async function apiVideos(id, key, n, prefix = "UU") {
 }
 
 /** Every video of a playlist (all pages, newest first). prefix "UUSH" = the channel's Shorts. */
-async function apiAll(id, key, prefix, max = 500) {
+async function apiAll(id, key, prefix, max = 500, withLive = false) {
   const g = async url => { const r = await fetch(url, { signal: sig() }); const j = await r.json(); if (!r.ok) throw fail("api_error", "YouTube API " + r.status + ": " + (j.error && j.error.message || "")); return j; };
   const ids = []; let tok = "";
   do {
@@ -95,10 +95,11 @@ async function apiAll(id, key, prefix, max = 500) {
   } while (tok && ids.length < max);
   const out = [];
   for (let i = 0; i < ids.length; i += 50) {
-    const vs = await g(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${ids.slice(i, i + 50).join(",")}&maxResults=50&key=${key}`);
+    const vs = await g(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails${withLive ? ",liveStreamingDetails" : ""}&id=${ids.slice(i, i + 50).join(",")}&maxResults=50&key=${key}`);
     const by = new Map((vs.items || []).map(v => [v.id, v]));
     ids.slice(i, i + 50).map(x => by.get(x)).filter(Boolean).forEach(v => out.push({
-      id: v.id, title: v.snippet.title, t: v.snippet.publishedAt, dur: isoSec(v.contentDetails && v.contentDetails.duration), live: "",
+      id: v.id, title: v.snippet.title, t: v.snippet.publishedAt, dur: isoSec(v.contentDetails && v.contentDetails.duration),
+      live: withLive ? (v.snippet.liveBroadcastContent === "live" ? "live" : v.snippet.liveBroadcastContent === "upcoming" ? "upcoming" : (v.liveStreamingDetails && v.liveStreamingDetails.actualEndTime ? "ended" : "")) : "",
     }));
   }
   return out;
@@ -155,6 +156,31 @@ async function livePage(id) {
   return { id: m[1], title: decode(t ? t[1] : "") };
 }
 
+/** EVERY video of the channel (finished live streams and normal uploads). Heavy, so it is cached for 30 minutes and shared by all visitors.
+ *  With YOUTUBE_API_KEY: the whole uploads playlist through the Data API (up to 1000). Without a key: the uploads playlist page + the channel's /streams tab (finished live streams), merged with the RSS list. */
+async function fullList(id, key, store, rss) {
+  const ck = "all:" + id, cached = store ? await store.get(ck, { type: "json" }).catch(() => null) : null;
+  if (cached && Date.now() - cached.t < 30 * 60e3 && Array.isArray(cached.v) && cached.v.length) return cached.v;
+  const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rj) => setTimeout(() => rj(new Error("timeout")), ms))]);
+  let list = [];
+  try {
+    if (key) list = await withTimeout(apiAll(id, key, "UU", 1000, true), 8000);
+    else {
+      const VR = [/\"videoRenderer\":\{\"videoId\":\"([\w-]{11})\"/g];
+      const [up, st] = await Promise.all([
+        withTimeout(scrapeShorts(`https://www.youtube.com/playlist?list=UU${id.slice(2)}`, 1000, 5000, [/\"playlistVideoRenderer\":\{\"videoId\":\"([\w-]{11})\"/g], ""), 8000).catch(() => []),
+        withTimeout(scrapeShorts(`https://www.youtube.com/channel/${id}/streams`, 1000, 5000, VR, "ended"), 8000).catch(() => []),
+      ]);
+      const by = new Map((rss || []).map(v => [v.id, v])), seen = new Set();
+      list = [...up, ...st, ...(rss || [])].filter(v => v && v.id && !seen.has(v.id) && seen.add(v.id)).map(v => ({ ...(by.get(v.id) || {}), ...v, t: (by.get(v.id) || {}).t || v.t || "", live: (st.some(x => x.id === v.id) ? "ended" : v.live) || "" }));
+      // the lists can be incomplete without a key, so the ones seen before are kept (the list only grows)
+      if (cached && cached.v) { const have = new Set(list.map(v => v.id)); list = list.concat(cached.v.filter(v => !have.has(v.id))); }
+    }
+  } catch (e) { console.log("YouTube full list failed:", e.message); if (cached && cached.v) return cached.v; throw e; }
+  if (store && list.length) await store.setJSON(ck, { t: Date.now(), v: list }).catch(() => {});
+  return list;
+}
+
 async function build(ref, media, store) {
   const key = process.env.YOUTUBE_API_KEY || "";
   const id = await resolveId(ref, key, store);
@@ -162,6 +188,12 @@ async function build(ref, media, store) {
   let apiErr = "";
   if (key) { try { videos = await apiVideos(id, key, 20); source = "api"; } catch (e) { apiErr = e.message; console.log("YouTube API failed, using RSS:", e.message); } }
   if (!videos) videos = await rssVideos(id, 20);
+  // all sermons: the newest 20 stay fresh (live status), the rest comes from the cached full list
+  try {
+    const all = await fullList(id, key, store, videos), have = new Set(videos.map(v => v.id));
+    videos = videos.concat(all.filter(v => !have.has(v.id)).map(v => ({ ...v, live: v.live === "live" || v.live === "upcoming" ? "ended" : v.live })));
+    if (videos.some(v => v.t)) videos.sort((a, b) => String(b.t || "").localeCompare(String(a.t || "")) || 0);
+  } catch (e) { console.log("full list skipped:", e.message); }
   let live = null;
   if (source === "api") live = videos.find(v => v.live === "live") || null;
   else live = await livePage(id).catch(() => null);
@@ -177,7 +209,7 @@ export async function getFeed(media, { force = false, maxAge = 120 } = {}) {
   const ref = parseChannel(media);
   if (!ref) return { configured: false };
   const store = openStore();
-  const tag = JSON.stringify(ref) + (process.env.YOUTUBE_API_KEY ? "k" : "");
+  const tag = "v2" + JSON.stringify(ref) + (process.env.YOUTUBE_API_KEY ? "k" : "");
   const cached = store ? await store.get("feed", { type: "json" }).catch(() => null) : null;
   if (!force && cached && cached.tag === tag && Date.now() - cached.t < maxAge * 1000) return cached.data;
   try {
@@ -213,12 +245,12 @@ async function shortsPage(id, n) {
   return out;
 }
 /** No API key: scrape a YouTube page (the Shorts playlist, or the channel's Shorts tab) and follow its "continuation" pages until every Short is found (or ~6 s have passed). */
-async function scrapeShorts(url, max = 500, ms = 6000) {
+async function scrapeShorts(url, max = 500, ms = 6000, res = null, lf = "") {
   const deadline = Date.now() + ms;
   const html = await (await fetch(url, { headers: PAGE_HEADERS, signal: sig() })).text();
   const out = [], seen = new Set();
   // YouTube uses different renderers over time: playlistVideoRenderer, reelItemRenderer, and (newer) shortsLockupViewModel with a reelWatchEndpoint
-  const RES = [/\"playlistVideoRenderer\":\{\"videoId\":\"([\w-]{11})\"/g, /\"reelItemRenderer\":\{\"videoId\":\"([\w-]{11})\"/g, /\"reelWatchEndpoint\":\{\"videoId\":\"([\w-]{11})\"/g];
+  const RES = res || [/\"playlistVideoRenderer\":\{\"videoId\":\"([\w-]{11})\"/g, /\"reelItemRenderer\":\{\"videoId\":\"([\w-]{11})\"/g, /\"reelWatchEndpoint\":\{\"videoId\":\"([\w-]{11})\"/g];
   const grab = txt => {
     for (const re of RES) {
       re.lastIndex = 0; let m;
@@ -227,7 +259,7 @@ async function scrapeShorts(url, max = 500, ms = 6000) {
         const near = txt.slice(Math.max(0, m.index - 1200), m.index + 3000);
         const t = near.match(/\"title\":\{\"runs\":\[\{\"text\":\"((?:[^\"\\]|\\.)*)\"/) || near.match(/\"primaryText\":\{\"content\":\"((?:[^\"\\]|\\.)*)\"/) || near.match(/\"headline\":\{\"simpleText\":\"((?:[^\"\\]|\\.)*)\"/) || near.match(/\"accessibilityText\":\"((?:[^\"\\]|\\.)*)\"/);
         let title = ""; try { title = t ? JSON.parse('\"' + t[1] + '\"') : ""; } catch { title = t ? t[1] : ""; }
-        out.push({ id: m[1], title: title.replace(/,\s*[\d.,]+\s*(?:[KMB]|lakh|crore)?\s*views?.*$/i, "") || "Short", t: "", dur: 0, live: "" });
+        out.push({ id: m[1], title: title.replace(/,\s*[\d.,]+\s*(?:[KMB]|lakh|crore)?\s*views?.*$/i, "") || (res ? "Video" : "Short"), t: "", dur: 0, live: lf });
       }
     }
   };

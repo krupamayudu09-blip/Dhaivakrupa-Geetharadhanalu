@@ -525,7 +525,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .mpvs .sv-ref{font:600 .45em var(--sans);color:var(--pa);margin-bottom:.5em}.mpvs .sv-t{font:700 1.3em/1.4 var(--serif)}
 .mpvs .sv-s{font:500 .6em/1.5 var(--sans);color:var(--pa);margin-top:.4em}.mpvs img{max-width:100%;max-height:100%;border-radius:4px}
 .mpvm{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;padding:0 12px;font:500 .85rem/1.5 var(--sans);opacity:.85;pointer-events:none}
-body.nc .lkrow,body.nc .mhp{display:none!important}
+/* My notes marker + word-search highlight */
+.v.mnv sup::after{content:" ★";color:#E0A800}.sr mark{background:color-mix(in srgb,var(--accent) 28%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+body.nc .bnx{display:none!important}.bnx{flex:none}
+body.nc .lkrow,body.nc .mhp,body.nc .mpv,body.nc .rmbtn,body.nc [data-bnp],body.nc .pjonly,body.nc #pjr{display:none!important}
 body.nc [data-add],body.nc [data-m],body.nc #mt1,body.nc #mc,body.nc .mb,body.nc .mgate,body.nc #pj1,body.nc [data-pj],body.nc #mp,body.nc #mr,body.nc #mrc,body.nc [data-play]{display:none!important}
 .mnote{margin:8px 0 12px;padding:12px 14px;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi);color:var(--muted);font-size:.92rem;line-height:1.6}
 .mnote[hidden]{display:none}
@@ -677,8 +680,8 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
  <a href="#/about" data-t="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span class="nl">About</span></a>
 </div></nav>
 <div id="bnback"></div>
-<aside id="bnsheet" aria-label="Bible notes" aria-hidden="true"><div id="bnhd"><i></i><h2>Bible notes</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
-<div id="bnbar" role="button" tabindex="0" aria-label="Bible notes: swipe up or tap to open"><i></i><span>Bible notes</span><b id="bncnt"></b></div>
+<aside id="bnsheet" aria-label="Last Sunday Reference" aria-hidden="true"><div id="bnhd"><i></i><h2>Last Sunday Reference</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
+<div id="bnbar" role="button" tabindex="0" aria-label="Last Sunday Reference: swipe up or tap to open"><i></i><span>Last Sunday Reference</span><b id="bncnt"></b></div>
 <div id="pj" role="dialog" aria-modal="true" aria-label="Projector presentation" data-th="dark">
  <div class="bgi" id="pjbg"></div>
  <img class="pjlogo" id="pjlogo" alt="">
@@ -812,7 +815,7 @@ function autoPub(now){
   pubTimer=setTimeout(async()=>{
     if(!MT.dirty)return;
     if(!canEdit()){MT.dirty=false;LS.set('meeting',MT);return}   // visitors never push changes; they follow the shared list
-    const stamp=MT.v,body={name:MT.name||'',ids:[...MT.ids]};
+    const stamp=MT.v,body={name:MT.name||'',date:MT.date||'',ids:[...MT.ids]};
     try{
       let r=null;
       for(let k=0;k<2;k++){const t=await idToken(k===1);if(!t)break;
@@ -831,14 +834,20 @@ let PUB={name:'',ids:[],t:0},afterPub=null;
 const pubList=()=>(PUB.ids||[]).map(id=>D.songs.find(s=>s.id===id)).filter(Boolean);
 const schedList=()=>meetList().length?meetList():pubList();
 const schedName=()=>meetList().length?MT.name:PUB.name;
+const schedDate=()=>meetList().length?MT.date:PUB.date;
+const isoToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmtMDate=iso=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||'');if(!m)return '';return new Date(+m[1],+m[2]-1,+m[3]).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})};
+/* the meeting date and its name are always shown together: "Sun, 12 Oct 2026 – Sunday worship" */
+const meetTitle=(date,name)=>[fmtMDate(date),String(name||'').trim()].filter(Boolean).join(' – ')||'This meeting';
+const schedTitle=()=>meetTitle(schedDate(),schedName());
 async function fetchPub(){
   try{const r=await fetch('/api/meeting',{cache:'no-store'});if(!r.ok)return;const d=await r.json();
     if(d.t!==PUB.t){PUB=d;
-      if(!MT.dirty){MT.name=d.name||'';MT.ids=[...(d.ids||[])];LS.set('meeting',MT);afterMeet&&afterMeet()}   // follow changes made in the admin panel
+      if(!MT.dirty){MT.name=d.name||'';MT.date=d.date||'';MT.ids=[...(d.ids||[])];LS.set('meeting',MT);afterMeet&&afterMeet()}   // follow changes made in the admin panel
       afterPub&&afterPub()}
     else if(MT.dirty)autoPub(true)}catch{}
 }
-function toggleMeet(id){const i=MT.ids.indexOf(id);if(i<0){MT.ids.push(id);toast('Added to the meeting')}else{MT.ids.splice(i,1);toast('Removed from the meeting')}
+function toggleMeet(id){const i=MT.ids.indexOf(id);if(i<0){if(!MT.ids.length&&!MT.date)MT.date=isoToday();MT.ids.push(id);toast('Added to the meeting')}else{MT.ids.splice(i,1);toast('Removed from the meeting')}
   mSave()}
 M.addEventListener('click',e=>{const lo=e.target.closest('[data-idout]');if(lo){idLogout();return}
   if(e.target.closest('[data-idin]')){idLogin();return}
@@ -1375,15 +1384,18 @@ function recentViewed(){
 /* songs grouped by category */
 const catList=()=>{const c=[...(D.categories||[])];D.songs.forEach(x=>{if(x.category&&!c.includes(x.category))c.push(x.category)});return c};
 function catPage(name){
-  nav('songs');title(name);const l=D.songs.filter(x=>x.category===name);
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none">‹ Home</a><h2>${esc(name)}</h2><p class="meta">Songs: ${l.length}</p></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
+  name=name||'';const label=name||'Uncategorised';
+  nav('songs');title(label);const l=D.songs.filter(x=>(x.category||'')===name);
+  const all=catList();if(D.songs.some(x=>!x.category))all.push('');
+  const chips=all.map(c=>`<a class="cat" style="padding:8px 12px;font-size:.9rem${c===name?';border-color:var(--accent);color:var(--accent)':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}><b>${esc(c||'Uncategorised')}</b><span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
+  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
 }
 /* alphabet grid + search, used directly on the home screen */
 function indexGrid(host){
   const g=new Map();D.songs.forEach(x=>{const k=group(x.title);(g.get(k)||g.set(k,[]).get(k)).push(x)});
   const extra=[...g.keys()].filter(k=>!TE_ALPHA.includes(k)).sort((a,b)=>(isTe(b)-isTe(a))||col.compare(a,b));
   const cell=k=>{const n=(g.get(k)||[]).length;return n?`<a class="ix" href="#/index/${encodeURIComponent(k)}"><b>${esc(k)}</b><span>${n}</span></a>`:`<span class="ix off" aria-hidden="true"><b>${esc(k)}</b></span>`};
-  const cc=catList().map(c=>[c,D.songs.filter(x=>x.category===c).length]).filter(c=>c[1]);
+  const cc=catList().map(c=>[c,D.songs.filter(x=>x.category===c).length]);
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<input class="search" id="iq" type="search" placeholder="Search songs – Telugu or English letters (e.g. yesu, stuthi)…" aria-label="Search songs">
@@ -1398,8 +1410,8 @@ function indexGrid(host){
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
-  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(schedName()||'This meeting')}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
-  e.innerHTML=`<section class="mh"><div class="mhh"><b>${esc(schedName()||'This meeting')}</b><span class="sub">${l.length} songs</span></div>
+  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(schedTitle())}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
+  e.innerHTML=`<section class="mh"><div class="mhh"><b>${esc(schedTitle())}</b><span class="sub">${l.length} songs</span></div>
   <ul class="mhpills">${l.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul></section>`;
 }
 function songView(id){
@@ -1514,10 +1526,10 @@ function bnDraw(){
   const row=x=>{
     const ex=vsExpand(x.v),first=ex[0]||0,last=(/^\d+-\d+$/.test(x.v)?ex[ex.length-1]:0),ref=`${x.l==='en'?books[x.b].en:books[x.b].te} ${x.c}${x.v?':'+x.v:''}`;
     return `<li class="sr"><a href="#/bible/${x.b}/${x.c}${first?'/'+first:''}" data-bnclose><div style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${['te','en','both'].includes(x.l)?x.l:'te'}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></div></a>`
-      +`</li>`;
+      +`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`;
   };
   const top=box.scrollTop;
-  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">No Bible references have been sent to the projector in the last 7 days.<br><small>Verses projected from the Bible tab, search or the phone remote appear here for everyone.</small></p>');
+  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Last Sunday Reference yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* v31: the last 7 days of Bible notes as a list of full verses, with a Present button (Meeting page + phone remote's Meeting tab) */
@@ -1531,12 +1543,19 @@ function bnMeetDraw(box){
   const clock=t=>new Date(t).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});
   const groups=[];all.forEach(x=>{const k=dayLabel(x.t),g=groups[groups.length-1];if(g&&g.k===k)g.l.push(x);else groups.push({k,l:[x]})});
   const row=x=>{const L=['te','en','both'].includes(x.l)?x.l:'te',ref=`${L==='en'?books[x.b].en:books[x.b].te} ${x.c}${x.v?':'+x.v:''}`;
-    return `<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}${vsExpand(x.v)[0]?'/'+vsExpand(x.v)[0]:''}" style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></a><button class="add" data-bnp="${esc(x.id)}" aria-label="Present ${esc(ref)}">📽</button></li>`};
+    return `<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}${vsExpand(x.v)[0]?'/'+vsExpand(x.v)[0]:''}" style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></a><button class="add" data-bnp="${esc(x.id)}" aria-label="Present ${esc(ref)}">📽</button><button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`};
   const top=box.scrollTop;
-  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">No Bible verses have been sent to the projector in the last 7 days.</p>';
+  box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Last Sunday Reference yet.</p>';
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* keep a Bible-notes list fresh while its page is open */
+async function bnRemove(id){
+  if(!canEdit()){needLogin();return}
+  if(!confirm('Remove this from Last Sunday Reference?'))return;
+  const keep=BN.list;bnSet(bpPrune().filter(x=>x.id!==id));
+  try{await bnApi({op:'delete',id});toast('Removed')}catch{bnSet(keep);toast('Could not remove – please log in again')}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bndel]');if(!b)return;e.preventDefault();e.stopPropagation();bnRemove(b.dataset.bndel)},true);
 function bnWatch(draw){BN.cb=draw;clearInterval(BN.mt);BN.mt=setInterval(()=>{if(!document.hidden)bnSync()},8000);bnSync()}
 function bnUnwatch(){BN.cb=null;clearInterval(BN.mt);BN.mt=null}
 function bnOpen(on){
@@ -1602,6 +1621,7 @@ const bkName=(i,l)=>(l||blang)==='en'?books[i].en:books[i].te;
 function refResults(q,mode){
   const p=parseRef(q);if(!p)return '';
   const bs=findBooks(p.name);
+  if(!bs.length&&mode==='web')return '';   // not a book name: the word search below handles it
   if(!bs.length)return `<li class="empty">No book matches “${esc(p.name)}”. Try: jn 3:16 • ps 23 • gen 1:1-5 • 1 cor 13 • యోహాను 3:16</li>`;
   return bs.map(b=>{
     const bk=books[b];
@@ -1628,9 +1648,47 @@ async function fillPreviews(root){
     }catch{el.textContent=''}
   }
 }
+/* ----- search a WORD in the Bible text (Telugu words search the Telugu Bible, other words the English one) ----- */
+let WSID=0;
+const wsHl=(t,ws)=>{const re=new RegExp('('+ws.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','gi');return String(t).split(re).map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join('')};
+async function wordSearch(q,out){
+  const id=++WSID;q=String(q||'').trim();
+  const ws=[...new Set(q.toLowerCase().split(/\s+/).filter(Boolean))];
+  if(q.length<2||!ws.length)return;
+  const pr=parseRef(q);if(pr&&pr.c&&findBooks(pr.name).length)return;   // it is a reference such as jn 3:16
+  const lang=isTe(q)?'te':'en',MAX=80;
+  out.insertAdjacentHTML('beforeend','<li class="empty" id="wsh">Searching the Bible for the word…</li>');
+  const hits=[];let total=0;
+  for(let i=0;i<books.length&&id===WSID;i+=6){
+    let part;try{part=await Promise.all(books.slice(i,i+6).map((_,k)=>load(lang,i+k+1)))}catch{part=null}
+    if(id!==WSID)return;
+    if(!part){const h=out.querySelector('#wsh');if(h)h.textContent='Could not load the Bible text. Check your connection and try again.';return}
+    part.forEach((bk,k)=>bk.forEach((ch,ci)=>ch.forEach((tx,vi)=>{const low=String(tx).toLowerCase();if(ws.every(w=>low.includes(w))){total++;if(hits.length<MAX)hits.push([i+k,ci+1,vi+1,tx])}})));
+    const h=out.querySelector('#wsh');if(h)h.textContent=`Searching… ${Math.min(i+6,books.length)}/${books.length} books • ${total} found`;
+  }
+  if(id!==WSID)return;
+  const h=out.querySelector('#wsh');if(h)h.remove();
+  out.querySelectorAll('.wsr').forEach(e=>e.remove());
+  const nm=bi=>blang==='en'||lang==='en'?books[bi].en:books[bi].te;
+  out.insertAdjacentHTML('beforeend',`<li class="wsr ixh" style="list-style:none;padding:8px 0 0;margin:0"><b>${total?`${total} verse${total>1?'s':''} with “${esc(q)}”${total>MAX?` – showing the first ${MAX}`:''}`:`No verse has “${esc(q)}”`}</b></li>`
+    +hits.map(([b,c,v,tx])=>`<li class="sr wsr"><a href="#/bible/${b}/${c}/${v}"><div style="min-width:0"><div class="t">${esc(nm(b))} ${c}:${v}</div><div class="sub" style="white-space:normal">${wsHl(tx,ws)}</div></div></a></li>`).join(''));
+}
+/* ----- My notes: verses a person marks as important; kept only on their own device/login, never shared ----- */
+const mnKey=()=>'mynotes:'+((idUser()&&idUser().email)||'guest').toLowerCase();
+const mnList=()=>{const a=LS.get(mnKey(),[]);return Array.isArray(a)?a.filter(x=>x&&books[x.b]&&x.c>=1&&x.v>=1):[]};
+function mnAdd(b,c,vs){const a=mnList();let n=0;vs.forEach(v=>{if(!a.some(x=>x.b===b&&x.c===c&&x.v===v)){a.unshift({b,c,v,t:Date.now()});n++}});LS.set(mnKey(),a.slice(0,500));return n}
+function mnDel(b,c,v){LS.set(mnKey(),mnList().filter(x=>!(x.b===b&&x.c===c&&x.v===v)))}
+function myNotes(){
+  nav('bible');title('My notes');
+  const l=mnList();
+  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Bible</a><h2>My notes</h2><p class="meta">Your important verses. Only you can see this list (it is kept on this device${idUser()?' for your login':''}).</p><div style="margin-top:10px">${langSeg()}</div>
+  <ul class="list" style="padding:0;margin-top:10px">${l.length?l.map(x=>`<li class="sr bnr"><a href="#/bible/${x.b}/${x.c}/${x.v}" style="flex:1;min-width:0"><div class="bnv" data-bv="${x.b}:${x.c}:${x.v}:${blang}"></div></a><button class="add" data-mndel="${x.b}:${x.c}:${x.v}" aria-label="Remove from My notes">✕</button></li>`).join(''):'<li class="empty">No verses yet.<br><small>Open a chapter, tap the verses that matter to you, then tap “☆ My notes”.</small></li>'}</ul></div>`;
+  bindSeg(myNotes);fillNoteVerses(M);
+  M.querySelectorAll('[data-mndel]').forEach(b=>b.onclick=()=>{const [x,y,z]=b.dataset.mndel.split(':').map(Number);mnDel(x,y,z);toast('Removed from My notes');myNotes()});
+}
 let BQ='';
 function bindRefSearch(inp,out,mode){
-  let t=null;const go=()=>{BQ=inp.value;out.innerHTML=refResults(BQ,mode);fillPreviews(out)};
+  let t=null;const go=()=>{BQ=inp.value;out.innerHTML=refResults(BQ,mode);fillPreviews(out);if(mode==='web')wordSearch(BQ,out)};
   inp.oninput=()=>{clearTimeout(t);t=setTimeout(go,120)};
   inp.onkeydown=e=>{if(e.key==='Enter'){const a=out.querySelector('a');if(a)location.hash=a.getAttribute('href');else out.querySelector('button')?.click()}};
   if(BQ)go();
@@ -1641,7 +1699,8 @@ function bibleHome(){
   if(!books.length){M.innerHTML='<p class="empty">Bible data could not be loaded. Please refresh the page.</p>';return}
   const last=LS.get('last',null);
   const list=books.map((b,i)=>({b,i})).filter(o=>ot?o.i<39:o.i>=39);
-  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a verse – jn 3:16, ps 23, 1 cor 13:4-7, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
+  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, faith, jn 3:16, ps 23, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
+  <a class="mhe" href="#/bible/mynotes" style="margin-top:10px;display:inline-flex">☆ My notes (${mnList().length})</a>
   <div class="seg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">Old Testament</button><button data-t="0" aria-pressed="${!ot}">New Testament</button></div>
   <div style="margin-top:12px">${langSeg()}</div>
   <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} chapters</span></a>`).join('')}</div>${bibleRecent()}</div>`;
@@ -1663,8 +1722,8 @@ async function read(b,c,hv){
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
   M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
   <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><button id="pj1">Projector</button></div>
-  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: double-click a verse to send it to the presentation.</p>
+  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><button id="mynb">☆ My notes</button><button id="lsr" class="pjonly">＋ Last Sunday Reference</button><button id="pj1" class="pjonly">Projector</button></div>
+  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap verses to select them, then ☆ My notes saves them as important verses (only you can see them).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
   <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
   window.scrollTo(0,0);
@@ -1677,6 +1736,7 @@ async function read(b,c,hv){
     const v=e.target.closest('.v');if(!v)return;const now=Date.now();
     if(v===lastV&&now-lastT<400){
       lastV=null;getSelection()?.removeAllRanges();
+      if(!canEdit())return;   // visitors: no double-tap projection
       if(!v.classList.contains('sel')){v.classList.add('sel')}
       const i=+v.dataset.i,many=document.querySelectorAll('.v.sel').length>1;noteBible(b,c,i+1);
       if(many)$('#pj1').click();else startBible(b,c,blang,String(i+1));
@@ -1696,6 +1756,11 @@ async function read(b,c,hv){
     noteProj(b,c,sel.length?vsCompact(sel.map(i=>i+1)):'',blang);
     present(idx.map(i=>({h:`<div class="pj-ref">${esc(ref)}:${i+1}</div>${te[i]?`<div class="pj-l">${esc(te[i])}</div>`:''}${en[i]?`<div class="${te[i]?'pj-e':'pj-l'}">${esc(en[i])}</div>`:''}`})),0,{title:ref,bible:sel.length?null:{b,c,lang:blang}});
   };
+  const mark=()=>{const my=mnList();document.querySelectorAll('#vs .v').forEach(el=>el.classList.toggle('mnv',my.some(x=>x.b===b&&x.c===c&&x.v===+el.dataset.i+1)))};mark();
+  $('#mynb').onclick=()=>{const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);if(!sel.length){toast('Tap the verses you want to keep, then tap My notes');return}
+    const n=mnAdd(b,c,sel);mark();toast(n?`Saved to My notes (${n})`:'Already in My notes')};
+  $('#lsr').onclick=()=>{if(!canEdit()){needLogin();return}const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
+    noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Last Sunday Reference')};
   bindSeg(()=>read(b,c));
 }
 
@@ -1754,7 +1819,7 @@ function slideStruct(h){
   return o;
 }
 async function present(slides,start=0,o={}){
-  if(!canEdit()){toast('Only contributors can use the projector. You can still use the remote control.');return}   // visitors: no projection
+  if(!canEdit()){toast('Only admin and contributors can use the projector');return}   // visitors: no projection
   PJ.slides=slides;PJ.title=o.title||'';PJ.bible=o.bible||null;PJ.v=Date.now();PJ.st=null;PJ.prev=null;   // the remote/preview copies are built after the first slide is on screen (see pjPrep)
   PJ.bg=o.bg||LS.get('pjbg',bgList()[1]||'');if(!o.bg&&LS.get('pjbgc',0)&&PJ.cust)PJ.bg=PJ.cust;pjApplyBg();pjApplyLook();const p=$('#pj');p.dataset.th=PJ.th;
   if(LS.get('pjlinkonly',1)&&!p.classList.contains('on')){   // show the projection on the preview link only: nothing opens on this device
@@ -1837,10 +1902,11 @@ function pjPrep(){
 }
 function pjState(){
   const on=pjLive(),mids=schedList().map(x=>x.id);if(on)pjPrep();
-  if(!on)return{n:PJ.n,v:'m'+(MT.v||0)+'-'+(PUB.t||0),i:0,total:0,closed:true,title:schedName()||'This meeting',slides:[],mids};
+  if(!on)return{n:PJ.n,v:'m'+(MT.v||0)+'-'+(PUB.t||0),i:0,total:0,closed:true,title:schedTitle(),slides:[],mids};
   return{n:PJ.n,v:PJ.v,i:PJ.i,total:PJ.slides.length,blank:$('#pj').classList.contains('blank'),th:PJ.th,title:PJ.title||'',closed:false,slides:PJ.prev,st:PJ.st,bg:/^\/[\w\-.\/%]+$/.test(PJ.bg||'')?PJ.bg:'',bk:(PJ.bg&&PJ.bg===PJ.cust)?PJ.cbk:0,bgd:(PJ.bg&&PJ.bg===PJ.cust)?PJ.cust:'',tc:hexOk(PJ.tc)?PJ.tc:'',bc:hexOk(PJ.bc)?PJ.bc:'',lg:pjLogo(),ov:(D.settings.pj_overlay??45)/100,mids};
 }
 async function startBible(b,c,lang,vs){
+  if(!canEdit()){toast('Only admin and contributors can use the projector');return}
   const bk=books[b];if(!bk||!(c>=1&&c<=bk.ch))return;lang=['te','en','both'].includes(lang)?lang:'te';
   let te=[],en=[];
   try{if(lang!=='en')te=(await load('te',b+1))[c-1]||[];if(lang!=='te')en=(await load('en',b+1))[c-1]||[]}catch{toast('Could not load the Bible');return}
@@ -1857,7 +1923,7 @@ function pjExec(c,a){
   if(c==='song'){const go=()=>{const x=D.songs.find(s=>s.id===String(a));if(x){present(songSlides(x),0,{title:x.title,bg:x.bg_image});return true}return false};
     if(!go())refreshData(true).then(go);else refreshData(true);return}   // known song: project at once, check for newer data afterwards
   if(c==='bible'){const [b,ch,l,vv]=String(a).split(':');startBible(+b,+ch,l,vv);return}
-  if(c==='madd'||c==='mdel'){if(!canEdit()){toast('Log in as a contributor on this device to change the meeting');return}if(!MT.ids.length&&PUB.ids.length){MT.ids=[...PUB.ids];MT.name=PUB.name}const id=String(a),k=MT.ids.indexOf(id);
+  if(c==='madd'||c==='mdel'){if(!canEdit()){toast('Log in as a contributor on this device to change the meeting');return}if(!MT.ids.length&&PUB.ids.length){MT.ids=[...PUB.ids];MT.name=PUB.name;MT.date=PUB.date||''}const id=String(a),k=MT.ids.indexOf(id);
     if(c==='madd'&&k<0&&D.songs.some(s=>s.id===id))MT.ids.push(id);else if(c==='mdel'&&k>=0)MT.ids.splice(k,1);else return;
     mSave();afterMeet&&afterMeet();return}
   if(!open)return;
@@ -2018,6 +2084,7 @@ $('#pjsh').onclick=()=>navigator.share?navigator.share({title:'Remote',url:rmLin
 let RT=null,rmP=null;
 function remote(code){
   clearTimeout(RT);if(rmP){rmP.stop();rmP=null}nav('');title('Remote control');
+  if(!canEdit()){M.innerHTML='<div class="view"><h2>Remote control</h2><p class="empty">Only admin and contributors can use the projector remote.<br><br><button class="mhe" data-idin>Contributor login</button></p></div>';return}
   if(!/^\d{6}$/.test(code||'')){
     M.innerHTML=`<div class="view"><h2>Remote control</h2><p class="meta">On the projector screen tap the 📱 button (or 📱 Remote on the Meeting page) to see a 6-digit code.</p>
     <input class="search" id="rc" inputmode="numeric" maxlength="6" placeholder="6-digit code" value="${esc(LS.get('rmcode',''))}"><div class="tb" style="margin-top:14px"><button id="rg">Connect</button></div></div>`;
@@ -2054,7 +2121,7 @@ function remote(code){
     const l=mids.map(byId).filter(Boolean);
     T.innerHTML=`<p class="meta">${esc(ttl||'This meeting')} — ${l.length} songs</p>`+(l.length?`<div class="tb"><button data-ms="0">Present from the start</button></div>
     <ol class="ml">${l.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><button class="mrow" data-ms="${i}">${esc(x.title)}</button><button class="add" data-m="${esc(x.id)}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="empty">No songs in the meeting. Tap ＋ on the “Songs” tab to add.</p>')
-      +`<div class="mbn"><h3>📖 Bible notes – last 7 days</h3><p class="sub">Tap 📽 to project a verse again. Choose book, chapter and verse in the Bible tab.</p><div id="rbn"></div></div>`;
+      +`<div class="mbn"><h3>📖 Last Sunday Reference</h3><p class="sub">Tap 📽 to project a verse again. Choose book, chapter and verse in the Bible tab.</p><div id="rbn"></div></div>`;
     bnWatch(()=>{if(tab==='meet'&&$('#rbn'))bnMeetDraw($('#rbn'))});bnMeetDraw($('#rbn'));
   };
   const listSongs=()=>{
@@ -2344,7 +2411,7 @@ async function startMeeting(from=0){
   const list=schedList();if(!list.length){toast('Add songs first');return}
   let off=0;const starts=[],sl=[];
   list.forEach(x=>{starts.push(off);const a=songSlides(x);off+=a.length;sl.push(...a)});
-  present(sl,starts[Math.min(from,list.length-1)]||0,{title:schedName()||'This meeting'});
+  present(sl,starts[Math.min(from,list.length-1)]||0,{title:schedTitle()});
 }
 function meeting(ids,name){
   if(ids){
@@ -2355,16 +2422,18 @@ function meeting(ids,name){
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
   M.innerHTML=`<div class="view"><h2>This meeting</h2>
-  <input class="search" id="mn" placeholder="Meeting name (e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
+  <p class="mtt" id="mtt" style="font:700 1.05rem var(--serif);margin:6px 0 8px"></p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="search" id="md" type="date" value="${esc(MT.date||'')}" aria-label="Meeting date" style="flex:0 0 170px;margin:0"><input class="search" id="mn" placeholder="Meeting name (e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name" style="flex:1;min-width:160px;margin:0"></div>
   <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
   <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
   <p class="sub" id="mpi"></p>
   ${lkRow()}
   <div id="mrc"></div><ol class="ml" id="ml"></ol>
-  <div class="mbn"><h3>📖 Bible notes – last 7 days</h3><p class="sub">Verses sent to the projector this week, shown in full. Tap 📽 to project one again.</p><div id="mbnl"></div></div>
+  <div class="mbn"><h3>📖 Last Sunday Reference</h3><p class="sub">Verses sent to the projector this week, shown in full. Tap 📽 to project one again.</p><div id="mbnl"></div></div>
   <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
-  if(!canEdit())$('#mn').readOnly=true;
+  if(!canEdit()){$('#mn').readOnly=true;$('#md').disabled=true}
+  const tt=()=>{$('#mtt').textContent=meetTitle(MT.date,MT.name)};tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
   $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit preview code to watch the presentation here, then tap ⛶ for full screen.'}</p>
       <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
@@ -2389,15 +2458,16 @@ function meeting(ids,name){
   const mv=(i,j)=>{if(!canEdit())return;[MT.ids[i],MT.ids[j]]=[MT.ids[j],MT.ids[i]];mSave();renderML()};
   $('#ml').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
     if(d.up!==undefined)mv(+d.up,+d.up-1);else if(d.dn!==undefined)mv(+d.dn,+d.dn+1);else if(d.play!==undefined)startMeeting(+d.play)};
-  $('#mn').oninput=e=>{if(!canEdit())return;MT.name=e.target.value;mSave()};
+  $('#mn').oninput=e=>{if(!canEdit())return;MT.name=e.target.value;mSave();tt()};
+  $('#md').onchange=e=>{if(!canEdit())return;MT.date=e.target.value;mSave();tt()};
   $('#mq').oninput=renderPick;
-  const info=()=>{const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${PUB.name||'This meeting'} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
+  const info=()=>{const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${meetTitle(PUB.date,PUB.name)} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
   info();afterPub=info;
   $('#mp').onclick=()=>startMeeting(0);
   $('#mr').onclick=()=>{if(!PJ.rm)rmStart();else $('#mrc').scrollIntoView({block:'nearest'});mrc()};
-  $('#ms').onclick=async()=>{const u=`${location.origin}/#/meeting/${MT.ids.join(',')}/${encodeURIComponent(MT.name||'')}`;
-    if(navigator.share)navigator.share({title:MT.name||'This meeting',url:u}).catch(()=>{});else{try{await navigator.clipboard.writeText(u);toast('Link copied')}catch{toast('Could not copy')}}};
-  $('#mc').onclick=()=>{if(!canEdit()){needLogin();return}if(MT.ids.length&&confirm('Remove the whole list?')){MT.ids=[];mSave();afterMeet()}};
+  $('#ms').onclick=async()=>{const u=`${location.origin}/#/meeting/${MT.ids.join(',')}/${encodeURIComponent(MT.name||'')}`,mtl=meetTitle(MT.date,MT.name);
+    if(navigator.share)navigator.share({title:mtl,url:u}).catch(()=>{});else{try{await navigator.clipboard.writeText(u);toast('Link copied')}catch{toast('Could not copy')}}};
+  $('#mc').onclick=()=>{if(!canEdit()){needLogin();return}if(MT.ids.length&&confirm('Remove the whole list?')){MT.ids=[];MT.date='';mSave();afterMeet();tt();$('#md').value=''}};
   renderML();renderPick();mrc();
 }
 
@@ -2481,7 +2551,7 @@ function videosHome(){
 }
 /* a video belongs to the "Live sermon" tab when YouTube says it is / was a live stream (or its title says live); everything else is an "Uploaded sermon" */
 const isLiveVid=v=>v.live==='live'||v.live==='upcoming'||v.live==='ended'||/\blive\b|లైవ్|ప్రత్యక్ష/i.test(v.title||'');
-let smTab=LS.get('smtab','live');
+let smTab=LS.get('smtab','live'),smN=30;   // smN = how many videos of the open tab are listed (Show more adds 30)
 function sermons(){
   nav('sermons');title('Sermons');
   if(!ytSet()){M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2></div><p class="empty">The YouTube channel has not been added yet.<br><small>Admin → YouTube &amp; Android App → YouTube channel link</small></p>`;return}
@@ -2493,10 +2563,11 @@ function sermons(){
     if(!$('#sml'))return;
     const all=vids(),lv=all.filter(isLiveVid),up=all.filter(v=>!isLiveVid(v)),tab=smTab==='up'?'up':'live',v=tab==='live'?lv:up;
     $('#smt').innerHTML=`<button role="tab" data-t="live" aria-pressed="${tab==='live'}" aria-selected="${tab==='live'}">🔴 Live sermon (${lv.length})</button><button role="tab" data-t="up" aria-pressed="${tab==='up'}" aria-selected="${tab==='up'}">📁 Uploaded sermon (${up.length})</button>`;
-    $('#smt').querySelectorAll('button').forEach(b=>b.onclick=()=>{smTab=b.dataset.t;LS.set('smtab',smTab);draw(done);liveCard()});
-    if($('#smm')&&all.length)$('#smm').textContent=`${all.length} videos from our YouTube channel`;
+    $('#smt').querySelectorAll('button').forEach(b=>b.onclick=()=>{smTab=b.dataset.t;LS.set('smtab',smTab);smN=30;draw(done);liveCard()});
+    if($('#smm')&&all.length)$('#smm').textContent=`All ${all.length} sermon videos from our YouTube channel – live streams and uploads`;
     const none=tab==='live'?'No live sermons yet.':'No uploaded sermons yet.';
-    $('#sml').innerHTML=v.length?`<ul class="vlist">${v.map(vRow).join('')}</ul>`:`<p class="empty">${all.length?none:done?'Could not load the videos.<br><small>'+esc(ytErr||'Check your connection and try again.')+'</small><br><br><button class="mhe" id="vre">↻ Try again</button>':'Loading videos…'}</p>`;
+    $('#sml').innerHTML=v.length?`<ul class="vlist">${v.slice(0,smN).map(vRow).join('')}</ul>${v.length>smN?`<div class="pad" style="text-align:center"><button class="mhe" id="vmore">Show more (${v.length-smN} more)</button></div>`:''}`:`<p class="empty">${all.length?none:done?'Could not load the videos.<br><small>'+esc(ytErr||'Check your connection and try again.')+'</small><br><br><button class="mhe" id="vre">↻ Try again</button>':'Loading videos…'}</p>`;
+    $('#vmore')&&($('#vmore').onclick=()=>{smN+=30;draw(done)});
     $('#vre')&&($('#vre').onclick=()=>{draw(false);ytLoad().then(()=>draw(true))});
   };
   draw(false);liveCard();
@@ -3013,6 +3084,7 @@ function route(){
   const h=location.hash||'#/',p=h.split('/').slice(1).map(decodeURIComponent);
   svStop&&svStop();shKeyOff&&shKeyOff();shKeyOff=null;bnOpen(false);document.body.classList.toggle('nobn',p[0]==='remote'||p[0]==='screen');clearTimeout(RT);M.onclick=null;afterMeet=null;bnUnwatch();mpGo=null;afterPub=null;window.scrollTo(0,0);document.title=siteName();
   if(p[0]==='song')songView(p[1]);
+  else if(p[0]==='bible'&&p[1]==='mynotes')myNotes();
   else if(p[0]==='bible'){p[2]?read(+p[1],+p[2],p[3]||0):p[1]!==undefined?chapters(+p[1]):bibleHome()}
   else if(p[0]==='meeting')meeting(p[1],p[2]);
   else if(p[0]==='index')songsIndex(p[1]);
