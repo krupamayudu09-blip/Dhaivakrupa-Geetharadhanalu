@@ -517,6 +517,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .mpvr button{flex:none;border-radius:999px;padding:6px 16px;min-height:42px;border:0;background:var(--pill);color:var(--pilltx);font:600 .9rem var(--sans)}
 .mpvs{position:relative;margin-top:10px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;--pb:#000;--pt:#fff;--pa:#F6D98B;background:var(--pb);color:var(--pt)}
 .mpvs[hidden]{display:none}
+.rpvw{max-width:210px;margin:4px auto 10px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .mpvs[data-th=light]{--pb:#fff;--pt:#111827;--pa:#9A6B12}.mpvs[data-th=blue]{--pb:#0B1F44;--pt:#F3F6FF;--pa:#F6D98B}
 .mpvs .bgi{position:absolute;inset:0;background-size:cover;background-position:center;display:none}.mpvs .bgi::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--ov,.45))}
 .mpvs.hasbg .bgi{display:block}.mpvs.hasbg{--pt:#fff;--pa:#F6D98B}
@@ -679,14 +680,14 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 @media (max-width:360px){.nscard .nst small{display:none}.dvbox{border-radius:16px;padding:8px 8px 10px}.dvt{font-size:.92rem}}
 @media (max-height:480px) and (orientation:landscape){.toast{bottom:calc(var(--nav) + 8px)}.nscard{top:calc(8px + env(safe-area-inset-top))}.dvbox{width:min(70vw,460px)}.dvbox img{max-height:62dvh;width:auto;margin:0 auto}}
 /* ---- My notes: verse action bar, star and highlight colours ---- */
-#mnbar{position:absolute;left:8px;top:0;z-index:33;display:none;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:min(94vw,520px);padding:8px 12px;border-radius:22px;background:var(--gfill,var(--surface));-webkit-backdrop-filter:var(--blur,none);backdrop-filter:var(--blur,none);border:1px solid var(--gline,var(--line));box-shadow:0 10px 30px rgba(0,0,0,.28)}
+#mnbar{position:absolute;left:8px;top:0;z-index:33;display:none;align-items:center;gap:6px;flex-wrap:nowrap;justify-content:center;max-width:94vw;padding:4px 8px;border-radius:18px;background:var(--gfill,var(--surface));-webkit-backdrop-filter:var(--blur,none);backdrop-filter:var(--blur,none);border:1px solid var(--gline,var(--line));box-shadow:0 10px 30px rgba(0,0,0,.28)}
 #mnbar.on{display:flex}
 #mnbar button{border:0;cursor:pointer;font:600 .9rem var(--sans);color:var(--text)}
-#mnbar .vstar{min-height:40px;padding:0 14px;border-radius:999px;background:var(--pill,var(--accent));color:var(--pilltx,#fff)}
+#mnbar .vstar{min-height:30px;min-width:32px;padding:0 6px;font-size:1.15rem;line-height:1;border-radius:999px;background:var(--pill,var(--accent));color:var(--pilltx,#fff)}
 #mnbar .vstar.on{background:#E0A800;color:#222}
-#mnbar .vc{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.25);background:var(--c)}
+#mnbar .vc{width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,0,0,.25);background:var(--c)}
 #mnbar .vc.none{background:transparent;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
-#mnbar .vx{min-height:36px;padding:0 10px;background:transparent;color:var(--muted)}
+#mnbar .vx{min-height:30px;padding:0 6px;background:transparent;color:var(--muted)}
 .v.hl{background:color-mix(in srgb,var(--hl) 62%,transparent)}.v.hl.sel{outline:2px solid var(--accent)}
 .v.mnv sup::after{content:" ★"}
 .sr.hl{background:color-mix(in srgb,var(--hl) 55%,transparent)}
@@ -1092,13 +1093,12 @@ function songsHome(){
   const s=D.settings;
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
-  <div class="pad" id="bnh"></div>
   <div class="pad"><h3 class="ixh">Song index</h3><div id="ixh"></div></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
   indexGrid($('#ixh'));homeVerse();videosHome();apkHome();recentViewed();
-  afterMeet=mhome;afterPub=mhome;mhome();newSongHome();bnWatch(bnHome);bnHome();
+  afterMeet=mhome;afterPub=mhome;mhome();newSongHome();
 }
 const songRow=x=>{const on=inMeet(x.id);return `<li class="sr"><a href="#/song/${encodeURIComponent(x.id)}"><div><div class="t">${x.featured?'<span class="star" aria-label="Featured">★</span> ':''}${esc(x.title)}</div><div class="sub">${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</div></div><span class="tag">${esc(x.category||'')}</span></a><button class="add" data-add="${esc(x.id)}" aria-label="Add to this meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`};
 function drawSongs(){
@@ -1428,7 +1428,7 @@ function indexGrid(host){
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<input class="search" id="iq" type="search" placeholder="Search songs – Telugu or English letters (e.g. yesu, stuthi)…" aria-label="Search songs">
-  <div class="seg" id="ixm" style="margin-top:10px"><button data-m="letter" aria-pressed="${mode==='letter'}">By letter</button><button data-m="cat" aria-pressed="${mode==='cat'}">By category</button></div>
+  <div class="seg" id="ixm" style="margin-top:10px"><button data-m="letter" aria-pressed="${mode==='letter'}">Index</button><button data-m="cat" aria-pressed="${mode==='cat'}">Category</button></div>
   <p class="meta">${mode==='cat'?'Tap a category to see its songs.':'Tap a letter to see the songs that start with it.'}</p>
   <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${esc(c)}</b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
   host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.m);indexGrid(host)});
@@ -1555,7 +1555,7 @@ function bnDraw(){
   const row=x=>{
     const ex=vsExpand(x.v),first=ex[0]||0,last=(/^\d+-\d+$/.test(x.v)?ex[ex.length-1]:0),ref=`${x.l==='en'?books[x.b].en:books[x.b].te} ${x.c}${x.v?':'+x.v:''}`;
     return `<li class="sr"><a href="#/bible/${x.b}/${x.c}${first?'/'+first:''}" data-bnclose><div style="flex:1;min-width:0"><div class="t">${esc(ref)}</div><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${['te','en','both'].includes(x.l)?x.l:'te'}"></div><div class="bnn">${esc(clock(x.t))}${x.n>1?' · sent '+x.n+' times':''}</div></div></a>`
-      +`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button></li>`;
+      +(canEdit()?`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button>`:'')+`</li>`;
   };
   const top=box.scrollTop;
   box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
@@ -1576,17 +1576,6 @@ function bnMeetDraw(box){
   const top=box.scrollTop;
   box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.</p>';
   box.scrollTop=top;fillNoteVerses(box);
-}
-/* home screen: the verses the admin / contributors projected most recently (full text), visible to everyone including visitors */
-function bnHome(){
-  const box=$('#bnh');if(!box)return;
-  const l=bpPrune().slice(0,2),sig=l.map(x=>x.id+':'+x.t+':'+x.l).join('|')+blang;
-  if(!l.length){box.innerHTML='';box._sig='';return}
-  if(box._sig===sig&&box.childElementCount)return;box._sig=sig;
-  const day=t=>{const d=new Date(t),k=d.toDateString();return k===new Date().toDateString()?'Today':k===new Date(Date.now()-864e5).toDateString()?'Yesterday':d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'})};
-  box.innerHTML=`<section class="mh"><div class="mhh"><b>Projected verse</b><a class="sub" href="#/notes" style="text-decoration:none">Sunday Reference ›</a></div>`
-    +l.map(x=>{const L=['te','en','both'].includes(x.l)?x.l:'te',f=vsExpand(x.v)[0];return `<a href="#/bible/${x.b}/${x.c}${f?'/'+f:''}" style="display:block;text-decoration:none;color:inherit;padding:8px 0"><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(day(x.t))}</div></a>`}).join('')+`</section>`;
-  fillNoteVerses(box);
 }
 /* keep a Bible-notes list fresh while its page is open */
 async function bnRemove(id){
@@ -1822,7 +1811,7 @@ async function read(b,c,hv){
   let vb=document.getElementById('mnbar');if(!vb){vb=document.createElement('div');vb.id='mnbar';document.body.appendChild(vb)}
   const selV=()=>[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
   const bar=()=>{const sv=selV();if(!sv.length){vb.classList.remove('on');return}const all=sv.every(v=>mnHas(b,c,v));
-    vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}">${all?'★ In My notes':'☆ Add to My notes'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on');place()};
+    vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}" aria-label="${all?'Remove from My notes':'Add to My notes'}" title="${all?'In My notes':'Add to My notes'}">${all?'★':'☆'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on');place()};
   const place=()=>{const f=document.querySelector('.v.sel');if(!f||!vb.classList.contains('on'))return;const r=f.getBoundingClientRect(),h=vb.offsetHeight,w=vb.offsetWidth;
     let top=r.top+scrollY-h-8;if(r.top-h-8<70)top=r.bottom+scrollY+8;   // above the verse; underneath when the verse is at the top of the screen
     vb.style.top=top+'px';vb.style.left=Math.max(8,Math.min(scrollX+innerWidth-w-8,scrollX+innerWidth/2-w/2))+'px'};
@@ -2165,6 +2154,7 @@ function remote(code){
   }
   LS.set('rmcode',code);
   M.innerHTML=`<div class="view"><p class="meta" id="rs">Connecting…</p>
+  <div class="mpvs rpvw" id="rpv"><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div></div>
   <div class="tb" style="margin:0 0 6px"><a class="mhe" href="#/screen/${code}">🖥 Full-screen preview</a></div>
   <div class="rbar"><button data-c="prev" aria-label="Previous">‹</button><span id="rcn2"></span><button data-c="next" aria-label="Next">›</button><button data-c="blank" aria-label="Blank screen">⬛</button></div>
   <div class="seg rtabs">${[['now','Presenting'],['meet','Meeting'],['songs','Songs'],['bible','Bible']].map(([k,t])=>`<button data-tab="${k}" aria-pressed="false">${t}</button>`).join('')}</div>
@@ -2255,7 +2245,7 @@ function remote(code){
     vsBar();
   };
   const seg0=()=>`<div class="seg" style="margin:10px 0">${[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu and English']].map(([v,t,n])=>`<button data-l="${v}" aria-pressed="${blang===v}" aria-label="${n}" title="${n}" style="min-width:48px;font-weight:700">${t}</button>`).join('')}</div>`;
-  const sendVerses=(vs,logv)=>{noteBible(R.b,R.c,+String(logv||vs).split(/[-,]/)[0]||undefined);noteProj(R.b,R.c,logv===undefined?vs:logv,blang);send('bible',`${R.b}:${R.c}:${blang}${vs?':'+vs:''}`);toast('Sent to the projector');R.vs=new Set();R.anc=null;R.last=0;setTab('now')};
+  const sendVerses=(vs,logv)=>{noteBible(R.b,R.c,+String(logv||vs).split(/[-,]/)[0]||undefined);noteProj(R.b,R.c,logv===undefined?vs:logv,blang);send('bible',`${R.b}:${R.c}:${blang}${vs?':'+vs:''}`);toast('Sent to the projector');R.vs=new Set();R.anc=null;R.last=0;if(typeof vsBar==='function'&&$('#vbar'))vsBar()};
   const tapVerse=n=>{
     if(R.rng){
       if(R.anc){const a=Math.min(R.anc,n),z=Math.max(R.anc,n);R.vs=new Set(Array.from({length:z-a+1},(_,k)=>a+k));R.anc=null;R.rng=false}
@@ -2270,8 +2260,8 @@ function remote(code){
     if(d.c)send(d.c);
     else if(d.g!==undefined)send('goto',+d.g);
     else if(d.tab)setTab(d.tab);
-    else if(d.ms!==undefined){send('start',+d.ms);toast('Sent to the projector');setTab('now')}
-    else if(d.song){send('song',d.song);toast('Sent to the projector');setTab('now')}
+    else if(d.ms!==undefined){send('start',+d.ms);toast('Sent to the projector')}
+    else if(d.song){send('song',d.song);toast('Sent to the projector')}
     else if(d.m){const on=mids.includes(d.m);send(on?'mdel':'madd',d.m);mids=on?mids.filter(x=>x!==d.m):[...mids,d.m];midHold=Date.now()+5000;tab==='meet'?tabMeet():listSongs()}
     else if(d.let!==undefined){R.l=d.let===R.l?'':d.let;listSongs()}
     else if(d.bk!==undefined){R.b=d.bk===''?null:+d.bk;R.c=null;R.vs=new Set();R.rng=false;R.anc=null;tabBible()}
@@ -2286,10 +2276,10 @@ function remote(code){
       else if(d.vgo==='from')sendVerses(String(a[0]),String(a[0]));
       else if(d.vgo==='sel'){const cv=vsCompact(a);sendVerses(a.length===1?cv+',':cv,cv)}
     }
-    else if(d.bnp){const x=bpPrune().find(n=>n.id===d.bnp);if(!x)return;const L=['te','en','both'].includes(x.l)?x.l:'te';noteBible(x.b,x.c,vsExpand(x.v)[0]||undefined);noteProj(x.b,x.c,x.v,L);send('bible',bnNoteArg(x));toast('Sent to the projector');setTab('now')}
-    else if(d.rv){const [rb,rc,rvs]=d.rv.split(':');noteBible(+rb,+rc,+String(rvs).split('-')[0]||undefined);noteProj(+rb,+rc,rvs,blang);send('bible',`${rb}:${rc}:${blang}:${rvs}`);toast('Sent to the projector');setTab('now')}
-    else if(d.rb){const [rb,rc]=d.rb.split(':').map(Number);noteBible(rb,rc);noteProj(rb,rc,'',blang);send('bible',`${rb}:${rc}:${blang}`);toast('Sent to the projector');setTab('now')}
-    else if(d.ch){noteBible(R.b,+d.ch);noteProj(R.b,+d.ch,'',blang);send('bible',`${R.b}:${d.ch}:${blang}`);toast('Sent to the projector');setTab('now')}
+    else if(d.bnp){const x=bpPrune().find(n=>n.id===d.bnp);if(!x)return;const L=['te','en','both'].includes(x.l)?x.l:'te';noteBible(x.b,x.c,vsExpand(x.v)[0]||undefined);noteProj(x.b,x.c,x.v,L);send('bible',bnNoteArg(x));toast('Sent to the projector')}
+    else if(d.rv){const [rb,rc,rvs]=d.rv.split(':');noteBible(+rb,+rc,+String(rvs).split('-')[0]||undefined);noteProj(+rb,+rc,rvs,blang);send('bible',`${rb}:${rc}:${blang}:${rvs}`);toast('Sent to the projector')}
+    else if(d.rb){const [rb,rc]=d.rb.split(':').map(Number);noteBible(rb,rc);noteProj(rb,rc,'',blang);send('bible',`${rb}:${rc}:${blang}`);toast('Sent to the projector')}
+    else if(d.ch){noteBible(R.b,+d.ch);noteProj(R.b,+d.ch,'',blang);send('bible',`${R.b}:${d.ch}:${blang}`);toast('Sent to the projector')}
     else if(d.ot!==undefined){R.ot=d.ot==='1';tabBible()}
     else if(d.l){blang=d.l;LS.set('blang',blang);tabBible()}
   };
@@ -2304,7 +2294,6 @@ function remote(code){
     $('#rs').textContent=(rmP&&rmP.open()?'⚡ ':'')+(age>=30000?'🟡 The projector device is not responding…':closed?'🟢 Connected':'🟢 Presenting');
     $('#rcn2').textContent=closed?'':`${cur+1} / ${s.total}`;
     if(!got){got=true;setTab(closed?'meet':'now')}
-    else if(was&&!closed)setTab('now');
     else if(tab==='now'){(sch||(!was&&closed))?tabNow():hl()}   // stay on the Presenting tab even when the presentation ends
     else if(mch){tab==='meet'?tabMeet():tab==='songs'&&listSongs()}
   };
@@ -2324,7 +2313,7 @@ function remote(code){
     }catch{if($('#rs'))$('#rs').textContent='No internet';RT=setTimeout(tick,1500);return}
     RT=setTimeout(tick,0);
   };
-  tick();
+  tick();miniPreview(code,$('#rpv'));
 }
 
 /* ---------- Full-screen preview (#/screen/CODE): shows what the projector shows, live, on any screen ---------- */
