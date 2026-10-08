@@ -19,7 +19,18 @@
     'https://images.unsplash.com/photo-1647974794666-20c41a4a3a4a?auto=format&fit=crop&w=2000&q=75',  // glowing dawn over a snowy lake
     'https://images.pexels.com/photos/33786721/pexels-photo-33786721.jpeg?auto=compress&cs=tinysrgb&w=1800', // golden wheat field at sunset
     'https://images.pexels.com/photos/33411342/pexels-photo-33411342.jpeg?auto=compress&cs=tinysrgb&w=1800', // wheat in soft evening light
-    'https://images.pexels.com/photos/37161481/pexels-photo-37161481.jpeg?auto=compress&cs=tinysrgb&w=1800'  // wheat in sunset light
+    'https://images.pexels.com/photos/37161481/pexels-photo-37161481.jpeg?auto=compress&cs=tinysrgb&w=1800',  // wheat in sunset light
+    'https://images.pexels.com/photos/18709648/pexels-photo-18709648.jpeg?auto=compress&cs=tinysrgb&w=1800', // mountains in fog and sunrise light
+    'https://images.pexels.com/photos/15336713/pexels-photo-15336713.jpeg?auto=compress&cs=tinysrgb&w=1800', // mountains at sunset
+    'https://images.pexels.com/photos/15740865/pexels-photo-15740865.jpeg?auto=compress&cs=tinysrgb&w=1800', // sunlight shining through clouds over hills
+    'https://images.pexels.com/photos/15740863/pexels-photo-15740863.jpeg?auto=compress&cs=tinysrgb&w=1800', // fog over wooded hills
+    'https://images.pexels.com/photos/6324136/pexels-photo-6324136.jpeg?auto=compress&cs=tinysrgb&w=1800', // green forested mountains at sunset
+    'https://images.pexels.com/photos/35449768/pexels-photo-35449768.jpeg?auto=compress&cs=tinysrgb&w=1800', // serene mountain landscape at twilight
+    'https://images.pexels.com/photos/80463/pexels-photo-80463.jpeg?auto=compress&cs=tinysrgb&w=1800', // sunset over the ocean
+    'https://images.pexels.com/photos/26887895/pexels-photo-26887895.jpeg?auto=compress&cs=tinysrgb&w=1800', // gentle wave on the shore at sunset
+    'https://images.pexels.com/photos/18907610/pexels-photo-18907610.jpeg?auto=compress&cs=tinysrgb&w=1800', // sea waves at dawn
+    'https://images.pexels.com/photos/31533953/pexels-photo-31533953.jpeg?auto=compress&cs=tinysrgb&w=1800', // sunset over a calm ocean shoreline
+    'https://images.pexels.com/photos/16030870/pexels-photo-16030870.jpeg?auto=compress&cs=tinysrgb&w=1800'  // sea at dawn
   ];
 
   /* ---- Verse themes: every verse of the day belongs to a theme; the picture follows it (photo tagged with that theme, else a painted scene in the theme's colours) ---- */
@@ -60,7 +71,7 @@
     return Object.assign({key:k},TH[k]);
   };
   /* Built-in photos (indexes into VERSE_BGS) used only for themes they really suit, and only if no own photo fits. Other themes get the painted scene. */
-  g.THEME_BGS=g.THEME_BGS||{peace:[1],creation:[0,1],hope:[0],praise:[0],guidance:[0],provision:[2,3,4]};
+  g.THEME_BGS=g.THEME_BGS||{love:[11,12,14],peace:[1,8,12],strength:[5,6],faith:[6,10,14],praise:[0,7,11],guidance:[0,5,13,15],hope:[0,7,13],creation:[0,1,9],salvation:[7,11],prayer:[8,10],wisdom:[9,15],provision:[2,3,4,9]};
 
   const normU=u=>/^https?:/i.test(u)?u:'/'+String(u).replace(/^\/+/,'');
   async function loadFrom(L,n,opt){

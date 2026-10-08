@@ -715,6 +715,48 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 .cat b .ixi{width:20px;height:20px;color:var(--accent)}
 .view h2 .ixi{width:24px;height:24px;margin-right:8px;color:var(--accent);vertical-align:-4px}
 
+
+/* ---- song categories ---- */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:10px 0}
+.cc{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);background:var(--surface);border-radius:18px;text-decoration:none;color:var(--text);min-width:0;transition:transform .15s,box-shadow .15s}
+.cc:hover,.cc:focus-visible{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.ci{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal;color:var(--h,var(--accent));background:color-mix(in srgb,var(--h,var(--accent)) 15%,transparent)}
+.ci .ixi{width:24px;height:24px;vertical-align:0}
+.cn{display:flex;flex-direction:column;min-width:0;flex:1}
+.cn b{font:600 1rem/1.35 var(--serif);color:var(--hd,var(--ink));overflow-wrap:anywhere}
+.cn small{font:500 .78rem var(--sans);color:var(--muted);margin-top:2px}
+.cc em{flex:none;font-style:normal;font-size:1.4rem;color:var(--muted)}
+.chead{display:flex;align-items:center;gap:14px;margin:10px 0 8px}
+.chead h2{margin:0}.chead .meta{margin:2px 0 0}
+.chead .ci{width:54px;height:54px;border-radius:16px}
+.cchips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cchips::-webkit-scrollbar{display:none}
+.cchip{flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);text-decoration:none;color:var(--text);font:600 .9rem var(--sans);white-space:nowrap}
+.cchip small{font:600 .74rem var(--sans);color:var(--muted)}
+.cchip.on{background:var(--h,var(--accent));border-color:var(--h,var(--accent));color:#fff}.cchip.on small{color:#fff;opacity:.85}
+
+/* ---- Bible page ---- */
+.bsr{position:relative}
+.bsr .ixi{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);pointer-events:none;vertical-align:0}
+.bsr .search{padding-left:42px}
+.bqa{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
+.bqc{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);background:var(--surface);border-radius:16px;text-decoration:none;color:var(--text);min-width:0}
+.bqc i{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.bqc i .ixi{width:22px;height:22px;vertical-align:0}
+.bqc span{display:flex;flex-direction:column;min-width:0}
+.bqc small{font:500 .75rem var(--sans);color:var(--muted)}
+.bqc b{font:600 .98rem/1.3 var(--serif);overflow-wrap:anywhere}
+.bqc.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.bqc.go small{color:#fff;opacity:.85}.bqc.go i{background:rgba(255,255,255,.22);color:#fff}
+.bsg{display:flex;flex-wrap:nowrap}.bsg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.bsg .ixi{width:18px;height:18px;vertical-align:0}
+.bk{display:flex;align-items:center;gap:12px}
+.bk .bn{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 .82rem var(--sans);font-style:normal;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.bk .bt{min-width:0}
+.ib{display:inline-flex;align-items:center;gap:6px}
+.ib .ixi{width:17px;height:17px;vertical-align:0}
+.chs a{font-size:1.02rem}.chs a:hover{border-color:var(--accent);color:var(--accent)}
+
 /* ---- Meeting Verses: responsive across phones, foldables, landscape, tablets and desktop ---- */
 #bnsheet,#bnbar,.mbn{box-sizing:border-box}
 #bnsheet{height:min(78vh,640px);height:min(78dvh,640px);max-height:calc(100vh - env(safe-area-inset-top) - 12px);max-height:calc(100dvh - env(safe-area-inset-top) - 12px);width:100%;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
@@ -880,7 +922,7 @@ async function idToken(force){
   if(q&&q.access_token){
     if(!force&&q.expires_at-Date.now()>60000)return q.access_token;
     try{return sessSave(await idPost('/token',{grant_type:'refresh_token',refresh_token:q.refresh_token})).access_token}
-    catch(e){if(e.status>=400&&e.status<500){sessClear();return null}return q.expires_at>Date.now()?q.access_token:null}
+    catch(e){return e.status>=400&&e.status<500?null:q.access_token}   // never wipe the saved login here: only the Log out button ends it
   }
   if(!localStorage.getItem('gotrue.user'))return null;      // older login made with the popup widget
   const w=await idLoad();let u=null;
@@ -946,9 +988,16 @@ function idLogin(go){
 }
 async function idLogout(){ID_MEM=null;sessClear();try{if(window.netlifyIdentity)await window.netlifyIdentity.logout()}catch{}try{localStorage.removeItem('gotrue.user')}catch{}applyRole();route()}
 const needLogin=()=>{toast('Only contributors can change the meeting');idLogin()};
-function idExpired(){sessClear();ID_MEM=null;try{localStorage.removeItem('gotrue.user')}catch{}MT.dirty=false;LS.set('meeting',MT);applyRole();toast('Contributor session ended – please log in again')}
+function idExpired(){const n=LS.get('idwarn',0);if(Date.now()-n>6e4){LS.set('idwarn',Date.now());toast('Could not renew the contributor login – check the internet or log in once again')}}   // login is kept; changes stay queued and are sent later
 window.addEventListener('storage',e=>{if(e.key==='gotrue.user'||e.key===IDK){SESS=null;applyRole()}});
 applyRole();
+/* keep the contributor logged in for good: ask the browser not to clear storage, and renew the token quietly in the background */
+(function(){
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
+  const keep=()=>{const q=sessLoad();if(q&&q.access_token&&q.expires_at-Date.now()<15*60*1000)idToken(true).catch(()=>{})};
+  setTimeout(keep,1200);setInterval(keep,10*60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)keep()});addEventListener('online',keep);addEventListener('focus',keep);
+})();
 function autoPub(now){
   clearTimeout(pubTimer);
   pubTimer=setTimeout(async()=>{
@@ -1203,12 +1252,21 @@ const IXI={
  idx:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18l4-11 4 11M5 14h5"/><path d="M14.5 7h6M14.5 12h6M14.5 17h6"/></svg>',
  cat:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
 };
+const CATI=[IXI.cat,
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>',
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg>',
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>',
+ '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/></svg>'];
+const CATH=['#B8892B','#D2557A','#3D8FD1','#E08A2E','#7B5BD6','#2E9A7A','#C9A227'];
+const catIc=i=>CATI[i%CATI.length],catHue=i=>CATH[i%CATH.length];
 function songsHome(){
   nav('songs');title();
   const s=D.settings;
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
-  <div class="pad"><h3 class="ixh">${IXI.idx}Song index</h3><div id="ixh"></div></div>
+  <div class="pad"><div id="ixh"></div></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
@@ -1531,8 +1589,12 @@ function catPage(name){
   name=name||'';const label=name||'Uncategorised';
   nav('songs');title(label);const l=D.songs.filter(x=>(x.category||'')===name);
   const all=catList();if(D.songs.some(x=>!x.category))all.push('');
-  const chips=all.map(c=>`<a class="cat" style="padding:8px 12px;font-size:.9rem${c===name?';border-color:var(--accent);color:var(--accent)':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}><b>${esc(c||'Uncategorised')}</b><span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${IXI.cat}${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
+  const ai=Math.max(0,all.indexOf(name));
+  const chips=all.map((c,i)=>`<a class="cchip${c===name?' on':''}" style="--h:${catHue(i)}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}>${esc(c||'Uncategorised')}<small>${D.songs.filter(x=>(x.category||'')===c).length}</small></a>`).join('');
+  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a>
+  <div class="chead" style="--h:${catHue(ai)}"><i class="ci">${catIc(ai)}</i><div><h2>${esc(label)}</h2><p class="meta">${l.length} ${l.length===1?'song':'songs'}</p></div></div>
+  <div class="cchips" role="navigation" aria-label="Categories">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
+  const on=M.querySelector('.cchip.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
 }
 /* alphabet grid + search, used directly on the home screen */
 function indexGrid(host){
@@ -1543,7 +1605,7 @@ function indexGrid(host){
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<div class="ixrow"><input class="search" id="iq" type="search" placeholder="Search songs…" aria-label="Search songs"><div class="seg" id="ixm"><button data-ixm="letter" aria-pressed="${mode==='letter'}" aria-label="Index" title="Index">${IXI.idx}</button><button data-ixm="cat" aria-pressed="${mode==='cat'}" aria-label="Category" title="Category">${IXI.cat}</button></div></div>
-  <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${IXI.cat}<span style="color:inherit;font:inherit">${esc(c)}</span></b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
+  <div id="ig">${mode==='cat'?`<div class="cgrid">${cc.map(([c,n],i)=>`<a class="cc" style="--h:${catHue(i)}" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><i class="ci">${catIc(i)}</i><span class="cn"><b>${esc(c)}</b><small>${n} ${n===1?'song':'songs'}</small></span><em aria-hidden="true">›</em></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
   host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.ixm);indexGrid(host)});
   $('#iq').oninput=e=>{const q=fz(e.target.value);
     $('#ig').style.display=q?'none':'';
@@ -1590,7 +1652,7 @@ function bibleRecent(remote){
   const r=BR().filter(x=>books[x[0]]).slice(0,10);if(!r.length)return '';
   const nm=x=>`${blang==='en'?books[x[0]].en:books[x[0]].te} ${x[1]}${x[2]?':'+x[2]:''}`,pv=x=>`data-rw="${x[0]}:${x[1]}:${x[2]||1}"`;
   setTimeout(()=>fillRecentWords(document),0);
-  return `<h3 class="ixh">Recently viewed</h3><ul class="list" style="padding:0">${r.map(x=>remote
+  return `<h3 class="ixh">${BI.clock}Recently viewed</h3><ul class="list" style="padding:0">${r.map(x=>remote
     ?`<li class="sr"><button class="mrow" data-rb="${x[0]}:${x[1]}">${esc(nm(x))}<small class="rw" ${pv(x)}></small></button></li>`
     :`<li class="sr"><a href="#/bible/${x[0]}/${x[1]}${x[2]?'/'+x[2]:''}"><div style="min-width:0"><div class="t">${esc(nm(x))}</div><div class="rw" ${pv(x)}></div></div></a></li>`).join('')}</ul>`;
 }
@@ -1856,22 +1918,33 @@ function bindRefSearch(inp,out,mode){
   if(BQ)go();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pj]');if(!b)return;e.preventDefault();const [bi,c,vs]=b.dataset.pj.split(':');startBible(+bi,+c,blang,vs)});
+const BI={
+ search:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>',
+ book:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>',
+ star:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/></svg>',
+ clock:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ play:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>',
+ cross:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg>',
+ copy:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></svg>',
+ plus:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+ screen:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20"/></svg>'
+};
 function bibleHome(){
   nav('bible');title('Holy Bible');
   if(!books.length){M.innerHTML='<p class="empty">Bible data could not be loaded. Please refresh the page.</p>';return}
   const last=LS.get('last',null);
   const list=books.map((b,i)=>({b,i})).filter(o=>ot?o.i<39:o.i>=39);
-  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
-  <a class="mhe" href="#/bible/mynotes" style="margin-top:10px;display:inline-flex">☆ My notes (${mnList().length})</a>
-  <div class="seg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">Old Testament</button><button data-t="0" aria-pressed="${!ot}">New Testament</button></div>
+  M.innerHTML=`<div class="view"><div class="bsr">${BI.search}<input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"></div><ul class="list bqres" id="bres" style="padding:0"></ul>
+  <div class="bqa">${last?`<a class="bqc go" href="#/bible/${last[0]}/${last[1]}"><i>${BI.play}</i><span><small>Continue reading</small><b>${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</b></span></a>`:''}<a class="bqc" href="#/bible/mynotes"><i>${BI.star}</i><span><small>My notes</small><b>${mnList().length} saved</b></span></a></div>
+  <div class="seg bsg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">${BI.book}Old Testament</button><button data-t="0" aria-pressed="${!ot}">${BI.cross}New Testament</button></div>
   <div style="margin-top:12px">${langSeg()}</div>
-  <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} chapters</span></a>`).join('')}</div>${bibleRecent()}</div>`;
+  <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><i class="bn">${i+1}</i><div class="bt"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} ${b.ch===1?'chapter':'chapters'}</span></div></a>`).join('')}</div>${bibleRecent()}</div>`;
   M.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ot=b.dataset.t==='1';bibleHome()});
   bindSeg(bibleHome);bindRefSearch($('#bq'),$('#bres'),'web');
 }
 function chapters(b){
   nav('bible');const bk=books[b];if(!bk)return bibleHome();title(blang==='en'?bk.en:bk.te);
-  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Books</a><h2>${esc(bk.te)}</h2><p class="meta">${esc(bk.en)}</p>
+  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Books</a><h2>${BI.book}${esc(bk.te)}</h2><p class="meta">${esc(bk.en)} • ${bk.ch} ${bk.ch===1?'chapter':'chapters'}</p>
   <div class="chs">${Array.from({length:bk.ch},(_,i)=>`<a href="#/bible/${b}/${i+1}">${i+1}</a>`).join('')}</div></div>`;
 }
 async function read(b,c,hv){
@@ -1884,7 +1957,7 @@ async function read(b,c,hv){
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
   M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
   <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Meeting Verses</button><button id="pj1" class="pjonly">Projector</button></div>
+  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp" class="ib">${BI.copy}Copy</button><a class="mhe ib" href="#/bible/mynotes" id="mynb" style="min-height:36px">${BI.star}My notes</a><button id="lsr" class="pjonly ib">${BI.plus}Meeting Verses</button><button id="pj1" class="pjonly ib">${BI.screen}Projector</button></div>
   
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
   <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
