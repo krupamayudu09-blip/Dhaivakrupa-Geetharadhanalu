@@ -27,6 +27,7 @@ li .n{width:1.6em;color:#667;text-align:right}li .t{flex:1}li small{display:bloc
 <main>
   <section>
     <h2>Today's schedule / ఈ రోజు షెడ్యూల్</h2>
+    <input type="date" id="dt" aria-label="Meeting date" style="margin-bottom:6px">
     <input type="text" id="nm" placeholder="Meeting name, e.g. ఆదివారం ఆరాధన">
     <div class="row"><span id="cnt"></span><button id="clr">🗑 Clear songs</button></div>
     <label class="row" style="margin-top:6px;font-size:.9rem"><input type="checkbox" id="keep"> Keep the meeting name when clearing songs</label>
@@ -43,7 +44,7 @@ li .n{width:1.6em;color:#667;text-align:right}li .t{flex:1}li small{display:bloc
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const LSget=(k,d)=>{try{return localStorage.getItem(k)??d}catch{return d}},LSset=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
-let songs=[],byId={},S={name:'',ids:[],t:0},dirty=false,saving=false,timer=null;
+let songs=[],byId={},S={name:'',date:'',ids:[],t:0},dirty=false,saving=false,timer=null;
 const norm=s=>String(s||'').toLowerCase();
 const status=(t,c)=>{const e=$('#st');e.textContent=t;e.className=c||''};
 
@@ -57,7 +58,7 @@ async function pull(first){
   if(dirty||saving)return;
   try{
     const r=await fetch('/api/meeting',{cache:'no-store'});if(!r.ok)return;const d=await r.json();
-    if(first||d.t!==S.t){const changed=!first&&JSON.stringify(d.ids)!==JSON.stringify(S.ids);S=d;$('#nm').value=S.name||'';render();
+    if(first||d.t!==S.t){const changed=!first&&JSON.stringify(d.ids)!==JSON.stringify(S.ids);S=d;$('#nm').value=S.name||'';$('#dt').value=S.date||'';render();
       if(changed)status('↻ Updated from the website','warn');else if(first)status('Saved on the server','')}
   }catch{status('Offline','bad')}
 }
@@ -82,7 +83,7 @@ function idLoad(){if(window.netlifyIdentity)return Promise.resolve(window.netlif
 async function token(force){const w=await idLoad();let u=null;for(let i=0;i<30&&!(u=w.currentUser());i++)await new Promise(r=>setTimeout(r,100));return u?await u.jwt(force):null}
 async function save(){
   if(saving){timer=setTimeout(save,300);return}
-  saving=true;const body={name:S.name||'',ids:S.ids};
+  saving=true;const body={name:S.name||'',date:S.date||'',ids:S.ids};
   try{
     let r=null;
     for(let k=0;k<2;k++){const t=await token(k===1);if(!t)break;r=await fetch('/api/meeting',{method:'POST',headers:{authorization:'Bearer '+t},body:JSON.stringify(body)});if(r.status!==401)break}
@@ -99,8 +100,9 @@ $('#ml').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.d
 $('#res').onclick=e=>{const b=e.target.closest('button[data-add]');if(b)change(()=>{if(!S.ids.includes(b.dataset.add))S.ids.push(b.dataset.add)})};
 $('#q').oninput=renderPick;
 $('#nm').oninput=e=>change(()=>{S.name=e.target.value});
+$('#dt').onchange=e=>change(()=>{S.date=e.target.value});
 $('#keep').checked=LSget('keepname','1')!=='0';
 $('#keep').onchange=e=>LSset('keepname',e.target.checked?'1':'0');
-$('#clr').onclick=()=>{if(!S.ids.length&&!S.name)return;if(confirm($('#keep').checked?'Remove all songs? The meeting name stays.':'Remove all songs and the meeting name?'))change(()=>{S.ids=[];if(!$('#keep').checked){S.name='';$('#nm').value=''}})};
+$('#clr').onclick=()=>{if(!S.ids.length&&!S.name)return;if(confirm($('#keep').checked?'Remove all songs? The meeting name stays.':'Remove all songs and the meeting name?'))change(()=>{S.ids=[];S.date='';$('#dt').value='';if(!$('#keep').checked){S.name='';$('#nm').value=''}})};
 load();
 </script></body></html>
