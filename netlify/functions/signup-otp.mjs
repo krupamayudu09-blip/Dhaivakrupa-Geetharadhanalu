@@ -51,10 +51,15 @@ const run = async (event, context) => {
   if (!EMAIL.test(email)) return J({ error: "Enter a valid e-mail address" }, 400);
 
   try { connectLambda(event); } catch {}
-  const store = getStore({ name: "signup-otp", consistency: "strong" });
+  const store = getStore({ name: "signup-otp" });   // writes/deletes: default mode (no strong-consistency requirement)
+  // reads: try strong consistency, fall back to the default if this environment does not support it (BlobsConsistencyError)
+  const readRec = async (k) => {
+    try { return await getStore({ name: "signup-otp", consistency: "strong" }).get(k, { type: "json" }); }
+    catch (e) { try { return await store.get(k, { type: "json" }); } catch { return null; } }
+  };
   const key = createHash("sha256").update(email).digest("hex").slice(0, 40);
   const now = Date.now();
-  const rec = await store.get(key, { type: "json" }).catch(() => null);
+  const rec = await readRec(key);
 
   if (b.op === "send") {
     if (rec && now - rec.sent < GAP) return J({ error: `Please wait ${Math.ceil((GAP - (now - rec.sent)) / 1000)} seconds before asking for a new code` }, 429);
