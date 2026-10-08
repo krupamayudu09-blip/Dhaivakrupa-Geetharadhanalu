@@ -294,3 +294,14 @@ Files: `index.html`, `sw.js` (cache v51), `admin/schedule.html`, `admin/bible-no
 - **Bible language** buttons are symbols: **తె** (Telugu), **A** (English), **తె+A** (both).
 - **Visitors** can again use the **Live preview** on the Meeting page (enter the 6-digit code, ⛶ Full screen) and the **phone remote** (Meeting page → Remote control, or About → Remote control). They still cannot project from their own device (no Projector / Present buttons, no double-tap).
 Files: `index.html`, `sw.js` (cache v52).
+
+## Contributor sign-up with e-mail OTP (no admin approval)
+**About → Contributor login → New here? Sign up**: the person enters name, e-mail and password, gets a 6-digit code by e-mail, enters it, and the account is created already confirmed with the `contributor` role. They are logged in straight away. The admin no longer has to approve new sign-ups (the Approvals page still works for older accounts).
+
+One-time setup (Netlify → Site settings → Environment variables), then redeploy:
+1. Create a free account at resend.com, add and verify your sending domain, and create an API key.
+2. `RESEND_API_KEY` = that key.  `OTP_FROM` = sender, e.g. `Dhaivakrupa <noreply@your-domain.com>` (Resend's test sender only delivers to your own address, so verify a domain for real use).
+3. Optional: `OTP_SECRET` = any long random text (makes the stored code hashes private to your site).
+4. Netlify Identity must stay enabled. Set Registration to **Invite only** so nobody can bypass the OTP using Netlify's own sign-up form; the OTP function creates accounts through the admin API and works with Invite only.
+
+Codes expire after 10 minutes, allow 5 wrong tries, work once, and can be re-sent once a minute. Files: `netlify/functions/signup-otp.mjs`, `index.html`.

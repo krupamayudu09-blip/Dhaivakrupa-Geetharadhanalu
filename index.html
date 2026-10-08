@@ -641,11 +641,7 @@ input.cs-in{margin:14px 0 0}
 .lgs a{color:var(--muted)}
 
 /* v32: scheduled songs on the home screen as pills; Bible notes in the Meeting tab line up; Sermons tabs */
-.cpg{margin:8px 0;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
-.cpg summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px;padding:6px 16px;cursor:pointer;font:700 1.02rem var(--serif);color:var(--hd,var(--ink))}
-.cpg summary::-webkit-details-marker{display:none}.cpg summary::after{content:"▾";margin-left:8px;transition:transform .2s;color:var(--muted)}.cpg[open] summary::after{transform:rotate(180deg)}
-.cpg summary span{margin-left:auto;font:600 .8rem var(--sans);color:var(--muted)}.cpg summary b{min-width:0;overflow-wrap:anywhere}
-.cpg .list{border-top:1px solid var(--line)}
+#ixm{display:grid;grid-template-columns:1fr 1fr;gap:8px}#ixm button{min-height:46px;font-weight:700;font-size:1rem;border-radius:12px}
 .mhpills{list-style:none;margin:10px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .mhpills li{padding:0}
 .mhpill{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));text-decoration:none;color:var(--ink)}
@@ -783,6 +779,7 @@ async function idApproved(tok){
   const u=await r.json(),ro=(u.app_metadata&&u.app_metadata.roles)||[];
   return ro.includes('contributor')||ro.includes('admin')||!!u.invited_at;
 }
+const EM_OK=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 const WAIT_MSG='Your account is waiting for admin approval. You can log in after the admin approves it.';
 const idUser=()=>{const q=sessLoad();if(q&&q.access_token&&q.email)return{email:q.email};try{const u=JSON.parse(localStorage.getItem('gotrue.user')||'null');if(u&&u.email)return u}catch{}return ID_MEM};
 const canEdit=()=>!!idUser();
@@ -815,6 +812,7 @@ function idLogin(go){
   <div id="lg_nw" hidden><label for="lg_n">Name</label><input id="lg_n" type="text" name="name" autocomplete="name"></div>
   <label for="lg_e">Email</label><input id="lg_e" type="email" name="email" autocomplete="username" inputmode="email" autocapitalize="off" required>
   <label for="lg_p">Password</label><input id="lg_p" type="password" name="password" autocomplete="current-password" required>
+  <div id="lg_ot" hidden><label for="lg_o">Code from your e-mail</label><input id="lg_o" type="text" name="otp" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="6-digit code"><p class="cs-st" style="text-align:left;margin:6px 0 0"><a href="#" id="lg_rs">Send a new code</a></p></div>
   <p class="cs-st" id="lg_m" style="text-align:left;margin:10px 0 0" role="alert"></p>
   <div class="cs-bar"><button class="mhe dl" type="submit" id="lg_ok" style="flex:1;justify-content:center;cursor:pointer">Log in</button><button class="mhe" type="button" id="lg_c" style="cursor:pointer">Cancel</button></div>
   <p class="cs-st"><a href="#" id="lg_f">Forgot password?</a> &nbsp;•&nbsp; <a href="#" id="lg_t">New here? Sign up</a></p></form>`;
@@ -824,8 +822,12 @@ function idLogin(go){
   setTimeout(()=>{try{$('#lg_e').focus()}catch{}},50);
   $('#lg_f').onclick=async e=>{e.preventDefault();const em=$('#lg_e').value.trim();if(!em){msg('Type your email first');return}
     try{await idPost('/recover',{email:em},true);msg('We sent a password reset link to '+em)}catch(x){msg(x.message)}};
-  let up=false;
-  const mode=v=>{up=v;$('#lg_h').textContent=up?'Sign up':'Contributor login';$('#lg_nw').hidden=!up;$('#lg_ok').textContent=up?'Create account':'Log in';
+  let up=false,step=0;
+  const otpPost=async body=>{let r;try{r=await fetch('/.netlify/functions/signup-otp',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)})}catch{throw new Error('No internet connection')}
+    let j={};try{j=await r.json()}catch{}if(!r.ok)throw new Error(j.error||'Something went wrong ('+r.status+')');return j};
+  const stepTo=n=>{step=n;$('#lg_ot').hidden=!n;$('#lg_e').readOnly=!!n;$('#lg_ok').textContent=!up?'Log in':n?'Verify & create account':'Send code';if(n)setTimeout(()=>{try{$('#lg_o').focus()}catch{}},50)};
+  $('#lg_rs').onclick=async e=>{e.preventDefault();msg('Sending a new code…');try{await otpPost({op:'send',email:$('#lg_e').value.trim(),name:$('#lg_n').value.trim()});msg('A new code was sent to '+$('#lg_e').value.trim())}catch(x){msg(x.message)}};
+  const mode=v=>{up=v;stepTo(0);$('#lg_h').textContent=up?'Sign up':'Contributor login';$('#lg_nw').hidden=!up;$('#lg_ok').textContent=up?'Send code':'Log in';
     $('#lg_p').autocomplete=up?'new-password':'current-password';$('#lg_f').hidden=up;$('#lg_t').textContent=up?'I already have an account':'New here? Sign up';msg('')};
   $('#lg_t').onclick=e=>{e.preventDefault();mode(!up)};
   d.querySelector('form').onsubmit=async e=>{
@@ -833,11 +835,21 @@ function idLogin(go){
     if(up){
       const em=$('#lg_e').value.trim(),pw=$('#lg_p').value,nm=$('#lg_n').value.trim();
       if(pw.length<8){b.disabled=false;msg('Password must be at least 8 characters');return}
-      msg('Creating your account…');
+      if(!EM_OK(em)){b.disabled=false;msg('Enter a valid email');return}
       try{
-        await idPost('/signup',{email:em,password:pw,data:{full_name:nm}},true);
-        b.disabled=false;mode(false);msg('Account created. Open the confirmation email we sent to '+em+', then wait for the admin to approve you. After that you can log in here.');
-      }catch(x){b.disabled=false;msg(/signups? (are )?(not allowed|disabled)/i.test(x.message)?'Sign up is closed right now. Ask the admin to invite you.':x.message)}
+        if(!step){
+          msg('Sending the code…');
+          await otpPost({op:'send',email:em,name:nm});
+          b.disabled=false;stepTo(1);msg('We e-mailed a 6-digit code to '+em+'. Enter it below. No admin approval is needed.');
+        }else{
+          const code=$('#lg_o').value.trim();if(!/^\d{6}$/.test(code)){b.disabled=false;msg('Enter the 6-digit code');return}
+          msg('Creating your account…');
+          await otpPost({op:'verify',email:em,name:nm,password:pw,code});
+          const tk=await idPost('/token',{grant_type:'password',username:em,password:pw});
+          sessSave(tk);close();applyRole();toast('Account created – you are logged in as a contributor');
+          if(go===true&&location.hash!=='#/contribute')location.hash='#/contribute';else route();
+        }
+      }catch(x){b.disabled=false;msg(x.message)}
       return;
     }
     msg('Logging in…');
@@ -1111,11 +1123,10 @@ function songsHome(){
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
   <div class="pad"><h3 class="ixh">Song index</h3><div id="ixh"></div></div>
-  <div class="pad" id="cph"></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
-  indexGrid($('#ixh'));catHome();homeVerse();videosHome();apkHome();recentViewed();
+  indexGrid($('#ixh'));homeVerse();videosHome();apkHome();recentViewed();
   afterMeet=mhome;afterPub=mhome;mhome();newSongHome();
 }
 const songRow=x=>{const on=inMeet(x.id);return `<li class="sr"><a href="#/song/${encodeURIComponent(x.id)}"><div><div class="t">${x.featured?'<span class="star" aria-label="Featured">★</span> ':''}${esc(x.title)}</div><div class="sub">${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</div></div><span class="tag">${esc(x.category||'')}</span></a><button class="add" data-add="${esc(x.id)}" aria-label="Add to this meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`};
@@ -1454,16 +1465,6 @@ function indexGrid(host){
     $('#ig').style.display=q?'none':'';
     const r=q?songSearch(D.songs,e.target.value):[];
     $('#ir').innerHTML=q?(r.length?r.map(songRow).join(''):'<li class="empty">No songs found.</li>'):''};
-}
-/* home screen: every category with its songs (tap a category to open or close it) */
-function catHome(){
-  const host=$('#cph');if(!host)return;
-  const groups=catList().map(c=>[c,D.songs.filter(x=>x.category===c)]);
-  const unc=D.songs.filter(x=>!x.category);if(unc.length)groups.push(['Uncategorised',unc]);
-  const open=LS.get('cphopen',[]);
-  host.innerHTML=groups.length?`<h3 class="ixh">Songs by category</h3>`+groups.filter(g=>g[1].length).map(([c,l])=>`<details class="cpg" data-c="${esc(c)}"${open.includes(c)?' open':''}><summary><b>${esc(c)}</b><span>${l.length}</span></summary><ul class="list" style="padding:0"></ul></details>`).join(''):'';
-  const fill=d=>{const u=d.querySelector('ul');if(u.childElementCount)return;const c=d.dataset.c,l=c==='Uncategorised'?unc:D.songs.filter(x=>x.category===c);u.innerHTML=l.map(songRow).join('')};
-  host.querySelectorAll('details').forEach(d=>{if(d.open)fill(d);d.addEventListener('toggle',()=>{if(d.open)fill(d);const a=[...host.querySelectorAll('details[open]')].map(x=>x.dataset.c);LS.set('cphopen',a)})});
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
@@ -2929,7 +2930,7 @@ function contributors(){
   <div class="cp-h"><span>Our team</span>${names.length?`<span class="sub">${names.length}</span>`:''}</div>
   ${names.length?`<div class="cp-grid">${names.map(card).join('')}</div>`:`<div class="cp-empty">No contributors are listed yet.</div>`}
   <section class="cp-join"><b>${me?'You are logged in':'Want to help?'}</b>
-    <p>${me?`Signed in as ${esc(me.email)}. Add or edit songs and the daily verse picture right here.`:'Contributors add songs and the daily verse picture. Sign up below (or ask the admin to invite you). After the admin approves you, log in.'}</p>
+    <p>${me?`Signed in as ${esc(me.email)}. Add or edit songs and the daily verse picture right here.`:'Contributors add songs and the daily verse picture. Sign up below with your email – a one-time code confirms it and you can start right away (no admin approval).'}</p>
     <div class="cp-btns"><a class="mhe dl" href="#/contribute">${me?'Add songs / edit verse':'Contributor login'}</a>${contact}${me?`<button class="mhe" data-idout>Log out</button>`:''}</div>
   </section></div>`;
   /* light follows the finger / pointer across each card */
