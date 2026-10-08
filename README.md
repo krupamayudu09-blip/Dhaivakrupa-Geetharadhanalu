@@ -286,3 +286,11 @@ Files changed: `index.html`, `sw.js` (cache v46). No server changes. Deploy both
 - **Bible search with Tenglish**: type Telugu words in English letters (`prema`, `rakshana`, `yesu`, `devudu`); matches are found in the Telugu Bible by sound, and the English word is searched in the English Bible.
 - **Alerts** (toast, new-song card, live bar, daily-verse / greeting popups, login and help dialogs) resize for small phones, tablets, landscape and desktop, and respect the notch / safe areas.
 Files: `index.html`, `sw.js` (cache v51), `admin/schedule.html`, `admin/bible-notes.html`.
+
+## v52 – My notes split, bar above the verse, projected verse for everyone, language symbols, visitor preview + remote
+- **My notes** lists only verses saved with ☆. A colour highlight only colours the verse in the chapter and is not listed in My notes.
+- The ☆ / colour bar now appears **above the tapped verse** (underneath it when the verse is at the top of the screen).
+- **Projected verse**: the verses admin/contributors project are shown to everyone, including visitors, in a "Projected verse" card on the home screen and in the Sunday Reference sheet.
+- **Bible language** buttons are symbols: **తె** (Telugu), **A** (English), **తె+A** (both).
+- **Visitors** can again use the **Live preview** on the Meeting page (enter the 6-digit code, ⛶ Full screen) and the **phone remote** (Meeting page → Remote control, or About → Remote control). They still cannot project from their own device (no Projector / Present buttons, no double-tap).
+Files: `index.html`, `sw.js` (cache v52).

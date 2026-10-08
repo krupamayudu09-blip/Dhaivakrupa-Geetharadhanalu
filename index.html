@@ -528,8 +528,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 /* My notes marker + word-search highlight */
 .v.mnv sup::after{content:" ★";color:#E0A800}.sr mark{background:color-mix(in srgb,var(--accent) 28%,transparent);color:inherit;border-radius:3px;padding:0 1px}
 body.nc .bnx{display:none!important}.bnx{flex:none}
-body.nc .lkrow,body.nc .mhp,body.nc .mpv,body.nc .rmbtn,body.nc [data-bnp],body.nc .pjonly,body.nc #pjr{display:none!important}
-body.nc [data-add],body.nc [data-m],body.nc #mt1,body.nc #mc,body.nc .mb,body.nc .mgate,body.nc #pj1,body.nc [data-pj],body.nc #mp,body.nc #mr,body.nc #mrc,body.nc [data-play]{display:none!important}
+body.nc:not(.rmt) .lkrow,body.nc:not(.rmt) .mhp,body.nc [data-bnp],body.nc .pjonly,body.nc #pjr{display:none!important}
+.vonly{display:none}body.nc .vonly{display:inline-flex}
+body.nc:not(.rmt) [data-add],body.nc:not(.rmt) [data-m],body.nc:not(.rmt) #mt1,body.nc:not(.rmt) #mc,body.nc:not(.rmt) .mb,body.nc:not(.rmt) .mgate,body.nc:not(.rmt) #pj1,body.nc:not(.rmt) [data-pj],body.nc:not(.rmt) #mp,body.nc:not(.rmt) #mr,body.nc:not(.rmt) #mrc,body.nc:not(.rmt) [data-play]{display:none!important}
 .mnote{margin:8px 0 12px;padding:12px 14px;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi);color:var(--muted);font-size:.92rem;line-height:1.6}
 .mnote[hidden]{display:none}
 .mnote button{margin-top:8px;border-radius:999px;padding:6px 16px;min-height:38px;border:0;background:var(--pill);color:var(--pilltx);font:600 .9rem var(--sans)}
@@ -678,14 +679,14 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 @media (max-width:360px){.nscard .nst small{display:none}.dvbox{border-radius:16px;padding:8px 8px 10px}.dvt{font-size:.92rem}}
 @media (max-height:480px) and (orientation:landscape){.toast{bottom:calc(var(--nav) + 8px)}.nscard{top:calc(8px + env(safe-area-inset-top))}.dvbox{width:min(70vw,460px)}.dvbox img{max-height:62dvh;width:auto;margin:0 auto}}
 /* ---- My notes: verse action bar, star and highlight colours ---- */
-#vbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + 36px + env(safe-area-inset-bottom));z-index:33;display:none;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:min(94vw,520px);padding:8px 12px;border-radius:22px;background:var(--gfill,var(--surface));-webkit-backdrop-filter:var(--blur,none);backdrop-filter:var(--blur,none);border:1px solid var(--gline,var(--line));box-shadow:0 10px 30px rgba(0,0,0,.28)}
-#vbar.on{display:flex}
-#vbar button{border:0;cursor:pointer;font:600 .9rem var(--sans);color:var(--text)}
-#vbar .vstar{min-height:40px;padding:0 14px;border-radius:999px;background:var(--pill,var(--accent));color:var(--pilltx,#fff)}
-#vbar .vstar.on{background:#E0A800;color:#222}
-#vbar .vc{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.25);background:var(--c)}
-#vbar .vc.none{background:transparent;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
-#vbar .vx{min-height:36px;padding:0 10px;background:transparent;color:var(--muted)}
+#mnbar{position:absolute;left:8px;top:0;z-index:33;display:none;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:min(94vw,520px);padding:8px 12px;border-radius:22px;background:var(--gfill,var(--surface));-webkit-backdrop-filter:var(--blur,none);backdrop-filter:var(--blur,none);border:1px solid var(--gline,var(--line));box-shadow:0 10px 30px rgba(0,0,0,.28)}
+#mnbar.on{display:flex}
+#mnbar button{border:0;cursor:pointer;font:600 .9rem var(--sans);color:var(--text)}
+#mnbar .vstar{min-height:40px;padding:0 14px;border-radius:999px;background:var(--pill,var(--accent));color:var(--pilltx,#fff)}
+#mnbar .vstar.on{background:#E0A800;color:#222}
+#mnbar .vc{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.25);background:var(--c)}
+#mnbar .vc.none{background:transparent;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
+#mnbar .vx{min-height:36px;padding:0 10px;background:transparent;color:var(--muted)}
 .v.hl{background:color-mix(in srgb,var(--hl) 62%,transparent)}.v.hl.sel{outline:2px solid var(--accent)}
 .v.mnv sup::after{content:" ★"}
 .sr.hl{background:color-mix(in srgb,var(--hl) 55%,transparent)}
@@ -1091,12 +1092,13 @@ function songsHome(){
   const s=D.settings;
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
+  <div class="pad" id="bnh"></div>
   <div class="pad"><h3 class="ixh">Song index</h3><div id="ixh"></div></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
   indexGrid($('#ixh'));homeVerse();videosHome();apkHome();recentViewed();
-  afterMeet=mhome;afterPub=mhome;mhome();newSongHome();
+  afterMeet=mhome;afterPub=mhome;mhome();newSongHome();bnWatch(bnHome);bnHome();
 }
 const songRow=x=>{const on=inMeet(x.id);return `<li class="sr"><a href="#/song/${encodeURIComponent(x.id)}"><div><div class="t">${x.featured?'<span class="star" aria-label="Featured">★</span> ':''}${esc(x.title)}</div><div class="sub">${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</div></div><span class="tag">${esc(x.category||'')}</span></a><button class="add" data-add="${esc(x.id)}" aria-label="Add to this meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`};
 function drawSongs(){
@@ -1465,7 +1467,7 @@ function songView(id){
 /* ---------- Bible ---------- */
 const bname=(b,l)=>l==='en'?b.en:b.te;
 async function load(l,n){const k=l+n;if(!cache[k])cache[k]=await (await fetch(`/bible/${l}/${n}.json`)).json();return cache[k]}
-function langSeg(){return `<div class="seg" role="group" aria-label="Language">${[['te','Telugu'],['en','English'],['both','Both']].map(([v,t])=>`<button data-l="${v}" aria-pressed="${blang===v}">${t}</button>`).join('')}</div>`}
+function langSeg(){return `<div class="seg" role="group" aria-label="Language">${[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu and English']].map(([v,t,n])=>`<button data-l="${v}" aria-pressed="${blang===v}" aria-label="${n}" title="${n}" style="min-width:48px;font-weight:700">${t}</button>`).join('')}</div>`}
 function bindSeg(fn){M.querySelectorAll('.seg button[data-l]').forEach(b=>b.onclick=()=>{blang=b.dataset.l;LS.set('blang',blang);fn()})}
 let ot=true;
 /* last 10 Bible chapters/verses the visitor opened (kept on the device, shared with the remote tab) */
@@ -1574,6 +1576,17 @@ function bnMeetDraw(box){
   const top=box.scrollTop;
   box.innerHTML=groups.length?groups.map(g=>`<h4 class="bnd">${esc(g.k)}</h4><ul class="list" style="padding:0">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Sunday Reference yet.</p>';
   box.scrollTop=top;fillNoteVerses(box);
+}
+/* home screen: the verses the admin / contributors projected most recently (full text), visible to everyone including visitors */
+function bnHome(){
+  const box=$('#bnh');if(!box)return;
+  const l=bpPrune().slice(0,2),sig=l.map(x=>x.id+':'+x.t+':'+x.l).join('|')+blang;
+  if(!l.length){box.innerHTML='';box._sig='';return}
+  if(box._sig===sig&&box.childElementCount)return;box._sig=sig;
+  const day=t=>{const d=new Date(t),k=d.toDateString();return k===new Date().toDateString()?'Today':k===new Date(Date.now()-864e5).toDateString()?'Yesterday':d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'})};
+  box.innerHTML=`<section class="mh"><div class="mhh"><b>Projected verse</b><a class="sub" href="#/notes" style="text-decoration:none">Sunday Reference ›</a></div>`
+    +l.map(x=>{const L=['te','en','both'].includes(x.l)?x.l:'te',f=vsExpand(x.v)[0];return `<a href="#/bible/${x.b}/${x.c}${f?'/'+f:''}" style="display:block;text-decoration:none;color:inherit;padding:8px 0"><div class="bnv" data-bv="${x.b}:${x.c}:${esc(x.v)}:${L}"></div><div class="bnn">${esc(day(x.t))}</div></a>`}).join('')+`</section>`;
+  fillNoteVerses(box);
 }
 /* keep a Bible-notes list fresh while its page is open */
 async function bnRemove(id){
@@ -1717,13 +1730,15 @@ async function wordSearch(q,out){
 }
 /* ----- My notes: verses a person marks as important; kept only on their own device/login, never shared ----- */
 const mnKey=()=>'mynotes:'+((idUser()&&idUser().email)||'guest').toLowerCase();
-const mnList=()=>{const a=LS.get(mnKey(),[]);return Array.isArray(a)?a.filter(x=>x&&books[x.b]&&x.c>=1&&x.v>=1):[]};
+const mnAll=()=>{const a=LS.get(mnKey(),[]);return Array.isArray(a)?a.filter(x=>x&&books[x.b]&&x.c>=1&&x.v>=1).map(x=>({...x,s:x.s===undefined?!x.col:!!x.s})):[]};
+const mnList=()=>mnAll().filter(x=>x.s);   // My notes = starred verses only (highlight-only verses are not listed)
 const MN_COLS=[['Yellow','#FFD54A'],['Green','#7ED957'],['Blue','#5BB8FF'],['Pink','#FF8FB8'],['Orange','#FFA94D']];
-const mnSave=a=>LS.set(mnKey(),a.slice(0,500));
-function mnAdd(b,c,vs){const a=mnList();let n=0;vs.forEach(v=>{if(!a.some(x=>x.b===b&&x.c===c&&x.v===v)){a.unshift({b,c,v,t:Date.now()});n++}});mnSave(a);return n}
+const mnSave=a=>LS.set(mnKey(),a.filter(x=>x.s||x.col).slice(0,800));
+const mnFind=(a,b,c,v)=>a.find(y=>y.b===b&&y.c===c&&y.v===v);
+function mnAdd(b,c,vs){const a=mnAll();let n=0;vs.forEach(v=>{let x=mnFind(a,b,c,v);if(!x){x={b,c,v,t:Date.now(),s:true};a.unshift(x);n++}else if(!x.s){x.s=true;x.t=Date.now();n++}});mnSave(a);return n}
 const mnHas=(b,c,v)=>mnList().some(x=>x.b===b&&x.c===c&&x.v===v);
-function mnColor(b,c,vs,col){const a=mnList();vs.forEach(v=>{let x=a.find(y=>y.b===b&&y.c===c&&y.v===v);if(!x){x={b,c,v,t:Date.now()};a.unshift(x)}if(col)x.col=col;else delete x.col});mnSave(a)}
-function mnDel(b,c,v){mnSave(mnList().filter(x=>!(x.b===b&&x.c===c&&x.v===v)))}
+function mnColor(b,c,vs,col){const a=mnAll();vs.forEach(v=>{let x=mnFind(a,b,c,v);if(!x){if(!col)return;x={b,c,v,t:Date.now(),s:false};a.unshift(x)}if(col)x.col=col;else delete x.col});mnSave(a)}
+function mnDel(b,c,v){const a=mnAll(),x=mnFind(a,b,c,v);if(x)x.s=false;mnSave(a)}   // un-star; a colour highlight stays
 function myNotes(){
   nav('bible');title('My notes');
   const l=mnList();
@@ -1769,7 +1784,7 @@ async function read(b,c,hv){
   M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
   <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
   <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Sunday Reference</button><button id="pj1" class="pjonly">Projector</button></div>
-  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap a verse, then use ☆ to save it to My notes or pick a colour to highlight it (only you can see this).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
+  <p class="meta" style="margin:6px 0 0;font-size:.85rem">Tip: tap a verse – ☆ saves it to My notes, a colour only highlights it (only you can see this).<span class="pjonly"> Double-click a verse to send it to the presentation.</span></p>
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
   <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
   window.scrollTo(0,0);
@@ -1802,15 +1817,19 @@ async function read(b,c,hv){
     noteProj(b,c,sel.length?vsCompact(sel.map(i=>i+1)):'',blang);
     present(idx.map(i=>({h:`<div class="pj-ref">${esc(ref)}:${i+1}</div>${te[i]?`<div class="pj-l">${esc(te[i])}</div>`:''}${en[i]?`<div class="${te[i]?'pj-e':'pj-l'}">${esc(en[i])}</div>`:''}`})),0,{title:ref,bible:sel.length?null:{b,c,lang:blang}});
   };
-  const mark=()=>{const my=mnList();document.querySelectorAll('#vs .v').forEach(el=>{const x=my.find(y=>y.b===b&&y.c===c&&y.v===+el.dataset.i+1);el.classList.toggle('mnv',!!x);el.classList.toggle('hl',!!(x&&x.col));if(x&&x.col)el.style.setProperty('--hl',x.col);else el.style.removeProperty('--hl')})};mark();
+  const mark=()=>{const my=mnAll();document.querySelectorAll('#vs .v').forEach(el=>{const x=my.find(y=>y.b===b&&y.c===c&&y.v===+el.dataset.i+1);el.classList.toggle('mnv',!!(x&&x.s));el.classList.toggle('hl',!!(x&&x.col));if(x&&x.col)el.style.setProperty('--hl',x.col);else el.style.removeProperty('--hl')})};mark();
   /* action bar: appears when a verse is tapped – ☆ saves it to My notes, a colour highlights it, ✕ clears the selection */
-  let vb=document.getElementById('vbar');if(!vb){vb=document.createElement('div');vb.id='vbar';document.body.appendChild(vb)}
+  let vb=document.getElementById('mnbar');if(!vb){vb=document.createElement('div');vb.id='mnbar';document.body.appendChild(vb)}
   const selV=()=>[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
   const bar=()=>{const sv=selV();if(!sv.length){vb.classList.remove('on');return}const all=sv.every(v=>mnHas(b,c,v));
-    vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}">${all?'★ In My notes':'☆ Add to My notes'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on')};
+    vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}">${all?'★ In My notes':'☆ Add to My notes'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on');place()};
+  const place=()=>{const f=document.querySelector('.v.sel');if(!f||!vb.classList.contains('on'))return;const r=f.getBoundingClientRect(),h=vb.offsetHeight,w=vb.offsetWidth;
+    let top=r.top+scrollY-h-8;if(r.top-h-8<70)top=r.bottom+scrollY+8;   // above the verse; underneath when the verse is at the top of the screen
+    vb.style.top=top+'px';vb.style.left=Math.max(8,Math.min(scrollX+innerWidth-w-8,scrollX+innerWidth/2-w/2))+'px'};
+  addEventListener('resize',place);
   vb.onclick=e=>{const sv=selV();if(!sv.length)return;
     if(e.target.closest('#vst')){if(sv.every(v=>mnHas(b,c,v))){sv.forEach(v=>mnDel(b,c,v));toast('Removed from My notes')}else{mnAdd(b,c,sv);toast('Saved to My notes')}mark();bar();return}
-    const cb=e.target.closest('[data-col]');if(cb){mnColor(b,c,sv,cb.dataset.col);mark();bar();toast(cb.dataset.col?'Highlighted – saved in My notes':'Highlight removed');return}
+    const cb=e.target.closest('[data-col]');if(cb){mnColor(b,c,sv,cb.dataset.col);mark();bar();toast(cb.dataset.col?'Verse highlighted':'Highlight removed');return}
     if(e.target.closest('#vcl')){document.querySelectorAll('.v.sel').forEach(v=>v.classList.remove('sel'));bar()}};
   const vsEl=$('#vs'),prevClick=vsEl.onclick;vsEl.onclick=e=>{prevClick&&prevClick.call(vsEl,e);bar()};
   addEventListener('hashchange',()=>vb.classList.remove('on'),{once:true});
@@ -2139,7 +2158,6 @@ $('#pjsh').onclick=()=>navigator.share?navigator.share({title:'Remote',url:rmLin
 let RT=null,rmP=null;
 function remote(code){
   clearTimeout(RT);if(rmP){rmP.stop();rmP=null}nav('');title('Remote control');
-  if(!canEdit()){M.innerHTML='<div class="view"><h2>Remote control</h2><p class="empty">Only admin and contributors can use the projector remote.<br><br><button class="mhe" data-idin>Contributor login</button></p></div>';return}
   if(!/^\d{6}$/.test(code||'')){
     M.innerHTML=`<div class="view"><h2>Remote control</h2><p class="meta">On the projector screen tap the 📱 button (or 📱 Remote on the Meeting page) to see a 6-digit code.</p>
     <input class="search" id="rc" inputmode="numeric" maxlength="6" placeholder="6-digit code" value="${esc(LS.get('rmcode',''))}"><div class="tb" style="margin-top:14px"><button id="rg">Connect</button></div></div>`;
@@ -2191,7 +2209,7 @@ function remote(code){
     $('#rq').oninput=e=>{R.q=e.target.value;listSongs()};listSongs()};
   const tabBible=()=>{
     if(!books.length){T.innerHTML='<p class="empty">Bible data could not be loaded.</p>';return}
-    const seg=`<div class="seg" style="margin:10px 0">${[['te','Telugu'],['en','English'],['both','Both']].map(([v,t])=>`<button data-l="${v}" aria-pressed="${blang===v}">${t}</button>`).join('')}</div>`;
+    const seg=`<div class="seg" style="margin:10px 0">${[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu and English']].map(([v,t,n])=>`<button data-l="${v}" aria-pressed="${blang===v}" aria-label="${n}" title="${n}" style="min-width:48px;font-weight:700">${t}</button>`).join('')}</div>`;
     if(R.b==null){
       const l=books.map((b,i)=>({b,i})).filter(o=>R.ot?o.i<39:o.i>=39);
       T.innerHTML=`<input class="search" id="rbq" type="search" value="${esc(BQ)}" placeholder="Search a verse – jn 3:16, ps 23, 1 cor 13:4-7" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="rbres" style="padding:0"></ul>${seg}<div class="seg"><button data-ot="1" aria-pressed="${R.ot}">Old Testament</button><button data-ot="0" aria-pressed="${!R.ot}">New Testament</button></div>
@@ -2236,7 +2254,7 @@ function remote(code){
     })();
     vsBar();
   };
-  const seg0=()=>`<div class="seg" style="margin:10px 0">${[['te','Telugu'],['en','English'],['both','Both']].map(([v,t])=>`<button data-l="${v}" aria-pressed="${blang===v}">${t}</button>`).join('')}</div>`;
+  const seg0=()=>`<div class="seg" style="margin:10px 0">${[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu and English']].map(([v,t,n])=>`<button data-l="${v}" aria-pressed="${blang===v}" aria-label="${n}" title="${n}" style="min-width:48px;font-weight:700">${t}</button>`).join('')}</div>`;
   const sendVerses=(vs,logv)=>{noteBible(R.b,R.c,+String(logv||vs).split(/[-,]/)[0]||undefined);noteProj(R.b,R.c,logv===undefined?vs:logv,blang);send('bible',`${R.b}:${R.c}:${blang}${vs?':'+vs:''}`);toast('Sent to the projector');R.vs=new Set();R.anc=null;R.last=0;setTab('now')};
   const tapVerse=n=>{
     if(R.rng){
@@ -2481,7 +2499,7 @@ function meeting(ids,name){
   <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
   <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
-  <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
+  <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><a class="mhe vonly" href="#/remote" style="min-height:40px;align-items:center">Remote control</a><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
   <p class="sub" id="mpi"></p>
   ${lkRow()}
   <div id="mrc"></div><ol class="ml" id="ml"></ol>
@@ -2491,7 +2509,7 @@ function meeting(ids,name){
   if(!canEdit())$('#mn').hidden=true;
   tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
-  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit preview code to watch the presentation here, then tap ⛶ for full screen.'}</p>
+  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
       <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
       <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`);
   const stopP=()=>{mpFullOff();svStop&&svStop();$('#mpvs').hidden=true;$('#mpx').hidden=true;$('#mpg').hidden=false};
@@ -3137,7 +3155,7 @@ function about(){
 function route(){
   if(ID_TOKEN_FLOW&&/_token=/.test(location.hash)){songsHome();idLoad().catch(()=>{});return}
   const h=location.hash||'#/',p=h.split('/').slice(1).map(decodeURIComponent);
-  svStop&&svStop();shKeyOff&&shKeyOff();shKeyOff=null;bnOpen(false);document.body.classList.toggle('nobn',p[0]==='remote'||p[0]==='screen');clearTimeout(RT);M.onclick=null;afterMeet=null;bnUnwatch();mpGo=null;afterPub=null;window.scrollTo(0,0);document.title=siteName();
+  svStop&&svStop();shKeyOff&&shKeyOff();shKeyOff=null;bnOpen(false);document.body.classList.toggle('nobn',p[0]==='remote'||p[0]==='screen');document.body.classList.toggle('rmt',p[0]==='remote'||p[0]==='screen');clearTimeout(RT);M.onclick=null;afterMeet=null;bnUnwatch();mpGo=null;afterPub=null;window.scrollTo(0,0);document.title=siteName();
   if(p[0]==='song')songView(p[1]);
   else if(p[0]==='bible'&&p[1]==='mynotes')myNotes();
   else if(p[0]==='bible'){p[2]?read(+p[1],+p[2],p[3]||0):p[1]!==undefined?chapters(+p[1]):bibleHome()}
