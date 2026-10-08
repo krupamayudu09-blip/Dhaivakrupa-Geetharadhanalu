@@ -828,6 +828,74 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 
 /* respect reduced-motion for the sheet */
 @media (prefers-reduced-motion:reduce){#bnsheet,#bnback{transition:none}}
+
+/* ================= v34: no overlapping anywhere; compact home meeting card; friendlier Meeting page ================= */
+main,.pad,.view,.list li,.list a>div{min-width:0}
+.t,.mht,.mi a{overflow-wrap:anywhere}
+img,video,svg{max-width:100%}
+/* breathing room between stacked home blocks so nothing touches the search bar */
+#mh{padding-bottom:0}
+#mh:not(:empty){margin-bottom:14px}
+#mh .mh{margin:12px 0 0;overflow:hidden}
+#ixh{padding-top:2px}
+.ixrow{position:relative;z-index:1}
+/* --- home meeting card: small title (name + day/date), max 5 rows, no clipping --- */
+.mh{container-type:normal;padding:12px 14px}
+.mhh{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;font:inherit}
+.mhst{display:flex;flex-direction:column;min-width:0;flex:1}
+.mhst b{font:700 .95rem/1.3 var(--serif);color:var(--hd,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mhst small{font:500 .74rem/1.35 var(--sans);color:var(--muted);opacity:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mhc{flex:none;font:600 .78rem var(--sans);color:var(--accent)}
+.mhpills{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin:10px 0 0;max-height:none;overflow:visible;padding:0}
+.mhpill{min-height:42px;padding:5px 12px 5px 6px;min-width:0;overflow:hidden}
+.mhpill .mht{flex:1;min-width:0;font-size:.98rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mhmore{display:block;margin-top:8px;padding:8px 4px 2px;text-align:center;text-decoration:none;font:600 .85rem var(--sans);color:var(--accent)}
+.mhs{padding:10px 10px 10px 14px}
+@media (min-width:600px){.mhpills{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.mhpills{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-height:480px) and (orientation:landscape){.mhpills{max-height:none;overflow:visible}}
+/* --- Meeting page --- */
+.mtg>h2{margin:8px 0 10px}
+.mthead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi)}
+.mtmeta{min-width:0;flex:1}
+.mtmeta p{margin:0}
+.mtn{font:700 1.05rem/1.35 var(--serif);color:var(--hd,var(--ink));overflow-wrap:anywhere}
+.mtt{font:500 .82rem/1.4 var(--sans);color:var(--muted)}
+.mtn[hidden]+.mtt{font:700 1.02rem/1.35 var(--serif);color:var(--hd,var(--ink))}
+.mtcount{flex:none;padding:4px 12px;border-radius:999px;background:var(--pill);color:var(--pilltx);font:700 .8rem var(--sans)}
+.mtg #mn{margin:0 0 12px}
+.mtact{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:0 0 12px}
+.mtact>*{min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 10px;white-space:nowrap}
+.mtact .mtp{grid-column:1/-1;font-weight:700;background:var(--pill);color:var(--pilltx);border-color:transparent}
+.mtact .vonly{grid-column:1/-1}
+.mtsec{margin:18px 0 8px;font:700 1.05rem var(--serif);color:var(--hd,var(--ink))}
+.mbn .mtsec,.mgate .mtsec{margin-top:0}
+.mtg .mbn,.mtg .mgate{margin:20px 0 0}
+.mtg .lkrow{margin:0 0 10px}
+/* song rows: big readable title, controls never squeeze it */
+.mtg .ml{margin:0;padding:0;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi),var(--gsh);overflow:hidden}
+.mtg .mi{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:6px 10px;padding:10px 12px}
+.mtg .mi:last-child{border-bottom:0}
+.mtg .mi a{min-width:0;font-size:1.02rem}
+.mtg .mb{gap:4px}
+.mtg .mb button{width:36px;height:36px;font-size:.8rem}
+.mtg .mi .empty,.mtg li.empty{grid-column:1/-1}
+@media (max-width:480px){
+  .mtg .mi{grid-template-columns:28px minmax(0,1fr)}
+  .mtg .mi .mb{grid-column:2;justify-content:flex-end}
+  .mtg .mb button{width:40px;height:34px}
+}
+.mtg .ml>li.empty{display:block;padding:18px 14px;text-align:center;color:var(--muted)}
+/* live preview is tucked into a collapsible panel so it never pushes the song list down */
+.mpvd{margin:20px 0 0;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi);overflow:hidden}
+.mpvd>summary{display:flex;flex-direction:column;gap:2px;padding:12px 14px;cursor:pointer;list-style:none;font:700 1rem var(--sans);color:var(--hd,var(--ink))}
+.mpvd>summary::-webkit-details-marker{display:none}
+.mpvd>summary small{font:500 .78rem var(--sans);color:var(--muted)}
+.mpvd[open]>summary{border-bottom:1px solid var(--line)}
+.mpvd .mpv{margin:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+.mpvd .mpvr{flex-wrap:wrap}.mpvd .mpvr .search{flex:1 1 150px}
+.mtinfo{margin:14px 0 0;text-align:center}
+.mtg .mnote{margin:0 0 12px}
 </style></head>
 <body>
 <div class="app">
@@ -1614,9 +1682,14 @@ function indexGrid(host){
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
-  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(dayTitle())}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
-  e.innerHTML=`<section class="mh"><div class="mhh"><div><b class="mtit">${esc(dayTitle())}</b>${String(schedName()||'').trim()?`<div class="sub">${esc(String(schedName()).trim())}</div>`:''}</div><span class="sub">${l.length} songs</span></div>
-  <ul class="mhpills">${l.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul></section>`;
+  const nm=String(schedName()||'').trim();
+  /* small title: meeting name (if any) and the day + date underneath */
+  const ttl=`<span class="mhst"><b>${esc(nm||'This meeting')}</b><small>${esc(dayTitle())}</small></span>`;
+  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting">${ttl.replace('</small>',' · No songs yet</small>')}<span class="mhp" aria-hidden="true">＋</span></a>`;return}
+  const MAX=5,show=l.slice(0,MAX),more=l.length-show.length;
+  e.innerHTML=`<section class="mh"><a class="mhh" href="#/meeting" aria-label="Open the meeting page">${ttl}<span class="mhc">${l.length} ${l.length===1?'song':'songs'} ›</span></a>
+  <ul class="mhpills">${show.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul>
+  ${more>0?`<a class="mhmore" href="#/meeting">View all ${l.length} songs ›</a>`:''}</section>`;
 }
 function songView(id){
   nav('songs');const x=D.songs.find(s=>s.id===id);
@@ -2667,30 +2740,32 @@ function meeting(ids,name){
   }
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
-  M.innerHTML=`<div class="view"><h2>This meeting</h2>
-  <p class="mtt" id="mtt" style="font:700 1.15rem/1.4 var(--serif);margin:6px 0 2px"></p><p class="sub" id="mtn" style="margin:0 0 8px" hidden></p>
+  M.innerHTML=`<div class="view mtg"><h2>This meeting</h2>
+  <div class="mthead"><div class="mtmeta"><p class="mtn" id="mtn" hidden></p><p class="mtt" id="mtt"></p></div><span class="mtcount" id="mcnt"></span></div>
   <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
-  <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
-  <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><a class="mhe vonly" href="#/remote" style="min-height:40px;align-items:center">Remote control</a><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
-  <p class="sub" id="mpi"></p>
+  <div class="tb mtact"><button id="mp" class="mtp">▶ Present</button><button id="mr">📱 Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button><a class="mhe vonly" href="#/remote">Remote control</a></div>
   ${lkRow()}
-  <div id="mrc"></div><ol class="ml" id="ml"></ol>
-  <div class="mbn"><h3>📖 Meeting Verses</h3><div id="mbnl"></div></div>
-  <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
+  <div id="mrc"></div>
+  <h3 class="mtsec">Songs</h3>
+  <ol class="ml" id="ml"></ol>
+  <div class="mgate"><h3 class="mtsec">Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div>
+  <div class="mbn"><h3 class="mtsec">📖 Meeting Verses</h3><div id="mbnl"></div></div>
+  <details class="mpvd" id="mpvd"><summary>📺 Live preview<small>Watch what the projector shows</small></summary><div id="mpvbody"></div></details>
+  <p class="sub mtinfo" id="mpi"></p></div>`;
   const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
   if(!canEdit())$('#mn').hidden=true;
   tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
-  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
+  $('#mpvbody').innerHTML=`<div class="mpv"><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
       <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
-      <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`);
+      <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`;
   const stopP=()=>{mpFullOff();svStop&&svStop();$('#mpvs').hidden=true;$('#mpx').hidden=true;$('#mpg').hidden=false};
-  const watchP=code=>{LS.set('mpcode',code);svStop&&svStop();$('#mpvs').hidden=false;$('#mpx').hidden=false;$('#mpg').hidden=true;miniPreview(code,$('#mpvs'))};
+  const watchP=code=>{$('#mpvd').open=true;LS.set('mpcode',code);svStop&&svStop();$('#mpvs').hidden=false;$('#mpx').hidden=false;$('#mpg').hidden=true;miniPreview(code,$('#mpvs'))};
   $('#mpg').onclick=()=>{const v=$('#mpc').value.trim();if(!/^\d{6}$/.test(v)){toast('Enter the 6-digit code');return}watchP(v)};
   $('#mpx').onclick=stopP;$('#mpc').onkeydown=e=>{if(e.key==='Enter')$('#mpg').click()};
   $('#mpfs').onclick=e=>{e.stopPropagation();mpFullToggle()};
-  mpGo=(code,full)=>{if(!/^\d{6}$/.test(code||''))return;$('#mpc').value=code;if($('#mpvs').hidden)watchP(code);if(full)mpFullToggle(true);$('#mpvs').scrollIntoView({block:'nearest'})};   // used by the Remote panel
+  mpGo=(code,full)=>{if(!/^\d{6}$/.test(code||''))return;$('#mpvd').open=true;$('#mpc').value=code;if($('#mpvs').hidden)watchP(code);if(full)mpFullToggle(true);$('#mpvs').scrollIntoView({block:'nearest'})};   // used by the Remote panel
   bnWatch(()=>bnMeetDraw($('#mbnl')));bnMeetDraw($('#mbnl'));
   $('#mbnl').onclick=e=>{const b=e.target.closest('[data-bnp]');if(!b)return;e.preventDefault();const x=bpPrune().find(n=>n.id===b.dataset.bnp);if(!x)return;startBible(x.b,x.c,['te','en','both'].includes(x.l)?x.l:'te',bnSend(x))};
   const renderML=()=>{
@@ -2707,7 +2782,7 @@ function meeting(ids,name){
     if(d.up!==undefined)mv(+d.up,+d.up-1);else if(d.dn!==undefined)mv(+d.dn,+d.dn+1);else if(d.play!==undefined)startMeeting(+d.play)};
   $('#mn').oninput=e=>{if(!canEdit())return;MT.name=e.target.value;mSave();tt()};
   $('#mq').oninput=renderPick;
-  const info=()=>{tt();const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${meetTitle(PUB.date,PUB.name)} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
+  const info=()=>{tt();const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone · ${n} ${n===1?'song':'songs'} · updated ${new Date(PUB.t).toLocaleString([],{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
   info();afterPub=info;
   $('#mp').onclick=()=>startMeeting(0);
   $('#mr').onclick=()=>{if(!PJ.rm)rmStart();else $('#mrc').scrollIntoView({block:'nearest'});mrc()};
