@@ -44,7 +44,7 @@ async function sendMail(to, code, name) {
   if (!r.ok) throw Object.assign(new Error("Could not send the e-mail (" + r.status + "). Check the OTP_FROM address / domain in Resend."), { status: 502 });
 }
 
-export const handler = async (event, context) => {
+const run = async (event, context) => {
   if (event.httpMethod !== "POST") return J({ error: "method" }, 405);
   let b; try { b = JSON.parse(event.body || "{}"); } catch { return J({ error: "Bad request" }, 400); }
   const email = clean(b.email, 254).toLowerCase(), name = clean(b.name, 80);
@@ -94,4 +94,13 @@ export const handler = async (event, context) => {
     return J({ ok: true });
   }
   return J({ error: "op" }, 400);
+};
+
+// Safety wrapper: any unexpected crash is returned as a readable message instead of a blank 502.
+export const handler = async (event, context) => {
+  try { return await run(event, context); }
+  catch (e) {
+    console.log("signup-otp crashed:", e && e.stack || e);
+    return J({ error: "Server problem: " + (e && e.name ? e.name + " - " : "") + (e && e.message ? e.message : String(e)) }, 500);
+  }
 };
