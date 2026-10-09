@@ -1444,18 +1444,21 @@ const shortAlertsOn=()=>D.settings.short_alerts!==false;
 let autoBusy=false;
 const GESTURES=['click','touchend','keydown'];
 function askPermission(){
+  /* A browser only shows the real permission box reliably after a tap (Chrome hides or "quiets" it otherwise; Safari/iPhone/Firefox refuse).
+     So the first visit shows our own small card; its Allow button calls requestPermission() directly inside the tap. */
   return new Promise(res=>{
-    const ua=navigator.userAgent,timed=/Chrome|Edg|SamsungBrowser|OPR/.test(ua)&&!/iPhone|iPad|iPod|CriOS|FxiOS/.test(ua);
-    let done=false,tm=0;
-    const go=()=>{                                                   // requestPermission must be called right inside the tap handler (Safari/Firefox)
-      if(done)return;done=true;clearTimeout(tm);
-      GESTURES.forEach(g=>removeEventListener(g,go,true));
-      LS.set('notifAsked',Date.now());
-      let q;try{q=Notification.requestPermission()}catch{res('default');return}
+    if(document.getElementById('npAsk')){res('default');return}
+    const d=document.createElement('div');d.id='npAsk';d.setAttribute('role','dialog');d.setAttribute('aria-label','Notifications');
+    d.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;max-width:420px;margin:0 auto;background:var(--surface,#fff);color:var(--text,#1B2433);border:1px solid var(--line,#DCE3EF);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.25);padding:14px 16px;font:inherit';
+    d.innerHTML='<div style="font-weight:700;margin-bottom:4px">\uD83D\uDD14 Notifications</div><div style="color:var(--muted,#5F6B80);font-size:.92em;margin-bottom:12px">Get the daily verse at 8 AM, live alerts and new songs.</div><div style="display:flex;gap:8px;justify-content:flex-end"><button id="npNo" type="button" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#DCE3EF);background:transparent;color:inherit;font:inherit;cursor:pointer">Not now</button><button id="npYes" type="button" style="padding:9px 16px;border-radius:10px;border:0;background:var(--ink,#17305C);color:#fff;font:inherit;font-weight:600;cursor:pointer">Allow</button></div>';
+    document.body.appendChild(d);
+    const close=()=>d.remove();
+    d.querySelector('#npNo').onclick=()=>{LS.set('notifAsked',Date.now());close();res('default')};
+    d.querySelector('#npYes').onclick=()=>{
+      LS.set('notifAsked',Date.now());close();
+      let q;try{q=Notification.requestPermission()}catch{res('default');return}      // called straight from the tap
       Promise.resolve(q).then(res,()=>res('default'));
     };
-    if(timed)tm=setTimeout(go,2500);
-    GESTURES.forEach(g=>addEventListener(g,go,true));
   });
 }
 async function autoSubscribe(){
@@ -1491,7 +1494,7 @@ async function dvLocalCheck(){
   const v=await dailyVerse();if(!v)return;
   try{
     const te=(await load('te',v[0]))[v[1]-1][v[2]-1],bk=books[v[0]-1],reg=await navigator.serviceWorker.ready;
-    await reg.showNotification((D.settings.vi_greet_on===true&&D.settings.vi_greet)||'ఈ రోజు వాక్యం',{body:`${te}\n— ${bk.te} ${v[1]}:${v[2]}`,icon:'/icon.svg',image:(await verseImgUrl(te,bk.te+' '+v[1]+':'+v[2],v[0],{w:1200,h:630},hlFor(v),undefined,[v[1],v[2]]))||undefined,tag:'daily-verse',data:{url:`/#/bible/${v[0]-1}/${v[1]}`}});
+    await reg.showNotification((D.settings.vi_greet_on===true&&D.settings.vi_greet)||'ఈ రోజు వాక్యం',{body:`${te}\n— ${bk.te} ${v[1]}:${v[2]}`,icon:'/icon.svg',badge:'/icon.svg',image:(await verseImgUrl(te,bk.te+' '+v[1]+':'+v[2],v[0],{w:1200,h:630},hlFor(v),undefined,[v[1],v[2]]))||undefined,tag:'daily-verse',data:{url:`/#/bible/${v[0]-1}/${v[1]}`}});
     LS.set('dvShown',todayKey());
   }catch{}
 }

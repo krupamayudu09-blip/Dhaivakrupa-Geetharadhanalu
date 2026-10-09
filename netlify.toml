@@ -10,3 +10,8 @@
   for = "/admin/*"
   [headers.values]
     Cache-Control = "no-store"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
