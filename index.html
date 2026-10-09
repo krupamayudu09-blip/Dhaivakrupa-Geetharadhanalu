@@ -3089,12 +3089,12 @@ function studio(){
   const me=idUser();
   M.innerHTML=`<div class="cp cs">${back}
   <section class="cp-hero"><i class="cp-orb a"></i><i class="cp-orb b"></i><i class="cp-orb c"></i><span class="cp-kick">${esc(me.email)}</span><h2>Contributor studio</h2><p>Add songs and edit the daily verse picture. Changes appear on the site about a minute after saving.</p></section>
-  <div class="cs-tabs"><button data-t="songs" aria-pressed="${CS.tab==='songs'}">Songs</button><button data-t="verse" aria-pressed="${CS.tab==='verse'}">Daily verse picture</button></div>
+  <div class="cs-tabs"><button data-t="songs" aria-pressed="${CS.tab==='songs'}">Songs</button><button data-t="bulk" aria-pressed="${CS.tab==='bulk'}">Add up to 20</button><button data-t="verse" aria-pressed="${CS.tab==='verse'}">Daily verse picture</button></div>
   <div id="csb"></div><p class="cs-st" id="csst"></p>
   <p class="cs-foot"><a href="#" id="cslo">Log out</a></p></div>`;
   M.querySelectorAll('.cs-tabs button').forEach(b=>b.onclick=()=>{if(CS.busy)return;CS.tab=b.dataset.t;CS.edit=null;studio()});
   $('#cslo').onclick=e=>{e.preventDefault();idLogout()};
-  CS.tab==='verse'?csVerse():csSongs();
+  CS.tab==='verse'?csVerse():CS.tab==='bulk'?csBulk():csSongs();
 }
 function csSongs(){
   const box=$('#csb');
@@ -3151,6 +3151,68 @@ function csSongForm(box){
       try{D.songs.sort((a,b)=>col.compare(a.title,b.title))}catch{}
       csBusy(false);toast(isNew?'Song added – it goes live in about a minute':'Saved – it goes live in about a minute');CS.edit=null;CS.q='';studio();
     }catch(e){csBusy(false,errMsg(e));toast(errMsg(e))}
+  };
+}
+/* ---- Bulk add: up to 20 songs in one go (type them in, or import an XML file). Used by contributors and admins. ---- */
+const BULK_MAX=20;
+let BK=[];
+const bkBlank=()=>({title:'',category:'',writer:'',lyrics:''});
+const bkXml=t=>{const g=(b,n)=>{const m=b.match(new RegExp('<'+n+'>([\\s\\S]*?)</'+n+'>','i'));return m?m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,'&').trim():''};
+  return (t.match(/<song[\s>][\s\S]*?<\/song>/gi)||[]).map(b=>({title:g(b,'title'),title_en:g(b,'title_en'),category:g(b,'category'),writer:g(b,'writer'),scale:g(b,'scale'),lyrics:g(b,'lyrics'),youtube:g(b,'youtube')})).filter(x=>x.title||x.lyrics)};
+function csBulk(){
+  const box=$('#csb');if(!BK.length)BK=[bkBlank()];
+  const cats=catList();
+  const card=(x,i)=>`<div class="cs-card" data-i="${i}"><h3>Song ${i+1}${BK.length>1?` <button type="button" class="mhe" data-rm="${i}" style="float:right;padding:4px 12px;cursor:pointer">Remove</button>`:''}</h3>
+  <label>Song title (Telugu) *</label><input data-k="title" value="${esc(x.title)}" autocomplete="off">
+  <label>Category</label><select data-k="category"><option value="">— none —</option>${cats.map(c=>`<option value="${esc(c)}"${x.category===c?' selected':''}>${esc(c)}</option>`).join('')}</select>
+  <label>Writer</label><input data-k="writer" value="${esc(x.writer)}" autocomplete="off">
+  <label>Lyrics – leave a blank line between verses *</label><textarea data-k="lyrics" style="min-height:140px">${esc(x.lyrics)}</textarea></div>`;
+  box.innerHTML=`<div class="cs-card"><h3>Add up to ${BULK_MAX} songs at once</h3>
+  <p class="sub" style="margin:0 0 10px">Fill in the songs below, or import an XML file (same format as <a href="/sample-songs.xml" target="_blank" rel="noopener">sample-songs.xml</a>). Each song is saved separately.</p>
+  <input id="bkfile" type="file" accept=".xml,text/xml,application/xml"><p class="sub" id="bkcount" style="margin:8px 0 0"></p></div>
+  <div id="bklist">${BK.map(card).join('')}</div>
+  <div class="cs-act"><button class="mhe" id="bkadd">+ Add another song</button><button class="mhe dl" id="bksave"></button></div>`;
+  const upd=()=>{const n=BK.length;$('#bkcount').textContent=n+' of '+BULK_MAX+' songs';$('#bkadd').disabled=n>=BULK_MAX;$('#bksave').textContent='Save '+n+(n===1?' song':' songs')};
+  upd();
+  const grab=()=>{box.querySelectorAll('.cs-card[data-i]').forEach(c=>{const o=BK[+c.dataset.i];if(!o)return;c.querySelectorAll('[data-k]').forEach(f=>{o[f.dataset.k]=f.value})})};
+  $('#bkadd').onclick=()=>{if(CS.busy)return;grab();if(BK.length>=BULK_MAX){toast('Maximum '+BULK_MAX+' songs at a time');return}BK.push(bkBlank());csBulk();const l=box.querySelectorAll('.cs-card[data-i]');l[l.length-1].querySelector('input').focus()};
+  $('#bklist').onclick=e=>{const r=e.target.closest('[data-rm]');if(!r||CS.busy)return;grab();BK.splice(+r.dataset.rm,1);if(!BK.length)BK=[bkBlank()];csBulk()};
+  $('#bkfile').onchange=async e=>{
+    const f=e.target.files[0];if(!f)return;grab();
+    try{
+      const L=bkXml(await f.text());if(!L.length){toast('No songs found in that file');return}
+      BK=BK.filter(x=>x.title||x.lyrics);let skipped=0;
+      L.forEach(x=>{if(BK.length<BULK_MAX)BK.push({title:x.title||'',category:x.category||'',writer:x.writer||'',lyrics:x.lyrics||'',title_en:x.title_en,scale:x.scale,youtube:x.youtube});else skipped++});
+      toast(skipped?`Added ${L.length-skipped} songs – only ${BULK_MAX} fit, ${skipped} left out`:`Added ${L.length} songs from the file`);
+      csBulk();
+    }catch{toast('Could not read that file')}
+  };
+  $('#bksave').onclick=async()=>{
+    if(CS.busy)return;grab();
+    const list=BK.filter(x=>x.title.trim()||x.lyrics.trim());
+    if(!list.length){toast('Add at least one song');return}
+    const bad=list.findIndex(x=>!x.title.trim()||!x.lyrics.trim());
+    if(bad>=0){toast('Song '+(BK.indexOf(list[bad])+1)+' needs a title and lyrics');return}
+    csBusy(true,'Saving…');
+    const base=songFile(),me=cbMe(),failed=[];let done=0;
+    for(let i=0;i<list.length;i++){
+      const x=list[i];csBusy(true,`Saving song ${i+1} of ${list.length}…`);
+      const obj={featured:false,published:true,title:x.title.trim(),lyrics:x.lyrics.replace(/\r/g,'').trim(),date:nowStr()};
+      ['title_en','category','writer','scale','youtube'].forEach(k=>{const v=String(x[k]||'').trim();if(v)obj[k]=v});
+      if(me)obj.added_by=me;
+      const path=`content/songs/${base}-${p2(i+1)}.json`;
+      let ok=false,err=null;
+      for(let t=0;t<3&&!ok;t++){
+        try{await ggPut(path,b64(JSON.stringify(obj,null,2)),'Add song: '+obj.title);ok=true}
+        catch(e){err=e;if(e&&e.message==='login')break;await new Promise(r=>setTimeout(r,700*(t+1)))}
+      }
+      if(ok){done++;D.songs.push({...obj,id:path.split('/').pop().replace('.json','')})}
+      else{failed.push(x);if(err&&err.message==='login'){failed.push(...list.slice(i+1));break}}
+    }
+    try{D.songs.sort((a,b)=>col.compare(a.title,b.title))}catch{}
+    BK=failed.length?failed:[];csBusy(false);
+    if(failed.length){toast(`${done} saved, ${failed.length} failed – they are still in the form, press Save again`);CS.tab='bulk';studio();$('#csst').textContent=`${failed.length} song(s) not saved. Check your connection / login and try again.`}
+    else{toast(done+(done===1?' song':' songs')+' added – live in about a minute');CS.tab='songs';CS.q='';studio()}
   };
 }
 async function csVerse(){
@@ -3297,7 +3359,7 @@ function route(){
   else if(p[0]==='short')shortView(p[1]);
   else if(p[0]==='notes'){location.replace('#/');setTimeout(()=>bnOpen(true),50);return}
   else if(p[0]==='watch')watchView(p[1]);
-  else if(p[0]==='contribute')studio();
+  else if(p[0]==='contribute'){if(p[1]==='bulk'){CS.tab='bulk';CS.edit=null}studio()}
   else if(p[0]==='contributors')contributors();
   else if(p[0]==='contributor')contributorPage(p[1]);
   else if(p[0]==='about')about();

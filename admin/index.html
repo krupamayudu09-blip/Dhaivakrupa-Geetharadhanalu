@@ -61,6 +61,12 @@ if (window.netlifyIdentity) {
     a.style.cssText='position:fixed;right:12px;bottom:156px;z-index:99999;background:#8e3b6b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
     document.body.appendChild(a);
   }
+  function pill5(){
+    if(document.getElementById('bulk-pill'))return;
+    var a=document.createElement('a');a.id='bulk-pill';a.href='/#/contribute/bulk';a.textContent='🎵 Add up to 20 songs / ఒకేసారి 20 పాటలు';
+    a.style.cssText='position:fixed;right:12px;bottom:204px;z-index:99999;background:#c0532b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+    document.body.appendChild(a);
+  }
   function pill3(){
     if(document.getElementById('mem-pill'))return;
     var a=document.createElement('a');a.id='mem-pill';a.href='/admin/members.html';a.textContent='👥 Approvals / అనుమతులు';
@@ -79,7 +85,7 @@ if (window.netlifyIdentity) {
     a.style.cssText='position:fixed;right:12px;bottom:60px;z-index:99999;background:#b8892b;color:#fff;padding:10px 14px;border-radius:999px;font:14px system-ui;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)';
     document.body.appendChild(a);
   }
-  window.addEventListener('load',function(){setTimeout(function(){pill();pill2();pill3();pill4()},1500)});
+  window.addEventListener('load',function(){setTimeout(function(){pill();pill2();pill3();pill4();pill5()},1500)});
 })();
 </script>
 </body></html>
