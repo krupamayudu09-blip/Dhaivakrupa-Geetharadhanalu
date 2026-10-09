@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Install – Dhaivakrupa Songs</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#17305C">
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F4F7FC;color:#1B2433;font:16px/1.6 system-ui,sans-serif;padding:20px}
+.c{max-width:380px;width:100%;background:#fff;border:1px solid #DCE3EF;border-radius:18px;padding:24px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+img{width:84px;height:84px;border-radius:20px}
+h1{font-size:1.25rem;margin:12px 0 4px}p{color:#5F6B80;margin:6px 0}
+button,a.b{display:block;width:100%;box-sizing:border-box;margin-top:16px;padding:13px;border:0;border-radius:12px;background:#17305C;color:#fff;font:600 1rem system-ui;text-decoration:none;cursor:pointer}
+.s{display:none;margin-top:14px;text-align:left;background:#FFF3D1;border-radius:12px;padding:12px 14px;font-size:.93rem}
+</style></head><body><div class="c">
+<img src="/uploads/app-icon.png" alt="">
+<h1>Dhaivakrupa Songs</h1>
+<p>Add the app to your home screen.</p>
+<button id="i" hidden>Add to Home Screen</button>
+<div class="s" id="ios">On iPhone: tap the <b>Share</b> button in Safari, then <b>Add to Home Screen</b>.</div>
+<div class="s" id="other">Open your browser menu (⋮) and choose <b>Install app</b> or <b>Add to Home screen</b>.</div>
+<a class="b" id="open" href="/" hidden>Open the app</a>
+</div>
+<script>
+const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const i=document.getElementById('i');let ev;
+if(app){document.getElementById('open').hidden=false}
+else if(ios){document.getElementById('ios').style.display='block'}
+else{
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;i.hidden=false;document.getElementById('other').style.display='none'});
+  setTimeout(()=>{if(!ev)document.getElementById('other').style.display='block'},1500);
+}
+i.onclick=async()=>{if(!ev)return;ev.prompt();await ev.userChoice;i.hidden=true;document.getElementById('open').hidden=false};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script></body></html>

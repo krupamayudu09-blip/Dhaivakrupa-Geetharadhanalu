@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path');
 const out = 'dist';
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
-['index.html','admin','uploads','bible','manifest.webmanifest','sw.js','verse-img.js','icon.svg','daily-verses.json']
+['index.html','install.html','admin','uploads','bible','manifest.webmanifest','sw.js','verse-img.js','icon.svg','daily-verses.json']
   .forEach(f => fs.existsSync(f) && fs.cpSync(f, path.join(out, f), { recursive: true }));
 // A broken file (empty upload, leftover git conflict markers, bad JSON) must not stop the whole deploy: it is reported by name and skipped.
 const BAD = [];
