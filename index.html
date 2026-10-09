@@ -1479,7 +1479,14 @@ async function autoNotify(){
   if(autoBusy||!('Notification' in window&&'serviceWorker' in navigator))return;
   if(LS.get('notifOptOut',0))return;
   if(Notification.permission==='denied'){                      // blocked earlier (often by the browser itself): the browser will not ask again, so tell the person once how to undo it
-    if(isApp()&&!LS.get('deniedHint',0)){LS.set('deniedHint',1);toast('Notifications are blocked. Open phone Settings → Apps → this app → Notifications and turn them on.')}
+    if(isApp()&&Date.now()-LS.get('deniedHint',0)>864e5&&!document.getElementById('npBlk')){
+      const d=document.createElement('div');d.id='npBlk';
+      d.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;max-width:420px;margin:0 auto;background:var(--surface,#fff);color:var(--text,#1B2433);border:1px solid var(--line,#DCE3EF);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.25);padding:14px 16px;font:inherit';
+      d.innerHTML='<div style="font-weight:700;margin-bottom:4px">\uD83D\uDD14 Notifications are blocked</div><div style="color:var(--muted,#5F6B80);font-size:.92em;margin-bottom:12px"><b>Android:</b> Settings \u2192 Apps \u2192 this app \u2192 Notifications \u2192 On. Or Chrome \u2192 \u22EE \u2192 Settings \u2192 Site settings \u2192 Notifications \u2192 this site \u2192 Allow.<br><b>iPhone:</b> Settings \u2192 Notifications \u2192 this app \u2192 Allow.</div><div style="display:flex;gap:8px;justify-content:flex-end"><button id="npX" type="button" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#DCE3EF);background:transparent;color:inherit;font:inherit;cursor:pointer">Close</button><button id="npR" type="button" style="padding:9px 16px;border-radius:10px;border:0;background:var(--ink,#17305C);color:#fff;font:inherit;font-weight:600;cursor:pointer">I turned it on</button></div>';
+      document.body.appendChild(d);
+      d.querySelector('#npX').onclick=()=>{LS.set('deniedHint',Date.now());d.remove()};
+      d.querySelector('#npR').onclick=()=>{d.remove();if(Notification.permission==='granted'){autoNotify()}else toast('Still blocked – please check the setting')};
+    }
     return;
   }
   if(/^#\/(remote|screen)/.test(location.hash))return;           // never pop a prompt on the projector / remote screens
