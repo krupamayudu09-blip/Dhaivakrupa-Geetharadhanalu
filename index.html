@@ -628,10 +628,6 @@ input.cs-in{margin:14px 0 0}
 .cs-bg img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
 .cs-bg span{display:block;padding:5px 8px;font-size:.78rem;color:var(--muted)}
 .cs-bg select{width:100%!important;border-radius:0!important;border:0!important;border-top:1px solid var(--gline)!important;padding:6px 8px!important;font-size:.76rem!important}
-.cropv{position:fixed;inset:0;z-index:9999;background:rgba(8,14,30,.78);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
-.cropv .cb{background:var(--bg,#fff);color:var(--ink,#17305C);border-radius:24px;padding:16px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:12px;align-items:center}
-.cropv h3{margin:0;font-size:1.05rem}.cropv canvas{border-radius:16px;touch-action:none;cursor:grab;background:#222;max-width:100%}
-.cropv input[type=range]{width:100%}.cropv .cr{display:flex;gap:10px;width:100%;justify-content:flex-end}.cropv .sub{margin:0;text-align:center}
 .cs-pp{display:flex;align-items:center;gap:12px;margin:0 0 6px}.cs-pp img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gline);background:var(--glo)}
 .cs-bg button{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:50%;border:1px solid var(--gline);background:var(--gfill);color:var(--text);font:700 .9rem/1 var(--sans);cursor:pointer}
 .cs-st{margin:10px 2px 0;font-size:.86rem;color:var(--muted);text-align:center}
@@ -719,48 +715,6 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 .cat b .ixi{width:20px;height:20px;color:var(--accent)}
 .view h2 .ixi{width:24px;height:24px;margin-right:8px;color:var(--accent);vertical-align:-4px}
 
-
-/* ---- song categories ---- */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:10px 0}
-.cc{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);background:var(--surface);border-radius:18px;text-decoration:none;color:var(--text);min-width:0;transition:transform .15s,box-shadow .15s}
-.cc:hover,.cc:focus-visible{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
-.ci{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal;color:var(--h,var(--accent));background:color-mix(in srgb,var(--h,var(--accent)) 15%,transparent)}
-.ci .ixi{width:24px;height:24px;vertical-align:0}
-.cn{display:flex;flex-direction:column;min-width:0;flex:1}
-.cn b{font:600 1rem/1.35 var(--serif);color:var(--hd,var(--ink));overflow-wrap:anywhere}
-.cn small{font:500 .78rem var(--sans);color:var(--muted);margin-top:2px}
-.cc em{flex:none;font-style:normal;font-size:1.4rem;color:var(--muted)}
-.chead{display:flex;align-items:center;gap:14px;margin:10px 0 8px}
-.chead h2{margin:0}.chead .meta{margin:2px 0 0}
-.chead .ci{width:54px;height:54px;border-radius:16px}
-.cchips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.cchips::-webkit-scrollbar{display:none}
-.cchip{flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);text-decoration:none;color:var(--text);font:600 .9rem var(--sans);white-space:nowrap}
-.cchip small{font:600 .74rem var(--sans);color:var(--muted)}
-.cchip.on{background:var(--h,var(--accent));border-color:var(--h,var(--accent));color:#fff}.cchip.on small{color:#fff;opacity:.85}
-
-/* ---- Bible page ---- */
-.bsr{position:relative}
-.bsr .ixi{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);pointer-events:none;vertical-align:0}
-.bsr .search{padding-left:42px}
-.bqa{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
-.bqc{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);background:var(--surface);border-radius:16px;text-decoration:none;color:var(--text);min-width:0}
-.bqc i{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
-.bqc i .ixi{width:22px;height:22px;vertical-align:0}
-.bqc span{display:flex;flex-direction:column;min-width:0}
-.bqc small{font:500 .75rem var(--sans);color:var(--muted)}
-.bqc b{font:600 .98rem/1.3 var(--serif);overflow-wrap:anywhere}
-.bqc.go{background:var(--accent);border-color:var(--accent);color:#fff}
-.bqc.go small{color:#fff;opacity:.85}.bqc.go i{background:rgba(255,255,255,.22);color:#fff}
-.bsg{display:flex;flex-wrap:nowrap}.bsg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.bsg .ixi{width:18px;height:18px;vertical-align:0}
-.bk{display:flex;align-items:center;gap:12px}
-.bk .bn{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 .82rem var(--sans);font-style:normal;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
-.bk .bt{min-width:0}
-.ib{display:inline-flex;align-items:center;gap:6px}
-.ib .ixi{width:17px;height:17px;vertical-align:0}
-.chs a{font-size:1.02rem}.chs a:hover{border-color:var(--accent);color:var(--accent)}
-
 /* ---- Meeting Verses: responsive across phones, foldables, landscape, tablets and desktop ---- */
 #bnsheet,#bnbar,.mbn{box-sizing:border-box}
 #bnsheet{height:min(78vh,640px);height:min(78dvh,640px);max-height:calc(100vh - env(safe-area-inset-top) - 12px);max-height:calc(100dvh - env(safe-area-inset-top) - 12px);width:100%;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
@@ -832,119 +786,6 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 
 /* respect reduced-motion for the sheet */
 @media (prefers-reduced-motion:reduce){#bnsheet,#bnback{transition:none}}
-
-/* ================= v34: no overlapping anywhere; compact home meeting card; friendlier Meeting page ================= */
-main,.pad,.view,.list li,.list a>div{min-width:0}
-.t,.mht,.mi a{overflow-wrap:anywhere}
-img,video,svg{max-width:100%}
-/* breathing room between stacked home blocks so nothing touches the search bar */
-#mh{padding-bottom:0}
-#mh:not(:empty){margin-bottom:14px}
-#mh .mh{margin:12px 0 0;overflow:hidden}
-#ixh{padding-top:2px}
-.ixrow{position:relative;z-index:1}
-/* --- home meeting card: small title (name + day/date), max 5 rows, no clipping --- */
-.mh{container-type:normal;padding:12px 14px}
-.mhh{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;font:inherit}
-.mhst{display:flex;flex-direction:column;min-width:0;flex:1}
-.mhst b{font:700 .95rem/1.3 var(--serif);color:var(--hd,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mhst small{font:500 .74rem/1.35 var(--sans);color:var(--muted);opacity:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mhc{flex:none;font:600 .78rem var(--sans);color:var(--accent)}
-.mhpills{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin:10px 0 0;max-height:none;overflow:visible;padding:0}
-.mhpill{min-height:42px;padding:5px 12px 5px 6px;min-width:0;overflow:hidden}
-.mhpill .mht{flex:1;min-width:0;font-size:.98rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mhmore{display:block;margin-top:8px;padding:8px 4px 2px;text-align:center;text-decoration:none;font:600 .85rem var(--sans);color:var(--accent)}
-.mhs{padding:10px 10px 10px 14px}
-@media (min-width:600px){.mhpills{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (min-width:1000px){.mhpills{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-height:480px) and (orientation:landscape){.mhpills{max-height:none;overflow:visible}}
-/* --- Meeting page --- */
-.mtg>h2{margin:8px 0 10px}
-.mthead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi)}
-.mtmeta{min-width:0;flex:1}
-.mtmeta p{margin:0}
-.mtn{font:700 1.05rem/1.35 var(--serif);color:var(--hd,var(--ink));overflow-wrap:anywhere}
-.mtt{font:500 .82rem/1.4 var(--sans);color:var(--muted)}
-.mtn[hidden]+.mtt{font:700 1.02rem/1.35 var(--serif);color:var(--hd,var(--ink))}
-.mtcount{flex:none;padding:4px 12px;border-radius:999px;background:var(--pill);color:var(--pilltx);font:700 .8rem var(--sans)}
-.mtg #mn{margin:0 0 12px}
-.mtact{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:0 0 12px}
-.mtact>*{min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 10px;white-space:nowrap}
-.mtact .mtp{grid-column:1/-1;font-weight:700;background:var(--pill);color:var(--pilltx);border-color:transparent}
-.mtact .vonly{grid-column:1/-1}
-.mtsec{margin:18px 0 8px;font:700 1.05rem var(--serif);color:var(--hd,var(--ink))}
-.mbn .mtsec,.mgate .mtsec{margin-top:0}
-.mtg .mbn,.mtg .mgate{margin:20px 0 0}
-.mtg .lkrow{margin:0 0 10px}
-/* song rows: big readable title, controls never squeeze it */
-.mtg .ml{margin:0;padding:0;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi),var(--gsh);overflow:hidden}
-.mtg .mi{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:6px 10px;padding:10px 12px}
-.mtg .mi:last-child{border-bottom:0}
-.mtg .mi a{min-width:0;font-size:1.02rem}
-.mtg .mb{gap:4px}
-.mtg .mb button{width:36px;height:36px;font-size:.8rem}
-.mtg .mi .empty,.mtg li.empty{grid-column:1/-1}
-@media (max-width:480px){
-  .mtg .mi{grid-template-columns:28px minmax(0,1fr)}
-  .mtg .mi .mb{grid-column:2;justify-content:flex-end}
-  .mtg .mb button{width:40px;height:34px}
-}
-.mtg .ml>li.empty{display:block;padding:18px 14px;text-align:center;color:var(--muted)}
-/* live preview is tucked into a collapsible panel so it never pushes the song list down */
-.mpvd{margin:20px 0 0;border-radius:18px;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi);overflow:hidden}
-.mpvd>summary{display:flex;flex-direction:column;gap:2px;padding:12px 14px;cursor:pointer;list-style:none;font:700 1rem var(--sans);color:var(--hd,var(--ink))}
-.mpvd>summary::-webkit-details-marker{display:none}
-.mpvd>summary small{font:500 .78rem var(--sans);color:var(--muted)}
-.mpvd[open]>summary{border-bottom:1px solid var(--line)}
-.mpvd .mpv{margin:0;border:0;border-radius:0;box-shadow:none;background:transparent}
-.mpvd .mpvr{flex-wrap:wrap}.mpvd .mpvr .search{flex:1 1 150px}
-.mtinfo{margin:14px 0 0;text-align:center}
-.mtg .mnote{margin:0 0 12px}
-/* ===== v33 fixes: Bible chapter reader + menu icons ===== */
-/* header round icon buttons only (the generic .ib rule used to squash the reader's text buttons into 40px circles) */
-.bar .ib{display:grid;place-items:center;width:40px;min-width:40px;height:40px;padding:0;flex:none}
-.bar .ib .ic{width:20px;height:20px;vertical-align:0}
-.bar{gap:8px}
-.bar h1{min-width:0}
-/* reader buttons: normal pill buttons with icon + text */
-.tb .ib,.tb a.ib{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;min-width:0;height:auto;min-height:40px;padding:6px 14px;border-radius:999px;font:600 .88rem var(--sans);white-space:nowrap}
-.rd .rdh{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
-.rd .rdback{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font:600 .86rem var(--sans)}
-.rd .rdt{flex:1;min-width:0;text-align:center}
-.rd .rdt h2{margin:0;font:700 1.2rem/1.3 var(--serif);overflow-wrap:anywhere}
-.rd .rdt .meta{margin:2px 0 0}
-.rd .rdpn{flex:none;display:flex;gap:6px}
-.rd .rdpn a{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font:600 1.5rem/1 var(--sans);padding-bottom:3px;box-sizing:border-box}
-.rd .rdpn a.off{opacity:.3;pointer-events:none}
-.rd .rdtools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px}
-.rd .rdtools .seg{flex-wrap:nowrap}
-.rd .rdfs{margin:0;gap:6px;flex-wrap:nowrap}
-.rd .rdfs button{min-width:46px;padding:0 12px;font-weight:700}
-.rd .rdacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin:0 0 14px}
-.rd .rdacts>*{justify-content:center;text-align:center;min-width:0}
-.rd .rdacts .ixi{width:18px;height:18px;vertical-align:0;flex:none}
-.rd #vs{margin-top:4px}
-.rd .v{padding:10px 12px;margin:2px 0;-webkit-tap-highlight-color:transparent}
-.rd .v .te{line-height:1.95}
-.rd .v sup{display:inline-block;min-width:1.4em}
-.rd .pn a{display:flex;flex-direction:column;gap:2px;line-height:1.3}
-.rd .pn a small{font:600 .72rem var(--sans);color:var(--muted)}
-.rd .pn a b{font:700 .95rem var(--serif)}
-.rd .pn a:first-child{align-items:flex-start;text-align:left}.rd .pn a:last-child{align-items:flex-end;text-align:right}
-#mnbar .vc{box-shadow:none;overflow:visible}
-/* bottom menu: six equal tabs, icon above label, labels always visible */
-:root{--nav:84px}
-.nav{padding:0 10px}
-.nav div{max-width:520px;gap:0;padding:6px}
-.nav a,.nav a[aria-current=page]{flex:1 1 0;flex-grow:1;min-width:0;height:54px;flex-direction:column;justify-content:center;align-items:center;gap:3px;border-radius:22px;font-size:.66rem;font-weight:600;letter-spacing:.01em;line-height:1;transition:color .25s}
-.nav a[aria-current=page]{flex-grow:1;gap:3px;background:transparent;box-shadow:none;color:var(--pilltx);font-weight:700}
-.nav svg{width:23px;height:23px;stroke-width:1.7}
-.nav .nl,.nav a[aria-current=page] .nl{display:block;max-width:100%;opacity:1;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:none}
-.nvp{top:6px;height:54px;border-radius:22px}
-@media (max-width:340px){.nav a{font-size:.6rem}.nav svg{width:21px;height:21px}}
-@media (max-height:480px) and (orientation:landscape){.nav a,.nav a[aria-current=page]{flex-direction:row;gap:6px;height:44px;font-size:.72rem}.nvp{height:44px}}
-.mpvd.mpvtop{margin:4px 0 16px}
-.mtg>h2{margin-bottom:10px}
 </style></head>
 <body>
 <div class="app">
@@ -1039,7 +880,7 @@ async function idToken(force){
   if(q&&q.access_token){
     if(!force&&q.expires_at-Date.now()>60000)return q.access_token;
     try{return sessSave(await idPost('/token',{grant_type:'refresh_token',refresh_token:q.refresh_token})).access_token}
-    catch(e){return e.status>=400&&e.status<500?null:q.access_token}   // never wipe the saved login here: only the Log out button ends it
+    catch(e){if(e.status>=400&&e.status<500){sessClear();return null}return q.expires_at>Date.now()?q.access_token:null}
   }
   if(!localStorage.getItem('gotrue.user'))return null;      // older login made with the popup widget
   const w=await idLoad();let u=null;
@@ -1105,16 +946,9 @@ function idLogin(go){
 }
 async function idLogout(){ID_MEM=null;sessClear();try{if(window.netlifyIdentity)await window.netlifyIdentity.logout()}catch{}try{localStorage.removeItem('gotrue.user')}catch{}applyRole();route()}
 const needLogin=()=>{toast('Only contributors can change the meeting');idLogin()};
-function idExpired(){const n=LS.get('idwarn',0);if(Date.now()-n>6e4){LS.set('idwarn',Date.now());toast('Could not renew the contributor login – check the internet or log in once again')}}   // login is kept; changes stay queued and are sent later
+function idExpired(){sessClear();ID_MEM=null;try{localStorage.removeItem('gotrue.user')}catch{}MT.dirty=false;LS.set('meeting',MT);applyRole();toast('Contributor session ended – please log in again')}
 window.addEventListener('storage',e=>{if(e.key==='gotrue.user'||e.key===IDK){SESS=null;applyRole()}});
 applyRole();
-/* keep the contributor logged in for good: ask the browser not to clear storage, and renew the token quietly in the background */
-(function(){
-  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
-  const keep=()=>{const q=sessLoad();if(q&&q.access_token&&q.expires_at-Date.now()<15*60*1000)idToken(true).catch(()=>{})};
-  setTimeout(keep,1200);setInterval(keep,10*60*1000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)keep()});addEventListener('online',keep);addEventListener('focus',keep);
-})();
 function autoPub(now){
   clearTimeout(pubTimer);
   pubTimer=setTimeout(async()=>{
@@ -1369,21 +1203,12 @@ const IXI={
  idx:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18l4-11 4 11M5 14h5"/><path d="M14.5 7h6M14.5 12h6M14.5 17h6"/></svg>',
  cat:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
 };
-const CATI=[IXI.cat,
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>',
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg>',
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>',
- '<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/></svg>'];
-const CATH=['#B8892B','#D2557A','#3D8FD1','#E08A2E','#7B5BD6','#2E9A7A','#C9A227'];
-const catIc=i=>CATI[i%CATI.length],catHue=i=>CATH[i%CATH.length];
 function songsHome(){
   nav('songs');title();
   const s=D.settings;
   M.innerHTML=`<a class="vcard" id="vc" href="#/bible"><div class="fb">${esc(s.verse||s.tagline||'')}${s.verse&&s.verse_ref?`<small>${esc(s.verse_ref)}</small>`:''}</div></a>
   <div class="pad" id="mh"></div>
-  <div class="pad"><div id="ixh"></div></div>
+  <div class="pad"><h3 class="ixh">${IXI.idx}Song index</h3><div id="ixh"></div></div>
   <div class="pad" id="yvh"></div>
   <div class="pad" id="apkh"></div>
   <div class="pad" id="rvh"></div>`;
@@ -1495,7 +1320,6 @@ async function notifAll(on){
 const loadImg=u=>new Promise(ok=>{if(!u)return ok(null);const i=new Image();i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=u});
 const hlFor=(v,S0)=>{const S=S0||D.settings||{};if(S.vi_hl_on===false)return false;const m=(S.vi_hls||[]).find(h=>h&&+h.book===v[0]&&+h.chapter===v[1]&&+h.verse===v[2]&&h.phrase);return m?m.phrase:(v[3]||undefined)};
 /* Daily Verse Image can override the pastor / church details; an empty value falls back to General Settings */
-const jparse=t=>{t=String(t||'').replace(/^\uFEFF/,'');try{return JSON.parse(t)}catch(e){return JSON.parse(t.replace(/,(\s*[}\]])/g,'$1'))}};   /* hand-edited file with a trailing comma still loads */
 const viv=(S,k,k2)=>{const a=S[k];return (a!=null&&String(a).trim()!=='')?a:S[k2]};
 /* cv = [chapter, verse]: the verse decides the theme, and the theme decides the photo / painted scene */
 async function verseImgUrl(te,ref,b,sz,hl,S0,cv){try{
@@ -1508,14 +1332,14 @@ async function verseImgUrl(te,ref,b,sz,hl,S0,cv){try{
   const bg=await verseBgFor(T.key,n,S.vi_bgs);               // photo added for this theme (or for any verse); else a built-in one that suits it; else null -> painted scene in the theme's colours
   return verseCanvas(document.createElement('canvas'),te,ref,{w:(sz&&sz.w)||1080,h:(sz&&sz.h)||1350,theme:T.shape,pal:T.pal,bg,hl,font:vf?'"'+vf+'","Ramabhadra","Noto Serif Telugu",serif':undefined,hfont:hf?'"'+hf+'","Ponnala","Ramabhadra",serif':undefined,fscale:(+S.vi_text_size||100)/100,hscale:(+S.vi_hl_size||100)/100,title:S.vi_title||undefined,hlColor:S.vi_hl_color||undefined,pscale:(+S.vi_pastor_scale||100)/100,accent:S.accent,photo,
     greet:S.vi_greet_on===true&&S.vi_greet?S.vi_greet:undefined,date:S.vi_date_on===true?verseDate(S.vi_date_lang):undefined,
-    pastor:S.vi_show_pastor===false?null:{name:viv(S,'vi_pastor_name','pastor_name'),phone:S.vi_show_phone===false?'':viv(S,'vi_pastor_phone','pastor_phone'),church:viv(S,'vi_church_name','church_name')}}).toDataURL('image/jpeg',.9)}catch{return ''}}
+    pastor:S.vi_show_pastor===false?null:{name:viv(S,'vi_pastor_name','pastor_name'),phone:viv(S,'vi_pastor_phone','pastor_phone'),church:viv(S,'vi_church_name','church_name')}}).toDataURL('image/jpeg',.9)}catch{return ''}}
 /* the picture on the home screen: today's verse, same as the notification */
 let HV=null;
 async function homeVerse(){
   try{
     const v=await dailyVerse();if(!v||!$('#vc'))return;
     const te=(await load('te',v[0]))[v[1]-1][v[2]-1],bk=books[v[0]-1];if(!bk)return;
-    const ref=bk.te+' '+v[1]+':'+v[2],key=todayKey()+'|'+v.join('.')+'|'+[D.settings.accent,D.settings.pastor_name,D.settings.pastor_phone,D.settings.church_name,D.settings.pastor_photo,JSON.stringify([D.settings.vi_font,D.settings.vi_hl_font,D.settings.vi_text_size,D.settings.vi_hl_size,D.settings.vi_title,D.settings.vi_hl_on,D.settings.vi_hl_color,D.settings.vi_hls,D.settings.vi_show_pastor,D.settings.vi_show_phone,D.settings.vi_pastor_scale,D.settings.vi_bgs,D.settings.vi_pastor_photo,D.settings.vi_pastor_name,D.settings.vi_pastor_phone,D.settings.vi_church_name,D.settings.vi_greet_on,D.settings.vi_greet,D.settings.vi_date_on,D.settings.vi_date_lang])].join('|');
+    const ref=bk.te+' '+v[1]+':'+v[2],key=todayKey()+'|'+v.join('.')+'|'+[D.settings.accent,D.settings.pastor_name,D.settings.pastor_phone,D.settings.church_name,D.settings.pastor_photo,JSON.stringify([D.settings.vi_font,D.settings.vi_hl_font,D.settings.vi_text_size,D.settings.vi_hl_size,D.settings.vi_title,D.settings.vi_hl_on,D.settings.vi_hl_color,D.settings.vi_hls,D.settings.vi_show_pastor,D.settings.vi_pastor_scale,D.settings.vi_bgs,D.settings.vi_pastor_photo,D.settings.vi_pastor_name,D.settings.vi_pastor_phone,D.settings.vi_church_name,D.settings.vi_greet_on,D.settings.vi_greet,D.settings.vi_date_on,D.settings.vi_date_lang])].join('|');
     const u=(HV&&HV.key===key)?HV.u:await verseImgUrl(te,ref,v[0],{w:1200,h:760},hlFor(v),undefined,[v[1],v[2]]),box=$('#vc');
     if(!u||!box)return;HV={key,u};
     box.href='#/bible/'+(v[0]-1)+'/'+v[1];box.setAttribute('aria-label',ref);
@@ -1707,12 +1531,8 @@ function catPage(name){
   name=name||'';const label=name||'Uncategorised';
   nav('songs');title(label);const l=D.songs.filter(x=>(x.category||'')===name);
   const all=catList();if(D.songs.some(x=>!x.category))all.push('');
-  const ai=Math.max(0,all.indexOf(name));
-  const chips=all.map((c,i)=>`<a class="cchip${c===name?' on':''}" style="--h:${catHue(i)}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}>${esc(c||'Uncategorised')}<small>${D.songs.filter(x=>(x.category||'')===c).length}</small></a>`).join('');
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a>
-  <div class="chead" style="--h:${catHue(ai)}"><i class="ci">${catIc(ai)}</i><div><h2>${esc(label)}</h2><p class="meta">${l.length} ${l.length===1?'song':'songs'}</p></div></div>
-  <div class="cchips" role="navigation" aria-label="Categories">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
-  const on=M.querySelector('.cchip.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
+  const chips=all.map(c=>`<a class="cat" style="padding:8px 12px;font-size:.9rem${c===name?';border-color:var(--accent);color:var(--accent)':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}><b>${esc(c||'Uncategorised')}</b><span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
+  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${IXI.cat}${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
 }
 /* alphabet grid + search, used directly on the home screen */
 function indexGrid(host){
@@ -1723,7 +1543,7 @@ function indexGrid(host){
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<div class="ixrow"><input class="search" id="iq" type="search" placeholder="Search songs…" aria-label="Search songs"><div class="seg" id="ixm"><button data-ixm="letter" aria-pressed="${mode==='letter'}" aria-label="Index" title="Index">${IXI.idx}</button><button data-ixm="cat" aria-pressed="${mode==='cat'}" aria-label="Category" title="Category">${IXI.cat}</button></div></div>
-  <div id="ig">${mode==='cat'?`<div class="cgrid">${cc.map(([c,n],i)=>`<a class="cc" style="--h:${catHue(i)}" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><i class="ci">${catIc(i)}</i><span class="cn"><b>${esc(c)}</b><small>${n} ${n===1?'song':'songs'}</small></span><em aria-hidden="true">›</em></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
+  <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${IXI.cat}<span style="color:inherit;font:inherit">${esc(c)}</span></b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
   host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.ixm);indexGrid(host)});
   $('#iq').oninput=e=>{const q=fz(e.target.value);
     $('#ig').style.display=q?'none':'';
@@ -1732,14 +1552,9 @@ function indexGrid(host){
 }
 function mhome(){
   const e=$('#mh');if(!e)return;const l=schedList();
-  const nm=String(schedName()||'').trim();
-  /* small title: meeting name (if any) and the day + date underneath */
-  const ttl=`<span class="mhst"><b>${esc(nm||'This meeting')}</b><small>${esc(dayTitle())}</small></span>`;
-  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting">${ttl.replace('</small>',' · No songs yet</small>')}<span class="mhp" aria-hidden="true">＋</span></a>`;return}
-  const MAX=5,show=l.slice(0,MAX),more=l.length-show.length;
-  e.innerHTML=`<section class="mh"><a class="mhh" href="#/meeting" aria-label="Open the meeting page">${ttl}<span class="mhc">${l.length} ${l.length===1?'song':'songs'} ›</span></a>
-  <ul class="mhpills">${show.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul>
-  ${more>0?`<a class="mhmore" href="#/meeting">View all ${l.length} songs ›</a>`:''}</section>`;
+  if(!l.length){e.innerHTML=`<a class="mh mhs" href="#/meeting" aria-label="This meeting"><span class="mhst"><b>${esc(dayTitle())}</b><small>No songs yet</small></span><span class="mhp" aria-hidden="true">＋</span></a>`;return}
+  e.innerHTML=`<section class="mh"><div class="mhh"><div><b class="mtit">${esc(dayTitle())}</b>${String(schedName()||'').trim()?`<div class="sub">${esc(String(schedName()).trim())}</div>`:''}</div><span class="sub">${l.length} songs</span></div>
+  <ul class="mhpills">${l.map((x,i)=>`<li><a class="mhpill" href="#/song/${encodeURIComponent(x.id)}"><span class="mhn">${i+1}</span><span class="mht">${esc(x.title)}</span></a></li>`).join('')}</ul></section>`;
 }
 function songView(id){
   nav('songs');const x=D.songs.find(s=>s.id===id);
@@ -1775,7 +1590,7 @@ function bibleRecent(remote){
   const r=BR().filter(x=>books[x[0]]).slice(0,10);if(!r.length)return '';
   const nm=x=>`${blang==='en'?books[x[0]].en:books[x[0]].te} ${x[1]}${x[2]?':'+x[2]:''}`,pv=x=>`data-rw="${x[0]}:${x[1]}:${x[2]||1}"`;
   setTimeout(()=>fillRecentWords(document),0);
-  return `<h3 class="ixh">${BI.clock}Recently viewed</h3><ul class="list" style="padding:0">${r.map(x=>remote
+  return `<h3 class="ixh">Recently viewed</h3><ul class="list" style="padding:0">${r.map(x=>remote
     ?`<li class="sr"><button class="mrow" data-rb="${x[0]}:${x[1]}">${esc(nm(x))}<small class="rw" ${pv(x)}></small></button></li>`
     :`<li class="sr"><a href="#/bible/${x[0]}/${x[1]}${x[2]?'/'+x[2]:''}"><div style="min-width:0"><div class="t">${esc(nm(x))}</div><div class="rw" ${pv(x)}></div></div></a></li>`).join('')}</ul>`;
 }
@@ -2041,33 +1856,22 @@ function bindRefSearch(inp,out,mode){
   if(BQ)go();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pj]');if(!b)return;e.preventDefault();const [bi,c,vs]=b.dataset.pj.split(':');startBible(+bi,+c,blang,vs)});
-const BI={
- search:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>',
- book:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>',
- star:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/></svg>',
- clock:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
- play:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>',
- cross:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg>',
- copy:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></svg>',
- plus:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
- screen:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20"/></svg>'
-};
 function bibleHome(){
   nav('bible');title('Holy Bible');
   if(!books.length){M.innerHTML='<p class="empty">Bible data could not be loaded. Please refresh the page.</p>';return}
   const last=LS.get('last',null);
   const list=books.map((b,i)=>({b,i})).filter(o=>ot?o.i<39:o.i>=39);
-  M.innerHTML=`<div class="view"><div class="bsr">${BI.search}<input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"></div><ul class="list bqres" id="bres" style="padding:0"></ul>
-  <div class="bqa">${last?`<a class="bqc go" href="#/bible/${last[0]}/${last[1]}"><i>${BI.play}</i><span><small>Continue reading</small><b>${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</b></span></a>`:''}<a class="bqc" href="#/bible/mynotes"><i>${BI.star}</i><span><small>My notes</small><b>${mnList().length} saved</b></span></a></div>
-  <div class="seg bsg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">${BI.book}Old Testament</button><button data-t="0" aria-pressed="${!ot}">${BI.cross}New Testament</button></div>
+  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
+  <a class="mhe" href="#/bible/mynotes" style="margin-top:10px;display:inline-flex">☆ My notes (${mnList().length})</a>
+  <div class="seg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">Old Testament</button><button data-t="0" aria-pressed="${!ot}">New Testament</button></div>
   <div style="margin-top:12px">${langSeg()}</div>
-  <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><i class="bn">${i+1}</i><div class="bt"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} ${b.ch===1?'chapter':'chapters'}</span></div></a>`).join('')}</div>${bibleRecent()}</div>`;
+  <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} chapters</span></a>`).join('')}</div>${bibleRecent()}</div>`;
   M.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ot=b.dataset.t==='1';bibleHome()});
   bindSeg(bibleHome);bindRefSearch($('#bq'),$('#bres'),'web');
 }
 function chapters(b){
   nav('bible');const bk=books[b];if(!bk)return bibleHome();title(blang==='en'?bk.en:bk.te);
-  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Books</a><h2>${BI.book}${esc(bk.te)}</h2><p class="meta">${esc(bk.en)} • ${bk.ch} ${bk.ch===1?'chapter':'chapters'}</p>
+  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Books</a><h2>${esc(bk.te)}</h2><p class="meta">${esc(bk.en)}</p>
   <div class="chs">${Array.from({length:bk.ch},(_,i)=>`<a href="#/bible/${b}/${i+1}">${i+1}</a>`).join('')}</div></div>`;
 }
 async function read(b,c,hv){
@@ -2078,15 +1882,12 @@ async function read(b,c,hv){
   try{if(blang!=='en')te=(await load('te',b+1))[c-1]||[];if(blang!=='te')en=(await load('en',b+1))[c-1]||[]}catch(e){M.innerHTML='<p class="empty">This chapter could not be loaded. Check your internet connection and try again.</p>';return}
   const n=Math.max(te.length,en.length);
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
-  const bnm=x=>blang==='en'?x.en:x.te;
-  const pl=prev?`${bnm(books[c>1?b:b-1])} ${c>1?c-1:books[b-1].ch}`:'',nl=next?`${bnm(books[c<bk.ch?b:b+1])} ${c<bk.ch?c+1:1}`:'';
-  M.innerHTML=`<div class="view rd"><div class="rdh"><a class="rdback" href="#/bible/${b}" aria-label="All chapters of ${esc(bk.en)}">‹ <span>Chapters</span></a>
-  <div class="rdt"><h2>${esc(bnm(bk))} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}</div>
-  <div class="rdpn"><a class="${prev?'':'off'}" href="${prev||'#'}" aria-label="Previous chapter">‹</a><a class="${next?'':'off'}" href="${next||'#'}" aria-label="Next chapter">›</a></div></div>
-  <div class="rdtools">${langSeg()}<div class="tb rdfs"><button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button></div></div>
-  <div class="tb rdacts"><button id="cp" class="ib">${BI.copy}<span>Copy</span></button><a class="mhe ib" href="#/bible/mynotes" id="mynb">${BI.star}<span>My notes</span></a><button id="lsr" class="pjonly ib">${BI.plus}<span>Meeting Verses</span></button><button id="pj1" class="pjonly ib">${BI.screen}<span>Projector</span></button></div>
+  M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
+  <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
+  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Meeting Verses</button><button id="pj1" class="pjonly">Projector</button></div>
+  
   <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
-  <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}"><small>‹ Previous</small><b>${esc(pl)}</b></a><a class="${next?'':'off'}" href="${next||'#'}"><small>Next ›</small><b>${esc(nl)}</b></a></div></div>`;
+  <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
   window.scrollTo(0,0);
   if(hv){const [h1,h2]=String(hv).split('-').map(Number);let f=null;for(let k=h1;k<=(h2>h1?h2:h1);k++){const el=document.querySelector(`.v[data-i="${k-1}"]`);if(el){el.classList.add('sel');f=f||el}}if(f)setTimeout(()=>f.scrollIntoView({block:'center'}),50)}
   /* click = select a verse; double-click (or double-tap) = send to the presentation.
@@ -2793,31 +2594,30 @@ function meeting(ids,name){
   }
   nav('meeting');title('This meeting');
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
-  M.innerHTML=`<div class="view mtg"><h2>This meeting</h2>
-  <details class="mpvd mpvtop" id="mpvd" open><summary>📺 Live preview</summary><div id="mpvbody"></div></details>
-  <div class="mthead"><div class="mtmeta"><p class="mtn" id="mtn" hidden></p><p class="mtt" id="mtt"></p></div><span class="mtcount" id="mcnt"></span></div>
+  M.innerHTML=`<div class="view"><h2>This meeting</h2>
+  <p class="mtt" id="mtt" style="font:700 1.15rem/1.4 var(--serif);margin:6px 0 2px"></p><p class="sub" id="mtn" style="margin:0 0 8px" hidden></p>
   <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
+  <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
-  <div class="tb mtact"><button id="mp" class="mtp">▶ Present</button><button id="mr">📱 Remote</button><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
+  <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><a class="mhe vonly" href="#/remote" style="min-height:40px;align-items:center">Remote control</a><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
+  <p class="sub" id="mpi"></p>
   ${lkRow()}
-  <div id="mrc"></div>
-  <h3 class="mtsec">Songs</h3>
-  <ol class="ml" id="ml"></ol>
-  <div class="mgate"><h3 class="mtsec">Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div>
-  <div class="mbn"><h3 class="mtsec">📖 Meeting Verses</h3><div id="mbnl"></div></div>
-  <p class="sub mtinfo" id="mpi"></p></div>`;
+  <div id="mrc"></div><ol class="ml" id="ml"></ol>
+  <div class="mbn"><h3>📖 Meeting Verses</h3><div id="mbnl"></div></div>
+  <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
   const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
   if(!canEdit())$('#mn').hidden=true;
   tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
-  $('#mpvbody').innerHTML=`<div class="mpv"><div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
-      <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`;
+  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
+      <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
+      <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`);
   const stopP=()=>{mpFullOff();svStop&&svStop();$('#mpvs').hidden=true;$('#mpx').hidden=true;$('#mpg').hidden=false};
-  const watchP=code=>{$('#mpvd').open=true;LS.set('mpcode',code);svStop&&svStop();$('#mpvs').hidden=false;$('#mpx').hidden=false;$('#mpg').hidden=true;miniPreview(code,$('#mpvs'))};
+  const watchP=code=>{LS.set('mpcode',code);svStop&&svStop();$('#mpvs').hidden=false;$('#mpx').hidden=false;$('#mpg').hidden=true;miniPreview(code,$('#mpvs'))};
   $('#mpg').onclick=()=>{const v=$('#mpc').value.trim();if(!/^\d{6}$/.test(v)){toast('Enter the 6-digit code');return}watchP(v)};
   $('#mpx').onclick=stopP;$('#mpc').onkeydown=e=>{if(e.key==='Enter')$('#mpg').click()};
   $('#mpfs').onclick=e=>{e.stopPropagation();mpFullToggle()};
-  mpGo=(code,full)=>{if(!/^\d{6}$/.test(code||''))return;$('#mpvd').open=true;$('#mpc').value=code;if($('#mpvs').hidden)watchP(code);if(full)mpFullToggle(true);$('#mpvs').scrollIntoView({block:'nearest'})};   // used by the Remote panel
+  mpGo=(code,full)=>{if(!/^\d{6}$/.test(code||''))return;$('#mpc').value=code;if($('#mpvs').hidden)watchP(code);if(full)mpFullToggle(true);$('#mpvs').scrollIntoView({block:'nearest'})};   // used by the Remote panel
   bnWatch(()=>bnMeetDraw($('#mbnl')));bnMeetDraw($('#mbnl'));
   $('#mbnl').onclick=e=>{const b=e.target.closest('[data-bnp]');if(!b)return;e.preventDefault();const x=bpPrune().find(n=>n.id===b.dataset.bnp);if(!x)return;startBible(x.b,x.c,['te','en','both'].includes(x.l)?x.l:'te',bnSend(x))};
   const renderML=()=>{
@@ -2834,7 +2634,7 @@ function meeting(ids,name){
     if(d.up!==undefined)mv(+d.up,+d.up-1);else if(d.dn!==undefined)mv(+d.dn,+d.dn+1);else if(d.play!==undefined)startMeeting(+d.play)};
   $('#mn').oninput=e=>{if(!canEdit())return;MT.name=e.target.value;mSave();tt()};
   $('#mq').oninput=renderPick;
-  const info=()=>{tt();const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone · ${n} ${n===1?'song':'songs'} · updated ${new Date(PUB.t).toLocaleString([],{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
+  const info=()=>{tt();const n=(PUB.ids||[]).length;$('#mpi').textContent=n?`Shared with everyone and the admin: ${meetTitle(PUB.date,PUB.name)} — ${n} songs (${new Date(PUB.t).toLocaleString()})`:(canEdit()?'Changes you make here are shared automatically.':'The meeting list is set by the contributors.')};
   info();afterPub=info;
   $('#mp').onclick=()=>startMeeting(0);
   $('#mr').onclick=()=>{if(!PJ.rm)rmStart();else $('#mrc').scrollIntoView({block:'nearest'});mrc()};
@@ -3245,36 +3045,6 @@ async function ggPut(p,content,msg,sha){
 function shrinkImg(file,max){max=max||1600;return new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(file);
   im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.85).split(',')[1])};
   im.onerror=()=>rej(new Error('That file is not a picture'));im.src=u})}
-/* Crop a photo into a circle that fits the daily verse picture: drag to move, slide to zoom. Returns a square JPEG File, or null if cancelled */
-function cropPhoto(file){return new Promise(async ok=>{
-  const url=URL.createObjectURL(file),img=new Image();
-  await new Promise(r=>{img.onload=r;img.onerror=r;img.src=url});
-  if(!img.width){URL.revokeObjectURL(url);return ok(file)}
-  const S=Math.max(220,Math.min(320,innerWidth-64)),ov=document.createElement('div');ov.className='cropv';
-  ov.innerHTML=`<div class="cb"><h3>Crop the pastor photo</h3><canvas width="${S}" height="${S}"></canvas><p class="sub">Drag the photo to move it. Use the slider to zoom. The circle is what shows on the verse picture.</p><input type="range" min="100" max="400" value="100" aria-label="Zoom"><div class="cr"><button class="mhe" type="button" data-x style="cursor:pointer">Cancel</button><button class="mhe dl" type="button" data-ok style="cursor:pointer">Use this photo</button></div></div>`;
-  document.body.appendChild(ov);
-  const cv=ov.querySelector('canvas'),x=cv.getContext('2d'),rg=ov.querySelector('input'),base=Math.max(S/img.width,S/img.height);
-  let z=1,ox=0,oy=0;
-  const clamp=()=>{const sc=base*z,mx=Math.max(0,(img.width*sc-S)/2),my=Math.max(0,(img.height*sc-S)/2);ox=Math.min(mx,Math.max(-mx,ox));oy=Math.min(my,Math.max(-my,oy))};
-  const paint=(c,k,mask)=>{const sc=base*z*k;c.fillStyle='#fff';c.fillRect(0,0,S*k,S*k);c.drawImage(img,S*k/2+ox*k-img.width*sc/2,S*k/2+oy*k-img.height*sc/2,img.width*sc,img.height*sc);
-    if(mask){const r=S*.44;c.save();c.fillStyle='rgba(8,14,30,.6)';c.beginPath();c.rect(0,0,S,S);c.arc(S/2,S/2,r,0,7);c.fill('evenodd');c.restore();c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(S/2,S/2,r,0,7);c.stroke()}};
-  const draw=()=>{clamp();paint(x,1,true)};
-  let drag=null;
-  cv.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,ox,oy};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'};
-  cv.onpointermove=e=>{if(!drag)return;ox=drag.ox+(e.clientX-drag.x);oy=drag.oy+(e.clientY-drag.y);draw()};
-  cv.onpointerup=cv.onpointercancel=()=>{drag=null;cv.style.cursor='grab'};
-  cv.onwheel=e=>{e.preventDefault();z=Math.min(4,Math.max(1,z*(e.deltaY<0?1.06:1/1.06)));rg.value=Math.round(z*100);draw()};
-  rg.oninput=()=>{z=rg.value/100;draw()};
-  const done=v=>{ov.remove();URL.revokeObjectURL(url);ok(v)};
-  ov.querySelector('[data-x]').onclick=()=>done(null);
-  ov.querySelector('[data-ok]').onclick=()=>{
-    /* keep what is inside the circle: a square photo, so it fits the round frame on the picture */
-    const out=document.createElement('canvas'),O=640,k=O/S,r=S*.44*k;out.width=out.height=O;
-    const c=out.getContext('2d');c.save();c.translate(O/2-S*k*.5,O/2-S*k*.5);paint(c,k,false);c.restore();
-    const sq=document.createElement('canvas'),d=Math.round(r*2);sq.width=sq.height=d;sq.getContext('2d').drawImage(out,O/2-r,O/2-r,d,d,0,0,d,d);
-    sq.toBlob(b=>done(b?new File([b],'pastor.jpg',{type:'image/jpeg'}):file),'image/jpeg',.92)};
-  draw();
-})}
 async function uploadImg(file,prefix){const data=await shrinkImg(file),name=`${prefix}-${Date.now().toString(36)}.jpg`;await ggPut('uploads/'+name,data,'Upload '+name);return '/uploads/'+name}
 const p2=n=>String(n).padStart(2,'0');
 const nowStr=()=>{const d=new Date();return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`};
@@ -3358,7 +3128,7 @@ function csSongForm(box){
 async function csVerse(){
   const box=$('#csb');box.innerHTML='<div class="cs-card"><p class="sub" style="margin:0;text-align:center">Loading…</p></div>';
   let g,o;
-  try{g=await ggGet('content/verse_image.json');o=g?jparse(g.text):{}}
+  try{g=await ggGet('content/verse_image.json');o=g?JSON.parse(g.text.replace(/^\uFEFF/,'')):{}}
   catch(e){box.innerHTML=`<div class="cs-card"><p class="sub" style="margin:0;text-align:center">${esc(errMsg(e))}</p></div>`;return}
   if(!$('#csb')||CS.tab!=='verse')return;
   const hls=(o.vi_hls||[]).map(x=>({...x})),bgs=(o.vi_bgs||[]).map(x=>({...x}));
@@ -3378,7 +3148,6 @@ async function csVerse(){
     <div class="cs-col"><input type="color" id="v_hlc" value="${esc(o.vi_hl_color||'#FFC93C')}"><span class="sub">Highlight colour</span></div>
     <label for="v_hs">Highlight text size</label>${sel('v_hs',o.vi_hl_size||'100',[['100','Same as the verse'],['112','A little bigger'],['125','Bigger']])}
     <div class="cs-sw"><span>Show the pastor / church bar</span><input type="checkbox" id="v_ps"${o.vi_show_pastor!==false?' checked':''}></div>
-    <div class="cs-sw"><span>Show the pastor phone number</span><input type="checkbox" id="v_phs"${o.vi_show_phone!==false?' checked':''}></div>
     <label for="v_psc">Pastor photo size: <b id="v_pscv">${+o.vi_pastor_scale||100}</b>%</label><input class="cs-rng" id="v_psc" type="range" min="70" max="150" step="5" value="${+o.vi_pastor_scale||100}"></div>
     <div class="cs-card"><h3>Greeting and date</h3><p class="sub" style="margin:0 0 12px">The greeting is written at the top of the picture (and is the title of the daily notification). The date is written under the verse reference.</p>
     <div class="cs-sw"><span>Show a greeting</span><input type="checkbox" id="v_gon"${o.vi_greet_on===true?' checked':''}></div>
@@ -3389,7 +3158,7 @@ async function csVerse(){
     <div class="cs-card"><h3>Pastor and church on the picture</h3><p class="sub" style="margin:0 0 12px">Leave a box empty to use what is saved in the site settings.</p>
     <div class="cs-pp"><img id="v_ppimg" alt="" src="${esc(viv(o,'vi_pastor_photo','pastor_photo')||'')}"><span class="sub">${o.vi_pastor_photo?'Photo chosen here':'Photo from the site settings'}</span></div>
     <label for="v_ppf">Pastor photo</label><input id="v_ppf" type="file" accept="image/*">
-    <div class="cs-bar"><button class="mhe" id="v_ppu" type="button" style="cursor:pointer">Crop &amp; upload photo</button>${o.vi_pastor_photo?'<button class="mhe" id="v_ppd" type="button" style="cursor:pointer">Use the site photo</button>':''}</div>
+    <div class="cs-bar"><button class="mhe" id="v_ppu" type="button" style="cursor:pointer">Upload photo</button>${o.vi_pastor_photo?'<button class="mhe" id="v_ppd" type="button" style="cursor:pointer">Use the site photo</button>':''}</div>
     <label for="v_pn">Pastor name</label><input id="v_pn" value="${esc(o.vi_pastor_name||'')}" placeholder="${esc(D.settings.pastor_name||'')}" autocomplete="off">
     <label for="v_pp">Phone number</label><input id="v_pp" value="${esc(o.vi_pastor_phone||'')}" placeholder="${esc(D.settings.pastor_phone||'')}" autocomplete="off" inputmode="tel">
     <label for="v_cn">Church name</label><input id="v_cn" value="${esc(o.vi_church_name||'')}" placeholder="${esc(D.settings.church_name||'')}" autocomplete="off"></div>
@@ -3419,9 +3188,8 @@ async function csVerse(){
     $('#v_ppu').onclick=async()=>{
       if(CS.busy)return;const f=$('#v_ppf').files[0];
       if(!f){toast('Choose a photo first');return}
-      grab();const cf=await cropPhoto(f);if(!cf)return;
-      csBusy(true,'Uploading the photo…');
-      try{o.vi_pastor_photo=await uploadImg(cf,'pastor');csBusy(false);draw()}
+      grab();csBusy(true,'Uploading the photo…');
+      try{o.vi_pastor_photo=await uploadImg(f,'pastor');csBusy(false);draw()}
       catch(e){csBusy(false,errMsg(e));toast(errMsg(e))}
     };
     if($('#v_ppd'))$('#v_ppd').onclick=()=>{grab();o.vi_pastor_photo='';draw()};
@@ -3433,7 +3201,7 @@ async function csVerse(){
   const grab=()=>{
     if(!$('#v_title'))return;
     o.vi_title=$('#v_title').value.trim();o.vi_text_size=$('#v_ts').value;o.vi_hl_on=$('#v_hlon').checked;o.vi_hl_color=$('#v_hlc').value;o.vi_hl_size=$('#v_hs').value;
-    o.vi_show_pastor=$('#v_ps').checked;o.vi_show_phone=$('#v_phs').checked;o.vi_pastor_scale=+$('#v_psc').value;
+    o.vi_show_pastor=$('#v_ps').checked;o.vi_pastor_scale=+$('#v_psc').value;
     o.vi_greet_on=$('#v_gon').checked;o.vi_greet=$('#v_gt').value.trim();o.vi_date_on=$('#v_don').checked;o.vi_date_lang=$('#v_dl').value;
     o.vi_pastor_name=$('#v_pn').value.trim();o.vi_pastor_phone=$('#v_pp').value.trim();o.vi_church_name=$('#v_cn').value.trim();
     box.querySelectorAll('[data-th]').forEach(x=>{if(bgs[+x.dataset.th])bgs[+x.dataset.th].theme=x.value});
@@ -3464,7 +3232,7 @@ async function csVerse(){
     csBusy(true,'Saving…');
     try{
       const cur=await ggGet('content/verse_image.json');   // newest copy, so nothing another contributor changed is lost
-      const base=cur?jparse(cur.text):{};
+      const base=cur?JSON.parse(cur.text.replace(/^\uFEFF/,'')):{};
       const res=await ggPut('content/verse_image.json',b64(JSON.stringify({...base,...out},null,2)),'Edit daily verse picture',cur&&cur.sha);
       g=cur;Object.assign(o,out);
       Object.assign(D.settings,out);HV=null;     // this device shows the new picture / background straight away

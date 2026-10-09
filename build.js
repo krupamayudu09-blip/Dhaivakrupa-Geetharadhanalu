@@ -49,19 +49,22 @@ Object.entries(vimg).forEach(([k, v]) => { settings[k] = v; });
   const manifest = { name, short_name: (settings.app_short_name || '').trim() || name, start_url: '/', display: 'standalone', background_color: '#F4F7FC', theme_color: settings.ink || '#17305C', icons: entries };
   fs.writeFileSync(path.join(out, 'manifest.webmanifest'), JSON.stringify(manifest));
   const shown = icon || '/icon.svg';
+  const badge = ok(settings.notif_badge) ? norm(settings.notif_badge) : shown;   // small monochrome status-bar icon for Android notifications
+  if (badge !== shown && !fs.existsSync(badge.slice(1))) console.warn('Notification badge file not found:', badge);
+  { const p = path.join(out, 'sw.js'); if (fs.existsSync(p)) fs.writeFileSync(p, fs.readFileSync(p, 'utf8').split("badge:'/icon.svg'").join(`badge:'${badge}'`)); }
   ['index.html', 'sw.js'].forEach(f => { const p = path.join(out, f); if (fs.existsSync(p)) fs.writeFileSync(p, fs.readFileSync(p, 'utf8').split("'/icon.svg'").join(`'${shown}'`).split('"/icon.svg"').join(`"${shown}"`)); });
   if (settings.ink && fs.existsSync(path.join(out, 'index.html'))) { const p = path.join(out, 'index.html'); fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace('<meta name="theme-color" content="#17305C">', `<meta name="theme-color" content="${String(settings.ink).replace(/[^#\w]/g, '')}">`)); }
-  console.log('App icon:', shown);
+  console.log('App icon:', shown, '| notification badge:', badge);
 })();
 
 // small file for the notification image (service worker reads it): pastor / church shown on the daily verse
 const pick = (...v) => { for (const x of v) if (x != null && String(x).trim() !== '') return x; return ''; };   // first non-empty value
 fs.writeFileSync(path.join(out, 'pastor.json'), JSON.stringify({
   // Daily Verse Image can override the pastor / church details; empty = the General Settings value
-  name: pick(settings.vi_pastor_name, settings.pastor_name), phone: settings.vi_show_phone === false ? '' : pick(settings.vi_pastor_phone, settings.pastor_phone),
+  name: pick(settings.vi_pastor_name, settings.pastor_name), phone: pick(settings.vi_pastor_phone, settings.pastor_phone),
   church: pick(settings.vi_church_name, settings.church_name), photo: pick(settings.vi_pastor_photo, settings.pastor_photo),
   ink: settings.ink || '', accent: settings.accent || '',
-  vi: { title: settings.vi_title || '', hlOn: settings.vi_hl_on !== false, hlColor: settings.vi_hl_color || '', showPastor: settings.vi_show_pastor !== false, showPhone: settings.vi_show_phone !== false, scale: +settings.vi_pastor_scale || 100,
+  vi: { title: settings.vi_title || '', hlOn: settings.vi_hl_on !== false, hlColor: settings.vi_hl_color || '', showPastor: settings.vi_show_pastor !== false, scale: +settings.vi_pastor_scale || 100,
     font: settings.vi_font || '', hlFont: settings.vi_hl_font || '', textSize: +settings.vi_text_size || 100, hlSize: +settings.vi_hl_size || 100, hls: settings.vi_hls || [],
     greetOn: settings.vi_greet_on === true, greet: settings.vi_greet || '', dateOn: settings.vi_date_on === true, dateLang: settings.vi_date_lang === 'te' ? 'te' : 'en',
     bgs: (settings.vi_bgs || []).filter(x => x && x.image).map(x => ({ image: x.image, theme: x.theme || '' })) } }));
