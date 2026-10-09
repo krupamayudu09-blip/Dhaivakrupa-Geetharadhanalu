@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path');
 const out = 'dist';
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
-['index.html','install.html','admin','uploads','bible','manifest.webmanifest','sw.js','verse-img.js','icon.svg','daily-verses.json']
+['index.html','install.html','admin','uploads','bible','manifest.webmanifest','sw.js','verse-img.js','icon.svg','daily-verses.json','widget']
   .forEach(f => fs.existsSync(f) && fs.cpSync(f, path.join(out, f), { recursive: true }));
 // A broken file (empty upload, leftover git conflict markers, bad JSON) must not stop the whole deploy: it is reported by name and skipped.
 const BAD = [];
@@ -46,7 +46,9 @@ Object.entries(vimg).forEach(([k, v]) => { settings[k] = v; });
   else if (mask) { add(mask, 'maskable'); entries.push({ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }); }
   else entries.push({ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' });
   const name = settings.site_name_te || settings.site_name || 'Dhaivakrupa';
-  const manifest = { name, short_name: (settings.app_short_name || '').trim() || name, start_url: '/', display: 'standalone', background_color: '#F4F7FC', theme_color: settings.ink || '#17305C', icons: entries };
+  const manifest = { name, short_name: (settings.app_short_name || '').trim() || name, start_url: '/', display: 'standalone', background_color: '#F4F7FC', theme_color: settings.ink || '#17305C', icons: entries,
+    // Home-screen widget with the verse of the day (shown in the widget picker of browsers/OSes that support PWA widgets)
+    widgets: [{ name: 'Verse of the day', tag: 'verse', description: "Today's Bible verse", template: 'verse', ms_ac_template: '/widget/verse-template.json', type: 'application/json', auth: false, update: 21600, icons: entries.slice(0, 1), screenshots: [] }] };
   fs.writeFileSync(path.join(out, 'manifest.webmanifest'), JSON.stringify(manifest));
   const shown = icon || '/icon.svg';
   const badge = ok(settings.notif_badge) ? norm(settings.notif_badge) : shown;   // small monochrome status-bar icon for Android notifications

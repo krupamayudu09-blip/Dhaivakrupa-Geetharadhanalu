@@ -1084,6 +1084,8 @@ async function init(){
   const wake=()=>{if(!document.hidden){greetCheck();fetchPub();refreshData();dvLocalCheck();bellBadge();ytLoad();autoNotify()}};
   document.addEventListener('visibilitychange',wake);addEventListener('online',wake);addEventListener('focus',wake);
   route();dvLocalCheck();autoNotify();greetCheck();
+  GESTURES.forEach(g=>addEventListener(g,function once(){removeEventListener(g,once,true);if('Notification' in window&&Notification.permission==='default')autoNotify()},true));   // first tap: ask if the automatic ask was skipped
+  widgetSync();
   try{navigator.serviceWorker&&navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='greeting')greetCheck(true)})}catch{}   // a greeting notification just arrived while the app is open
   ytLive();ytLoad();setInterval(()=>{if(!document.hidden)ytLoad()},60000);   // live bar + alerts: checked every minute while the app is open
 }
@@ -1494,11 +1496,21 @@ async function autoNotify(){
   autoBusy=true;
   try{
     if(Notification.permission!=='granted'){
-      if(Date.now()-LS.get(askKey(),0)<7*864e5)return;           // dismissed recently: do not nag
-      if(await askPermission()!=='granted')return;
+      if(isApp()){if(sessionStorage.getItem('npSess'))return}   // installed app: ask once on every launch until allowed
+      else if(Date.now()-LS.get(askKey(),0)<864e5)return;         // browser: dismissed recently, ask again after a day
+      const ans=await askPermission();if(isApp()&&ans==='default'&&document.getElementById('npAsk')===null)sessionStorage.setItem('npSess','1');
+      if(ans!=='granted')return;
     }
     await autoSubscribe();
   }catch{}finally{autoBusy=false}
+}
+/* ---- Home-screen widget: today's verse (PWA widget; the service worker fills it, the app keeps it fresh) ---- */
+async function widgetSync(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    if(reg.periodicSync){try{if((await navigator.permissions.query({name:'periodic-background-sync'})).state==='granted')await reg.periodicSync.register('verse-widget',{minInterval:6*3600*1000})}catch{}}
+    if(reg.widgets)reg.active&&reg.active.postMessage({type:'widget-refresh'});
+  }catch{}
 }
 /* fallback when server push is not available: show the verse notification when the app is opened after 8 AM */
 async function dvLocalCheck(){

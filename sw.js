@@ -1,4 +1,4 @@
-const V='dk-v66';
+const V='dk-v67';
 try{importScripts('/verse-img.js')}catch(e){}
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(['/','/icon.svg'])));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>clients.claim()))});
@@ -58,6 +58,41 @@ self.addEventListener('push',e=>{
     await self.registration.showNotification(ttl||'\u0C08 \u0C30\u0C4B\u0C1C\u0C41 \u0C35\u0C3E\u0C15\u0C4D\u0C2F\u0C02',{body:body||'Open the app to read today\'s verse',icon:'/icon.svg',badge:'/icon.svg',image,tag:'daily-verse',data:{url:'/#/bible/'+(b-1)+'/'+c}});
   })());
 });
+
+/* ---- Home-screen widget "Verse of the day" (PWA widgets: Windows 11 / Edge today; the same code works wherever the browser supports widgets) ---- */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function pickVerse(list,n){const N=list.length;let s=Math.floor(N/3)+1;while(gcd(s,N)!==1)s++;return list[(n*s)%N]}
+async function widgetVerse(){
+  const d=new Date(),n=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);
+  const out={title:'\u0C08 \u0C30\u0C4B\u0C1C\u0C41 \u0C35\u0C3E\u0C15\u0C4D\u0C2F\u0C02',verse:'Open the app to read today\'s verse',ref:'',url:'/'};
+  try{
+    const list=await (await fetch('/daily-verses.json')).json(),[b,c,v]=pickVerse(list,n);
+    const [bk,te]=await Promise.all([fetch('/bible/books.json').then(r=>r.json()),fetch('/bible/te/'+b+'.json').then(r=>r.json())]);
+    out.verse=te[c-1][v-1];out.ref=bk[b-1].te+' '+c+':'+v;out.url='/#/bible/'+(b-1)+'/'+c;
+    try{const P=await (await fetch('/pastor.json')).json();if(P.vi&&P.vi.greetOn&&P.vi.greet)out.title=P.vi.greet}catch{}
+    try{const k=await caches.open(V);await k.put('/widget/last.json',new Response(JSON.stringify(out)))}catch{}
+  }catch{
+    try{const h=await caches.match('/widget/last.json');if(h)return await h.json()}catch{}      // offline: show the last verse
+  }
+  return out;
+}
+async function widgetUpdate(w){
+  try{
+    const def=w&&w.definition;if(!def||!self.widgets)return;
+    const tpl=await (await fetch(def.msAcTemplate||'/widget/verse-template.json')).text();
+    const data=await widgetVerse();data.url=new URL(data.url,self.location.origin).href;
+    await self.widgets.updateByTag(def.tag,{template:tpl,data:JSON.stringify(data)});
+  }catch{}
+}
+async function widgetUpdateAll(){try{if(!self.widgets)return;for(const w of await self.widgets.getByTag('verse'))await widgetUpdate(w)}catch{}}
+self.addEventListener('widgetinstall',e=>e.waitUntil((async()=>{
+  try{await widgetUpdate(e.widget)}catch{}
+  try{if(self.registration.periodicSync)await self.registration.periodicSync.register('verse-widget',{minInterval:6*3600*1000})}catch{}
+})()));
+self.addEventListener('widgetresume',e=>e.waitUntil(widgetUpdate(e.widget)));
+self.addEventListener('widgetclick',e=>{if(e.action==='open')e.waitUntil(clients.openWindow('/'))});
+self.addEventListener('periodicsync',e=>{if(e.tag==='verse-widget')e.waitUntil(widgetUpdateAll())});
+self.addEventListener('message',e=>{if(e.data&&e.data.type==='widget-refresh')e.waitUntil(widgetUpdateAll())});
 self.addEventListener('notificationclick',e=>{
   e.notification.close();const url=(e.notification.data&&e.notification.data.url)||'/';
   e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(l=>{
