@@ -1442,6 +1442,8 @@ const shortAlertsOn=()=>D.settings.short_alerts!==false;
 /* ---- Automatic notifications: when the site opens it asks for permission, then subscribes this device to BOTH the daily 8 AM verse and the YouTube live alert. Nothing to switch on by hand.
    Turning both off on the 🔔 page is respected (notifOptOut). Chrome/Edge/Android are asked a moment after the site opens; Safari, iPhone and Firefox only allow the question after a tap, so they are asked on the first tap. ---- */
 let autoBusy=false;
+const isApp=()=>{try{return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true}catch{return false}};
+const askKey=()=>isApp()?'notifAskedApp':'notifAsked';
 const GESTURES=['click','touchend','keydown'];
 function askPermission(){
   /* A browser only shows the real permission box reliably after a tap (Chrome hides or "quiets" it otherwise; Safari/iPhone/Firefox refuse).
@@ -1453,9 +1455,9 @@ function askPermission(){
     d.innerHTML='<div style="font-weight:700;margin-bottom:4px">\uD83D\uDD14 Notifications</div><div style="color:var(--muted,#5F6B80);font-size:.92em;margin-bottom:12px">Get the daily verse at 8 AM, live alerts and new songs.</div><div style="display:flex;gap:8px;justify-content:flex-end"><button id="npNo" type="button" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#DCE3EF);background:transparent;color:inherit;font:inherit;cursor:pointer">Not now</button><button id="npYes" type="button" style="padding:9px 16px;border-radius:10px;border:0;background:var(--ink,#17305C);color:#fff;font:inherit;font-weight:600;cursor:pointer">Allow</button></div>';
     document.body.appendChild(d);
     const close=()=>d.remove();
-    d.querySelector('#npNo').onclick=()=>{LS.set('notifAsked',Date.now());close();res('default')};
+    d.querySelector('#npNo').onclick=()=>{LS.set(askKey(),Date.now());close();res('default')};
     d.querySelector('#npYes').onclick=()=>{
-      LS.set('notifAsked',Date.now());close();
+      LS.set(askKey(),Date.now());close();
       let q;try{q=Notification.requestPermission()}catch{res('default');return}      // called straight from the tap
       Promise.resolve(q).then(res,()=>res('default'));
     };
@@ -1475,13 +1477,17 @@ async function autoSubscribe(){
 }
 async function autoNotify(){
   if(autoBusy||!('Notification' in window&&'serviceWorker' in navigator))return;
-  if(LS.get('notifOptOut',0)||Notification.permission==='denied')return;
+  if(LS.get('notifOptOut',0))return;
+  if(Notification.permission==='denied'){                      // blocked earlier (often by the browser itself): the browser will not ask again, so tell the person once how to undo it
+    if(isApp()&&!LS.get('deniedHint',0)){LS.set('deniedHint',1);toast('Notifications are blocked. Open phone Settings → Apps → this app → Notifications and turn them on.')}
+    return;
+  }
   if(/^#\/(remote|screen)/.test(location.hash))return;           // never pop a prompt on the projector / remote screens
   const pt=LS.get('ptopics',null);if(pt&&!pt.verse&&!pt.live&&pt.shorts===false)return;
   autoBusy=true;
   try{
     if(Notification.permission!=='granted'){
-      if(Date.now()-LS.get('notifAsked',0)<7*864e5)return;           // dismissed recently: do not nag
+      if(Date.now()-LS.get(askKey(),0)<7*864e5)return;           // dismissed recently: do not nag
       if(await askPermission()!=='granted')return;
     }
     await autoSubscribe();
