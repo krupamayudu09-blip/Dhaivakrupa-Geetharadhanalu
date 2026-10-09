@@ -6,7 +6,6 @@
   "vi_text_size": "100",
   "vi_pastor_name": "",
   "vi_show_pastor": true,
-  "vi_show_phone": false,
   "vi_pastor_scale": 135,
   "vi_title": "ఈ రోజు వాక్యం",
   "vi_hl_on": true,
@@ -14,7 +13,8 @@
   "vi_hl_size": "100",
   "vi_date_lang": "en",
   "vi_hl_color": "#ffc93c",
-  "vi_pastor_photo": "/uploads/pastor-muzpncgs.jpg",
+  "vi_pastor_photo": "/uploads/img_8086-1-.png",
   "vi_church_name": "",
+  "vi_show_phone": false,
   "vi_greet": "శుభోదయం"
 }
