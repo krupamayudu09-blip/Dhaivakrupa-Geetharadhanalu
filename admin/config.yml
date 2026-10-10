@@ -22,7 +22,7 @@ collections:
     summary: "{{title}} {{category}}"
     sortable_fields: ["date", "title", "category"]
     fields:
-      - { label: "Title (Telugu) / పాట పేరు", name: "title", widget: "string", required: false, hint: "Required unless you upload an XML file that contains titles." }
+      - { label: "Title (Telugu) / పాట పేరు", name: "title", widget: "string", required: false }
       - { label: "Title (English, optional)", name: "title_en", widget: "string", required: false }
       - label: "Category / విభాగం"
         name: "category"
@@ -32,13 +32,12 @@ collections:
         value_field: "name"
         display_fields: ["name"]
         required: false
-        hint: "Pick a category. Add new ones under Categories in the left menu."
       - { label: "Writer / రచయిత", name: "writer", widget: "string", required: false }
       - { label: "Added by (contributor name – set automatically for contributors)", name: "added_by", widget: "string", required: false }
       - { label: "Scale (e.g. C, Dm)", name: "scale", widget: "string", required: false }
-      - { label: "Lyrics as TEXT (type or paste)", name: "lyrics", widget: "text", required: false, hint: "Leave a blank line between verses. Use text, photo, or both." }
+      - { label: "Lyrics as TEXT (type or paste)", name: "lyrics", widget: "text", required: false }
       - { label: "Lyrics as PHOTO (upload image of the song)", name: "lyrics_image", widget: "image", required: false, choose_url: false }
-      - { label: "XML file upload (one or many songs)", name: "xml_file", widget: "file", required: false, choose_url: false, hint: "See sample-songs.xml. Every <song> inside the file is added to the site automatically. To add up to 20 songs quickly, use the orange Add up to 20 songs button." }
+      - { label: "XML file upload (one or many songs)", name: "xml_file", widget: "file", required: false, choose_url: false }
       - { label: "Presentation background (optional, overrides default)", name: "bg_image", widget: "image", required: false, choose_url: false }
       - { label: "Audio file (optional)", name: "audio", widget: "file", required: false, choose_url: false }
       - { label: "YouTube link (optional)", name: "youtube", widget: "string", required: false }
@@ -72,13 +71,13 @@ collections:
           - { label: "Site name", name: "site_name", widget: "string", default: "Dhaivakrupa Ujjeevakeerthanalu" }
           - { label: "Site name (Telugu)", name: "site_name_te", widget: "string", default: "దైవకృప ఉజ్జీవకీర్తనలు" }
           - { label: "Tagline", name: "tagline", widget: "string", required: false }
-          - { label: "Logo (optional)", name: "logo", widget: "image", required: false, choose_url: false, hint: "Used in every theme. If you also add a light-theme logo below, this one is used only in the dark theme." }
-          - { label: "Logo for light theme (optional)", name: "logo_light", widget: "image", required: false, choose_url: false, hint: "A different logo shown in the light theme (for example a dark-coloured version that is visible on white). Leave empty to use the main logo in both themes." }
-          - { label: "App icon (upload a square PNG, 512x512 or larger)", name: "app_icon", widget: "image", required: false, choose_url: false, hint: "The icon on the phone home screen / installed app, and in notifications. Keep it square with the logo in the middle." }
-          - { label: "App icon – maskable version (optional)", name: "app_icon_maskable", widget: "image", required: false, choose_url: false, hint: "Optional full-bleed version for Android round/rounded icons: fill the whole square with your background colour and keep the logo inside the centre 60%. If empty, the App icon above is used." }
-          - { label: "Notification badge – small status-bar icon (optional, Android)", name: "notif_badge", widget: "image", required: false, choose_url: false, hint: "Upload a square PNG about 96x96: your logo in WHITE on a TRANSPARENT background (no colours, no background square). Android shows it as a flat shape in the status bar next to the notification. If empty, the App icon is used." }
-          - { label: "App name under the icon (short, optional)", name: "app_short_name", widget: "string", required: false, hint: "Shown under the icon on the home screen. Leave empty to use the Telugu site name." }
-          - { label: "Favicon image (upload PNG, SVG, ICO or JPG, square, at least 192x192)", name: "favicon_image", widget: "image", required: false, choose_url: false, hint: "Shown in the browser tab and as the home-screen icon. If uploaded, it is used instead of the emoji below." }
+          - { label: "Logo (optional)", name: "logo", widget: "image", required: false, choose_url: false }
+          - { label: "Logo for light theme (optional)", name: "logo_light", widget: "image", required: false, choose_url: false }
+          - { label: "App icon (upload a square PNG, 512x512 or larger)", name: "app_icon", widget: "image", required: false, choose_url: false }
+          - { label: "App icon – maskable version (optional)", name: "app_icon_maskable", widget: "image", required: false, choose_url: false }
+          - { label: "Notification badge – small status-bar icon (optional, Android)", name: "notif_badge", widget: "image", required: false, choose_url: false }
+          - { label: "App name under the icon (short, optional)", name: "app_short_name", widget: "string", required: false }
+          - { label: "Favicon image (upload PNG, SVG, ICO or JPG, square, at least 192x192)", name: "favicon_image", widget: "image", required: false, choose_url: false }
           - { label: "Favicon emoji (used only when no favicon image is uploaded)", name: "favicon", widget: "string", default: "✝️", required: false }
           - { label: "Hero Bible verse", name: "verse", widget: "text", required: false }
           - { label: "Hero verse reference", name: "verse_ref", widget: "string", required: false }
@@ -92,9 +91,9 @@ collections:
           - { label: "Contact email", name: "email", widget: "string", required: false }
           - { label: "WhatsApp number (with country code, e.g. 919876543210)", name: "whatsapp", widget: "string", required: false }
           - { label: "Facebook URL", name: "facebook", widget: "string", required: false }
-          - { label: "Show the Contributors card on the About page", name: "contrib_on", widget: "boolean", default: true, hint: "Shows the list of contributors and a Contributor login button. Contributors are people you invite in Netlify Identity. Give a user the role \"contributor\" to keep them out of the full admin." }
+          - { label: "Show the Contributors card on the About page", name: "contrib_on", widget: "boolean", default: true }
           - { label: "Contributors card – title", name: "contrib_title", widget: "string", required: false, default: "Contributors" }
-          - { label: "Contributors card – text", name: "contrib_text", widget: "text", required: false, hint: "A short line, for example: Thank you to everyone who adds songs and verses." }
+          - { label: "Contributors card – text", name: "contrib_text", widget: "text", required: false }
           - label: "Contributors (shown on the Contributors page)"
             name: "contrib_list"
             widget: "list"
@@ -104,14 +103,13 @@ collections:
               - { label: "Name", name: "name", widget: "string" }
               - { label: "Role / note (optional)", name: "role", widget: "string", required: false }
               - { label: "Photo (optional – square picture; initials are shown if empty)", name: "photo", widget: "image", required: false }
-          - { label: "Credit songs that have no contributor to (optional)", name: "contrib_default", widget: "string", required: false, hint: "Older songs were added before names were recorded. Type a name here (same spelling as in the list above) to credit them to that person. Songs added from now on keep the real name of whoever saved them." }
+          - { label: "Credit songs that have no contributor to (optional)", name: "contrib_default", widget: "string", required: false }
           - { label: "Footer text", name: "footer", widget: "string", default: "To God alone be the glory", required: false }
           - label: "Presentation backgrounds"
             name: "pj_backgrounds"
             widget: "list"
             required: false
             summary: "{{fields.label}}"
-            hint: "Images shown behind the projector slides. The first one is used by default."
             fields:
               - { label: "Name", name: "label", widget: "string" }
               - { label: "Image", name: "image", widget: "image", choose_url: false }
@@ -122,23 +120,20 @@ collections:
             required: false
             default: ""
             options: [{ label: "Default (Noto Telugu)", value: "" }, { label: "Noto Sans Telugu", value: "Noto Sans Telugu" }, { label: "Noto Serif Telugu", value: "Noto Serif Telugu" }, { label: "Anek Telugu", value: "Anek Telugu" }, { label: "Hind Guntur", value: "Hind Guntur" }, { label: "Mandali", value: "Mandali" }, { label: "NTR", value: "NTR" }, { label: "Ramabhadra", value: "Ramabhadra" }, { label: "Suranna", value: "Suranna" }, { label: "Gidugu", value: "Gidugu" }, { label: "Gurajada", value: "Gurajada" }, { label: "Lakki Reddy", value: "Lakki Reddy" }, { label: "Mallanna", value: "Mallanna" }, { label: "Peddana", value: "Peddana" }, { label: "Ponnala", value: "Ponnala" }, { label: "Ravi Prakash", value: "Ravi Prakash" }, { label: "Sree Krushnadevaraya", value: "Sree Krushnadevaraya" }, { label: "Tenali Ramakrishna", value: "Tenali Ramakrishna" }, { label: "Timmana", value: "Timmana" }, { label: "Dhurjati", value: "Dhurjati" }, { label: "Suravaram", value: "Suravaram" }, { label: "Tiro Telugu", value: "Tiro Telugu" }]
-            hint: "Used for all Telugu text (songs, Bible, menus, projector)."
-          - { label: "Telugu font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_te_file", widget: "file", required: false, choose_url: false, hint: "If a file is uploaded it is used instead of the Google font chosen above." }
+          - { label: "Telugu font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_te_file", widget: "file", required: false, choose_url: false }
           - label: "English font (Google Fonts)"
             name: "font_en"
             widget: "select"
             required: false
             default: ""
             options: [{ label: "Default (same as Telugu font)", value: "" }, { label: "Inter", value: "Inter" }, { label: "Roboto", value: "Roboto" }, { label: "Open Sans", value: "Open Sans" }, { label: "Lato", value: "Lato" }, { label: "Poppins", value: "Poppins" }, { label: "Montserrat", value: "Montserrat" }, { label: "Nunito", value: "Nunito" }, { label: "Raleway", value: "Raleway" }, { label: "Merriweather", value: "Merriweather" }, { label: "Lora", value: "Lora" }, { label: "Playfair Display", value: "Playfair Display" }, { label: "PT Serif", value: "PT Serif" }, { label: "Libre Baskerville", value: "Libre Baskerville" }, { label: "EB Garamond", value: "EB Garamond" }, { label: "Crimson Text", value: "Crimson Text" }, { label: "Noto Sans", value: "Noto Sans" }, { label: "Noto Serif", value: "Noto Serif" }]
-            hint: "Used for English letters and numbers (English titles, Bible KJV, numbers)."
-          - { label: "English font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_en_file", widget: "file", required: false, choose_url: false, hint: "If a file is uploaded it is used instead of the Google font chosen above." }
+          - { label: "English font – upload your own (.woff2, .woff, .ttf, .otf)", name: "font_en_file", widget: "file", required: false, choose_url: false }
           - label: "Default text size for songs and Bible"
             name: "font_size_default"
             widget: "select"
             required: false
             default: ""
             options: [{ label: "Normal (default)", value: "" }, { label: "Small", value: "1" }, { label: "Medium", value: "1.3" }, { label: "Large", value: "1.5" }, { label: "Extra large", value: "1.75" }]
-            hint: "The size readers see the first time. Each reader can still change it with the A- / A+ buttons."
           - { label: "SEO description", name: "seo_description", widget: "text", required: false }
 
       - label: "Daily Verse Image"
@@ -146,49 +141,45 @@ collections:
         file: "content/verse_image.json"
         format: "json"
         fields:
-          - { label: "Small title above the verse", name: "vi_title", widget: "string", required: false, default: "ఈ రోజు వాక్యం", hint: "The little line at the top of the picture. Leave empty to use the default." }
+          - { label: "Small title above the verse", name: "vi_title", widget: "string", required: false, default: "ఈ రోజు వాక్యం" }
           - label: "Verse font"
             name: "vi_font"
             widget: "select"
             required: false
             default: ""
             options: [{ label: "Default (Ramabhadra)", value: "" }, { label: "Ramabhadra", value: "Ramabhadra" }, { label: "Ponnala", value: "Ponnala" }, { label: "Noto Serif Telugu", value: "Noto Serif Telugu" }, { label: "Noto Sans Telugu", value: "Noto Sans Telugu" }, { label: "Anek Telugu", value: "Anek Telugu" }, { label: "Hind Guntur", value: "Hind Guntur" }, { label: "Mandali", value: "Mandali" }, { label: "NTR", value: "NTR" }, { label: "Suranna", value: "Suranna" }, { label: "Gidugu", value: "Gidugu" }, { label: "Gurajada", value: "Gurajada" }, { label: "Lakki Reddy", value: "Lakki Reddy" }, { label: "Mallanna", value: "Mallanna" }, { label: "Peddana", value: "Peddana" }, { label: "Ravi Prakash", value: "Ravi Prakash" }, { label: "Sree Krushnadevaraya", value: "Sree Krushnadevaraya" }, { label: "Tenali Ramakrishna", value: "Tenali Ramakrishna" }, { label: "Timmana", value: "Timmana" }, { label: "Dhurjati", value: "Dhurjati" }, { label: "Suravaram", value: "Suravaram" }, { label: "Tiro Telugu", value: "Tiro Telugu" }]
-            hint: "Font of the verse, the title and the pastor bar in the picture."
           - label: "Highlight font"
             name: "vi_hl_font"
             widget: "select"
             required: false
             default: ""
             options: [{ label: "Default (Ponnala)", value: "" }, { label: "Ramabhadra", value: "Ramabhadra" }, { label: "Ponnala", value: "Ponnala" }, { label: "Noto Serif Telugu", value: "Noto Serif Telugu" }, { label: "Noto Sans Telugu", value: "Noto Sans Telugu" }, { label: "Anek Telugu", value: "Anek Telugu" }, { label: "Hind Guntur", value: "Hind Guntur" }, { label: "Mandali", value: "Mandali" }, { label: "NTR", value: "NTR" }, { label: "Suranna", value: "Suranna" }, { label: "Gidugu", value: "Gidugu" }, { label: "Gurajada", value: "Gurajada" }, { label: "Lakki Reddy", value: "Lakki Reddy" }, { label: "Mallanna", value: "Mallanna" }, { label: "Peddana", value: "Peddana" }, { label: "Ravi Prakash", value: "Ravi Prakash" }, { label: "Sree Krushnadevaraya", value: "Sree Krushnadevaraya" }, { label: "Tenali Ramakrishna", value: "Tenali Ramakrishna" }, { label: "Timmana", value: "Timmana" }, { label: "Dhurjati", value: "Dhurjati" }, { label: "Suravaram", value: "Suravaram" }, { label: "Tiro Telugu", value: "Tiro Telugu" }]
-            hint: "Font of the highlighted main text."
           - label: "Verse text size"
             name: "vi_text_size"
             widget: "select"
             required: false
             default: "100"
             options: [{ label: "Small", value: "85" }, { label: "Normal", value: "100" }, { label: "Large", value: "115" }, { label: "Extra large", value: "130" }]
-            hint: "Long verses shrink automatically so they always fit."
           - label: "Highlight text size"
             name: "vi_hl_size"
             widget: "select"
             required: false
             default: "100"
             options: [{ label: "Same as the verse", value: "100" }, { label: "A little bigger", value: "112" }, { label: "Bigger", value: "125" }]
-          - { label: "Highlight the main text of the verse", name: "vi_hl_on", widget: "boolean", default: true, hint: "Shows one key phrase of the verse in a different font and colour." }
+          - { label: "Highlight the main text of the verse", name: "vi_hl_on", widget: "boolean", default: true }
           - { label: "Highlight colour", name: "vi_hl_color", widget: "color", default: "#FFC93C", required: false }
           - label: "Choose the highlight yourself (optional)"
             name: "vi_hls"
             widget: "list"
             required: false
             summary: "{{fields.book}} {{fields.chapter}}:{{fields.verse}} – {{fields.phrase}}"
-            hint: "Without this, the app picks the main phrase automatically. To choose it yourself, add the verse and type the exact words (copied from the verse) to highlight."
             fields:
               - { label: "Book number (Genesis = 1 … John = 43 … Revelation = 66)", name: "book", widget: "number", value_type: "int", min: 1, max: 66 }
               - { label: "Chapter", name: "chapter", widget: "number", value_type: "int", min: 1 }
               - { label: "Verse", name: "verse", widget: "number", value_type: "int", min: 1 }
               - { label: "Words to highlight", name: "phrase", widget: "string" }
-          - { label: "Show a greeting on the picture", name: "vi_greet_on", widget: "boolean", default: false, hint: "A greeting (for example Good Morning) is written at the top of the picture and is the title of the daily notification." }
-          - { label: "Greeting text", name: "vi_greet", widget: "string", required: false, hint: "For example: శుభోదయం, Good Morning, God bless you." }
+          - { label: "Show a greeting on the picture", name: "vi_greet_on", widget: "boolean", default: false }
+          - { label: "Greeting text", name: "vi_greet", widget: "string", required: false }
           - { label: "Show today's date on the picture", name: "vi_date_on", widget: "boolean", default: false }
           - label: "Date language"
             name: "vi_date_lang"
@@ -196,18 +187,17 @@ collections:
             required: false
             default: "en"
             options: [{ label: "English", value: "en" }, { label: "Telugu", value: "te" }]
-          - { label: "Show pastor / church bar at the bottom", name: "vi_show_pastor", widget: "boolean", default: true, hint: "Pastor photo, name, church and phone come from the boxes below; an empty box uses General Settings." }
-          - { label: "Pastor photo on the verse picture", name: "vi_pastor_photo", widget: "image", required: false, choose_url: false, hint: "Leave empty to use the pastor photo from General Settings." }
-          - { label: "Pastor name on the verse picture", name: "vi_pastor_name", widget: "string", required: false, hint: "Leave empty to use General Settings." }
-          - { label: "Phone number on the verse picture", name: "vi_pastor_phone", widget: "string", required: false, hint: "Leave empty to use General Settings." }
-          - { label: "Church name on the verse picture", name: "vi_church_name", widget: "string", required: false, hint: "Leave empty to use General Settings." }
-          - { label: "Pastor photo size (%)", name: "vi_pastor_scale", widget: "number", value_type: "int", min: 70, max: 150, default: 100, required: false, hint: "100 = normal. Increase to make the pastor photo and bar bigger." }
+          - { label: "Show pastor / church bar at the bottom", name: "vi_show_pastor", widget: "boolean", default: true }
+          - { label: "Pastor photo on the verse picture", name: "vi_pastor_photo", widget: "image", required: false, choose_url: false }
+          - { label: "Pastor name on the verse picture", name: "vi_pastor_name", widget: "string", required: false }
+          - { label: "Phone number on the verse picture", name: "vi_pastor_phone", widget: "string", required: false }
+          - { label: "Church name on the verse picture", name: "vi_church_name", widget: "string", required: false }
+          - { label: "Pastor photo size (%)", name: "vi_pastor_scale", widget: "number", value_type: "int", min: 70, max: 150, default: 100, required: false }
           - label: "Background photos (optional)"
             name: "vi_bgs"
             widget: "list"
             required: false
             summary: "{{fields.label}}"
-            hint: "Your own background photos for the verse picture. Tag each with a theme (love, peace, strength …): a verse of that theme gets one of its photos, rotating by day. With no photos the app uses built-in pictures / painted scenes that match the theme. Pick calm photos with space in the middle."
             fields:
               - { label: "Name", name: "label", widget: "string" }
               - { label: "Photo", name: "image", widget: "image", choose_url: false }
@@ -217,17 +207,16 @@ collections:
                 required: false
                 default: ""
                 options: [{ label: "Any verse", value: "" }, { label: "Love / ప్రేమ", value: "love" }, { label: "Peace / సమాధానం", value: "peace" }, { label: "Strength / బలం", value: "strength" }, { label: "Faith / విశ్వాసం", value: "faith" }, { label: "Praise / స్తుతి", value: "praise" }, { label: "Guidance / నడిపింపు", value: "guidance" }, { label: "Hope / నిరీక్షణ", value: "hope" }, { label: "Creation / సృష్టి", value: "creation" }, { label: "Salvation / రక్షణ", value: "salvation" }, { label: "Prayer / ప్రార్థన", value: "prayer" }, { label: "Wisdom / జ్ఞానము", value: "wisdom" }, { label: "Care & provision / కాపుదల", value: "provision" }]
-                hint: "A verse of this theme gets one of its photos. Any verse = used when no photo has the verse's theme."
 
       - label: "YouTube & Android App"
         name: "media"
         file: "content/youtube_app.json"
         format: "json"
         fields:
-          - { label: "YouTube channel link", name: "youtube", widget: "string", required: false, hint: "Paste the channel link, for example https://www.youtube.com/@yourchannel or https://www.youtube.com/channel/UC... (or just @yourchannel). It drives the Sermons tab, the Latest videos on the home screen and the live alerts." }
-          - { label: "YouTube channel ID (optional)", name: "youtube_channel_id", widget: "string", required: false, hint: "Only needed if the link above is not recognised. Starts with UC and is 24 characters long (youtube.com/account_advanced)." }
-          - { label: "Send an alert when the channel goes live", name: "live_alerts", widget: "boolean", default: true, hint: "Visitors who tapped 'Alert me when we go live' get a notification, and everyone sees a red LIVE bar in the app." }
-          - { label: "Send an alert when a new YouTube Short is posted", name: "short_alerts", widget: "boolean", default: true, hint: "Every visitor with notifications on gets a push notification a few minutes after a new Short is uploaded (checked every 10 minutes)." }
-          - { label: "Android app (APK) – upload", name: "apk_file", widget: "file", required: false, choose_url: true, hint: "Upload the .apk file; visitors download it from the home screen and the About tab. Very large files (over about 50 MB) may not upload here: host it elsewhere (for example a GitHub Release) and paste its https link." }
+          - { label: "YouTube channel link", name: "youtube", widget: "string", required: false }
+          - { label: "YouTube channel ID (optional)", name: "youtube_channel_id", widget: "string", required: false }
+          - { label: "Send an alert when the channel goes live", name: "live_alerts", widget: "boolean", default: true }
+          - { label: "Send an alert when a new YouTube Short is posted", name: "short_alerts", widget: "boolean", default: true }
+          - { label: "Android app (APK) – upload", name: "apk_file", widget: "file", required: false, choose_url: true }
           - { label: "App version (shown to visitors, e.g. 1.0.3)", name: "apk_version", widget: "string", required: false }
-          - { label: "Short note for visitors (optional)", name: "apk_notes", widget: "string", required: false, hint: "For example: What's new in this version." }
+          - { label: "Short note for visitors (optional)", name: "apk_notes", widget: "string", required: false }

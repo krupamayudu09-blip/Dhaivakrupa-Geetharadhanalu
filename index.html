@@ -786,6 +786,66 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
 
 /* respect reduced-motion for the sheet */
 @media (prefers-reduced-motion:reduce){#bnsheet,#bnback{transition:none}}
+
+/* ===== v6: icon buttons, sticky bars, categories, Bible ===== */
+:root{--stick:calc(64px + env(safe-area-inset-top))}
+.ibtn{position:relative;flex:none;width:42px;height:42px;padding:0;border-radius:50%;display:inline-grid;place-items:center;border:1px solid var(--gline);background:var(--glo);box-shadow:var(--ghi);color:var(--text);text-decoration:none;line-height:1;cursor:pointer;transition:background .2s,transform .12s}
+.ibtn:active{transform:scale(.9)}
+.ibtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ibtn b{font:700 .86rem/1 var(--sans);letter-spacing:-.02em}
+.ibtn[aria-pressed=true],.ibtn.on{background:var(--pill);color:var(--pilltx);border-color:transparent}
+.ibtn.off{opacity:.3;pointer-events:none}
+.ibtn .bdg{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--accent);color:#1C1606;font:700 .64rem/17px var(--sans);text-align:center}
+.sbar,.rdbar,.cstrip{position:sticky;top:var(--stick);z-index:9;background:var(--gfill);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--gline);box-shadow:var(--ghi),var(--gsh)}
+.sbar{display:flex;justify-content:space-between;gap:6px;padding:7px 8px;margin:10px 0 16px;border-radius:26px}
+.rdbar{margin:6px 10px 8px;padding:7px;border-radius:26px}
+.rdnav{display:flex;align-items:center;gap:8px}
+.rdtitle{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;height:42px;padding:0 8px;border:0;border-radius:21px;background:transparent;color:var(--hd);font:700 1.05rem/1.2 var(--serif);text-align:center}
+.rdtitle>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rdtitle small{display:block;font:500 .72rem var(--sans);color:var(--muted)}
+.rdtitle svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.rdtitle[aria-expanded=true] svg{transform:rotate(180deg)}
+.rdtitle.static{cursor:default;flex-direction:column;gap:0;justify-content:center}
+.rdtools{display:flex;justify-content:space-between;gap:6px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);max-height:60px;overflow:hidden;transition:max-height .25s,opacity .2s,margin .25s,padding .25s}
+.rdbar.min .rdtools{max-height:0;opacity:0;margin-top:0;padding-top:0;border-top-width:0}
+.rdpick{margin-top:8px;padding-top:10px;border-top:1px solid var(--line);max-height:46vh;overflow:auto}
+.rdpick[hidden]{display:none}
+.rdpick .chs,.chs2{padding:0;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px}
+.chs a{height:46px}.chs a.cur{background:var(--pill);color:var(--pilltx);border-color:transparent}
+.v{scroll-margin-top:190px}
+.rdtools .ibtn,.sbar .ibtn{flex:1 1 0;width:auto;min-width:32px;max-width:48px;height:40px;border-radius:20px}
+.rdtools,.sbar{gap:4px}
+.cstrip{display:flex;align-items:center;gap:8px;margin:6px 10px 0;padding:7px;border-radius:26px}
+.cscroll{position:relative;flex:1;min-width:0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.cscroll::-webkit-scrollbar{display:none}
+.cchip{flex:none;display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 14px;border-radius:21px;border:1px solid var(--gline);background:var(--glo);text-decoration:none;font:600 .92rem var(--serif);color:var(--text);white-space:nowrap}
+.cchip span{font:700 .72rem var(--sans);color:var(--accent)}
+.cchip.on{background:var(--pill);color:var(--pilltx);border-color:transparent}.cchip.on span{color:inherit;opacity:.7}
+.chero{display:flex;align-items:center;gap:14px;margin:14px 16px 12px;padding:16px 18px;border-radius:24px;background:linear-gradient(135deg,hsl(var(--h) 70% 55%/.24),hsl(var(--h) 70% 55%/.05)),var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi),var(--gsh)}
+.cico{flex:none;width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:hsl(var(--h) 65% 50%/.2);color:hsl(var(--h) 60% 36%)}
+:root[data-theme=dark] .cico{color:hsl(var(--h) 85% 76%)}
+.cico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.chero h2{margin:0;font:700 1.35rem/1.35 var(--serif);color:var(--hd)}
+.chero p{margin:0;color:var(--muted);font-size:.88rem}
+.catlist .tag{display:none}
+.cgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 0}
+@media (min-width:520px){.cgrid{grid-template-columns:repeat(3,1fr)}}
+.catc{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-height:110px;padding:14px;border-radius:20px;text-decoration:none;background:linear-gradient(160deg,hsl(var(--h) 70% 55%/.14),transparent 70%),var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi)}
+.catc .cn{font:600 1rem/1.4 var(--serif);color:var(--text)}
+.catc .cc{position:absolute;top:12px;right:12px;min-width:26px;text-align:center;font:700 .74rem/1 var(--sans);color:var(--muted);background:var(--glo);border:1px solid var(--gline);border-radius:999px;padding:5px 8px}
+.bhome .btools{display:flex;align-items:center;gap:8px;margin:12px 0 4px}
+.seg2{display:inline-flex;padding:4px;gap:2px;border-radius:24px;background:var(--glo);border:1px solid var(--gline)}
+.seg2 button{border:0;background:transparent;height:34px;min-width:58px;padding:0 14px;border-radius:20px;font:700 .85rem var(--sans);color:var(--muted)}
+.seg2 button[aria-pressed=true]{background:var(--pill);color:var(--pilltx)}
+.bgh{margin:18px 2px 0;font:700 .76rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.bhome .books{padding:8px 0 2px}
+.bk2{display:flex!important;align-items:center;gap:10px;padding:10px 12px}
+.bk2 .bn{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--hd);font:700 .72rem var(--sans)}
+.bk2 .bt{flex:1;min-width:0}.bk2 .bt b{font-size:.95rem;line-height:1.35;overflow-wrap:anywhere}
+.bk2 .bt small{display:block;color:var(--muted);font-size:.72rem;line-height:1.3}
+.bk2 .bc{flex:none;font:700 .72rem var(--sans);color:var(--muted)}
+.bcont{display:flex;align-items:center;gap:12px;margin-top:12px;padding:8px 16px 8px 8px;border-radius:30px;text-decoration:none;background:var(--gfill);border:1px solid var(--gline);box-shadow:var(--ghi),var(--gsh)}
+.bcont small{display:block;color:var(--muted);font:600 .7rem var(--sans)}.bcont b{font:700 1.05rem var(--serif);color:var(--hd)}
 </style></head>
 <body>
 <div class="app">
@@ -803,7 +863,7 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
  <a href="#/about" data-t="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span class="nl">About</span></a>
 </div></nav>
 <div id="bnback"></div>
-<aside id="bnsheet" aria-label="Meeting Verses" aria-hidden="true"><div id="bnhd"><i></i><h2>Meeting Verses</h2><p>Verses sent to the projector – shared with everyone, kept 7 days. Swipe down to close.</p></div><div id="bnbody"></div></aside>
+<aside id="bnsheet" aria-label="Meeting Verses" aria-hidden="true"><div id="bnhd"><i></i><h2>Meeting Verses</h2></div><div id="bnbody"></div></aside>
 <div id="bnbar" role="button" tabindex="0" aria-label="Meeting Verses: swipe up or tap to open"><i></i><span>Meeting Verses</span><b id="bncnt"></b></div>
 <div id="pj" role="dialog" aria-modal="true" aria-label="Projector presentation" data-th="dark">
  <div class="bgi" id="pjbg"></div>
@@ -817,7 +877,7 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
   <button id="pjg" aria-label="Background image">🖼</button><button id="pjr" aria-label="Remote control">📱</button><button id="pjf" aria-label="Full screen">⛶</button><button id="pjx" aria-label="Close presentation">✕ Close</button>
  </div>
  <div id="pjrm"><div class="cd"><b>Remote control</b><div class="code" id="pjcode"></div>
-  <p>Open this link on your phone or enter the code:</p><p id="pjlink"></p><p>Preview link (shows the projection on any screen):</p><p id="pjplink"></p><label class="lkrow"><input type="checkbox" class="lkonly"><span>📡 Show the projection on the preview link only <small>(do not open the projector on this device)</small></span></label><p id="pjrs" style="color:#F6D98B"></p>
+  <p>Remote link:</p><p id="pjlink"></p><p>Preview link:</p><p id="pjplink"></p><label class="lkrow"><input type="checkbox" class="lkonly"><span>📡 Show the projection on the preview link only</span></label><p id="pjrs" style="color:#F6D98B"></p>
   <div><button id="pjpc">Copy preview link</button><button id="pjcl">Copy remote link</button><button id="pjsh">Share</button><button id="pjoff">Stop remote</button><button id="pjok">OK</button></div></div></div>
  <input type="file" id="pjfile" accept="image/*" hidden>
 </div>
@@ -826,8 +886,7 @@ a.cp-link{display:block;text-decoration:none;color:inherit}
  <div class="lkg"><label>Text colour<input type="color" id="lktc" value="#ffffff"></label><label>Background colour<input type="color" id="lkbc" value="#000000"></label></div>
  <div><button data-lth="dark">Dark</button><button data-lth="blue">Blue</button><button data-lth="light">Light</button></div>
  <div style="margin-top:8px"><button id="lkph">📷 Upload photo</button><button id="lkrp">Remove photo</button><button id="lkrs">Reset colours</button></div>
- <p style="font-size:.8rem;opacity:.7;margin:10px 0 0">Changes show live on the preview link too.</p>
- <div style="margin-top:6px"><button id="lkok">Done</button></div></div></div>
+  <div style="margin-top:6px"><button id="lkok">Done</button></div></div></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
 const $=s=>document.querySelector(s), M=$('#main');
@@ -1205,6 +1264,22 @@ const IXI={
  idx:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18l4-11 4 11M5 14h5"/><path d="M14.5 7h6M14.5 12h6M14.5 17h6"/></svg>',
  cat:'<svg class="ixi" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
 };
+const IC={
+ prev:'<path d="M15 5l-7 7 7 7"/>',next:'<path d="M9 5l7 7-7 7"/>',down:'<path d="M6 9l6 6 6-6"/>',
+ grid:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>',
+ copy:'<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>',
+ share:'<circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/>',
+ proj:'<rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4"/>',
+ listplus:'<path d="M4 7h10M4 12h7M4 17h7"/><path d="M17 13v6M14 16h6"/>',
+ listcheck:'<path d="M4 7h10M4 12h7M4 17h7"/><path d="M14.5 16.5l2.2 2.2 4-4.4"/>',
+ star:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>',
+ folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+ play:'<path d="M8 5.5v13l11-6.5z"/>'
+};
+const ico=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
+const LANGS=[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu + English']];
+const langBtn=()=>{const c=LANGS.find(x=>x[0]===blang)||LANGS[0];return `<button class="ibtn" id="lgc" aria-label="Language: ${c[2]}" title="Language: ${c[2]}"><b>${c[1]}</b></button>`};
+const bindLang=fn=>{const b=document.getElementById('lgc');if(b)b.onclick=()=>{blang=LANGS[(LANGS.findIndex(x=>x[0]===blang)+1)%3][0];LS.set('blang',blang);fn()}};
 function songsHome(){
   nav('songs');title();
   const s=D.settings;
@@ -1559,8 +1634,14 @@ function catPage(name){
   name=name||'';const label=name||'Uncategorised';
   nav('songs');title(label);const l=D.songs.filter(x=>(x.category||'')===name);
   const all=catList();if(D.songs.some(x=>!x.category))all.push('');
-  const chips=all.map(c=>`<a class="cat" style="padding:8px 12px;font-size:.9rem${c===name?';border-color:var(--accent);color:var(--accent)':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}><b>${esc(c||'Uncategorised')}</b><span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
-  M.innerHTML=`<div class="view"><a href="#/" style="color:var(--muted);text-decoration:none" onclick="LS.set('ixmode','cat')">‹ All categories</a><h2>${IXI.cat}${esc(label)}</h2><p class="meta">Songs: ${l.length}</p><div class="cats" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));padding:4px 0 8px">${chips}</div></div>`+(l.length?`<ul class="list">${l.map(songRow).join('')}</ul>`:'<p class="empty">No songs in this category yet.</p>');
+  const chips=all.map(c=>`<a class="cchip${c===name?' on':''}" href="#/cat/${encodeURIComponent(c)}"${c===name?' aria-current="true"':''}>${esc(c||'Uncategorised')}<span>${D.songs.filter(x=>(x.category||'')===c).length}</span></a>`).join('');
+  M.innerHTML=`<div class="cstrip"><a class="ibtn" href="#/" onclick="LS.set('ixmode','cat')" aria-label="All categories" title="All categories">${ico('grid')}</a><div class="cscroll" id="csc">${chips}</div></div>
+  <section class="chero" style="--h:${cpHue(label)}"><span class="cico">${ico('folder')}</span><div><h2>${esc(label)}</h2><p>${l.length} songs</p></div></section>
+  <div class="pad"><input class="search" id="cq" type="search" placeholder="Search in ${esc(label)}" aria-label="Search in ${esc(label)}" autocomplete="off"></div>
+  <ul class="list catlist" id="cl"></ul>`;
+  const sc=$('#csc'),on=sc.querySelector('.on');if(on)sc.scrollLeft=on.offsetLeft-(sc.clientWidth-on.offsetWidth)/2;
+  const draw=q=>{const r=q&&q.trim()?songSearch(l,q):l;$('#cl').innerHTML=r.length?r.map(songRow).join(''):'<li class="empty">No songs found.</li>'};
+  draw('');$('#cq').oninput=e=>draw(e.target.value);
 }
 /* alphabet grid + search, used directly on the home screen */
 function indexGrid(host){
@@ -1571,7 +1652,7 @@ function indexGrid(host){
   const unc=D.songs.filter(x=>!x.category).length;if(unc)cc.push(['Uncategorised',unc]);
   const mode=LS.get('ixmode','letter');
   host.innerHTML=`<div class="ixrow"><input class="search" id="iq" type="search" placeholder="Search songs…" aria-label="Search songs"><div class="seg" id="ixm"><button data-ixm="letter" aria-pressed="${mode==='letter'}" aria-label="Index" title="Index">${IXI.idx}</button><button data-ixm="cat" aria-pressed="${mode==='cat'}" aria-label="Category" title="Category">${IXI.cat}</button></div></div>
-  <div id="ig">${mode==='cat'?`<div class="cats">${cc.map(([c,n])=>`<a class="cat" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><b>${IXI.cat}<span style="color:inherit;font:inherit">${esc(c)}</span></b><span>${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
+  <div id="ig">${mode==='cat'?`<div class="cgrid">${cc.map(([c,n])=>`<a class="catc" style="--h:${cpHue(c)}" href="#/cat/${encodeURIComponent(c==='Uncategorised'?'':c)}"><span class="cico">${ico('folder')}</span><span class="cn">${esc(c)}</span><span class="cc">${n}</span></a>`).join('')||'<p class="empty">No categories yet.</p>'}</div>`:`<div class="ixg">${TE_ALPHA.filter(k=>(g.get(k)||[]).length).map(cell).join('')}${extra.map(cell).join('')}</div>`}</div><ul class="list" id="ir" style="padding:0"></ul>`;
   host.querySelectorAll('#ixm button').forEach(b=>b.onclick=()=>{LS.set('ixmode',b.dataset.ixm);indexGrid(host)});
   $('#iq').oninput=e=>{const q=fz(e.target.value);
     $('#ig').style.display=q?'none':'';
@@ -1592,13 +1673,13 @@ function songView(id){
   M.innerHTML=`<article class="view"><h2>${esc(x.title)}</h2>
   <p class="meta">${esc([x.title_en,x.category,x.writer&&'Writer: '+x.writer,x.scale&&'Scale: '+x.scale].filter(Boolean).join(' • '))}</p>
   ${cbBy(x)?`<p class="meta">Added by <a href="#/contributor/${encodeURIComponent(cbBy(x))}">${esc(cbBy(x))}</a></p>`:''}
-  <div class="tb"><button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><button id="sh">Share</button><button id="pj1">Projector</button><button id="mt1"></button></div>
+  <div class="sbar" role="toolbar" aria-label="Song tools"><button class="ibtn" id="sm" aria-label="Smaller text" title="Smaller text"><b>A−</b></button><button class="ibtn" id="lg" aria-label="Larger text" title="Larger text"><b style="font-size:1.05rem">A+</b></button><button class="ibtn" id="cp" aria-label="Copy" title="Copy">${ico('copy')}</button><button class="ibtn" id="sh" aria-label="Share" title="Share">${ico('share')}</button><button class="ibtn" id="pj1" aria-label="Projector" title="Projector">${ico('proj')}</button><button class="ibtn" id="mt1"></button></div>
   ${x.lyrics?`<div class="lyrics">${esc(x.lyrics)}</div>`:''}
   ${x.lyrics_image?`<img class="photo" src="${esc(x.lyrics_image)}" alt="${esc(x.title)} – song image">`:''}
   ${x.audio?`<audio controls src="${esc(x.audio)}"></audio>`:''}
   ${x.youtube?`<p class="media"><a href="${esc(x.youtube)}" target="_blank" rel="noopener">Listen on YouTube</a></p>`:''}
   <div class="pn"><a class="${p?'':'off'}" href="#/song/${p?encodeURIComponent(p.id):''}">‹ Previous</a><a class="${n?'':'off'}" href="#/song/${n?encodeURIComponent(n.id):''}">Next ›</a></div></article>`;
-  const mt=()=>$('#mt1').textContent=inMeet(x.id)?'✓ In the meeting':'＋ Add to meeting';mt();$('#mt1').onclick=()=>{if(!canEdit()){needLogin();return}toggleMeet(x.id);mt()};
+  const mt=()=>{const on=inMeet(x.id),b=$('#mt1');b.innerHTML=ico(on?'listcheck':'listplus');b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',on?'In the meeting':'Add to meeting');b.title=on?'In the meeting':'Add to meeting'};mt();$('#mt1').onclick=()=>{if(!canEdit()){needLogin();return}toggleMeet(x.id);mt()};
   $('#pj1').onclick=()=>present(songSlides(x),0,{title:x.title,bg:x.bg_image});
   $('#sm').onclick=()=>setFs(fs-.1);$('#lg').onclick=()=>setFs(fs+.1);
   $('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(x.title+'\n\n'+(x.lyrics||'')+'\n\n'+location.href);toast('Copied')}catch{toast('Could not copy')}};
@@ -1698,7 +1779,7 @@ function bnDraw(){
       +(canEdit()?`<button class="add bnx" data-bndel="${esc(x.id)}" aria-label="Remove ${esc(ref)}">✕</button>`:'')+`</li>`;
   };
   const top=box.scrollTop;
-  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Meeting Verses yet.<br><small>Verses added by the admin or contributors appear here for everyone.</small></p>');
+  box.innerHTML=(groups.length?groups.map(g=>`<h3 class="ixh" style="padding:0 16px">${esc(g.k)}</h3><ul class="list">${g.l.map(row).join('')}</ul>`).join(''):'<p class="empty">Nothing in Meeting Verses yet.</p>');
   box.scrollTop=top;fillNoteVerses(box);
 }
 /* v31: the last 7 days of Bible notes as a list of full verses, with a Present button (Meeting page + phone remote's Meeting tab) */
@@ -1795,7 +1876,7 @@ function refResults(q,mode){
   return bs.map(b=>{
     const bk=books[b];
     if(!p.c){
-      return mode==='web'?`<li class="sr"><a href="#/bible/${b}"><div class="t">${esc(bkName(b))}</div><div class="sub">${esc(bk.en)} • ${bk.ch} chapters – tap to choose a chapter</div></a></li>`
+      return mode==='web'?`<li class="sr"><a href="#/bible/${b}"><div class="t">${esc(bkName(b))}</div><div class="sub">${esc(bk.en)} • ${bk.ch} chapters</div></a></li>`
         :`<li class="sr"><button class="mrow" data-bk="${b}">${esc(bkName(b))}<small>${bk.ch} chapters</small></button></li>`;
     }
     if(p.c>bk.ch)return `<li class="empty">${esc(bkName(b))} has only ${bk.ch} chapters.</li>`;
@@ -1871,8 +1952,8 @@ function mnDel(b,c,v){const a=mnAll(),x=mnFind(a,b,c,v);if(x)x.s=false;mnSave(a)
 function myNotes(){
   nav('bible');title('My notes');
   const l=mnList();
-  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Bible</a><h2>My notes</h2><p class="meta">Your important verses. Only you can see this list (it is kept on this device${idUser()?' for your login':''}).</p><div style="margin-top:10px">${langSeg()}</div>
-  <ul class="list" style="padding:0;margin-top:10px">${l.length?l.map(x=>`<li class="sr bnr${x.col?' hl':''}"${x.col?` style="--hl:${esc(x.col)}"`:''}><a href="#/bible/${x.b}/${x.c}/${x.v}" style="flex:1;min-width:0"><div class="bnv" data-bv="${x.b}:${x.c}:${x.v}:${blang}"></div></a><button class="add" data-mndel="${x.b}:${x.c}:${x.v}" aria-label="Remove from My notes">✕</button></li>`).join(''):'<li class="empty">No verses yet.<br><small>Open a chapter, tap the verses that matter to you, then tap “☆ My notes”.</small></li>'}</ul></div>`;
+  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Bible</a><h2>My notes</h2><div style="margin-top:10px">${langSeg()}</div>
+  <ul class="list" style="padding:0;margin-top:10px">${l.length?l.map(x=>`<li class="sr bnr${x.col?' hl':''}"${x.col?` style="--hl:${esc(x.col)}"`:''}><a href="#/bible/${x.b}/${x.c}/${x.v}" style="flex:1;min-width:0"><div class="bnv" data-bv="${x.b}:${x.c}:${x.v}:${blang}"></div></a><button class="add" data-mndel="${x.b}:${x.c}:${x.v}" aria-label="Remove from My notes">✕</button></li>`).join(''):'<li class="empty">No verses yet.</li>'}</ul></div>`;
   bindSeg(myNotes);fillNoteVerses(M);
   M.querySelectorAll('[data-mndel]').forEach(b=>b.onclick=()=>{const [x,y,z]=b.dataset.mndel.split(':').map(Number);mnDel(x,y,z);toast('Removed from My notes');myNotes()});
 }
@@ -1884,23 +1965,25 @@ function bindRefSearch(inp,out,mode){
   if(BQ)go();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pj]');if(!b)return;e.preventDefault();const [bi,c,vs]=b.dataset.pj.split(':');startBible(+bi,+c,blang,vs)});
+const BGRP=[['Law',0,5],['History',5,17],['Poetry',17,22],['Major Prophets',22,27],['Minor Prophets',27,39],['Gospels',39,43],['Acts',43,44],['Epistles',44,65],['Revelation',65,66]];
 function bibleHome(){
   nav('bible');title('Holy Bible');
   if(!books.length){M.innerHTML='<p class="empty">Bible data could not be loaded. Please refresh the page.</p>';return}
-  const last=LS.get('last',null);
-  const list=books.map((b,i)=>({b,i})).filter(o=>ot?o.i<39:o.i>=39);
-  M.innerHTML=`<div class="view"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search a word or verse – love, prema, yesu, jn 3:16, యోహాను 3:16" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>${last?`<div class="pn" style="padding:6px 0 0"><a href="#/bible/${last[0]}/${last[1]}">Continue reading: ${esc(bname(books[last[0]],blang==='en'?'en':'te'))} ${last[1]}</a></div>`:''}
-  <a class="mhe" href="#/bible/mynotes" style="margin-top:10px;display:inline-flex">☆ My notes (${mnList().length})</a>
-  <div class="seg" style="margin-top:14px"><button data-t="1" aria-pressed="${ot}">Old Testament</button><button data-t="0" aria-pressed="${!ot}">New Testament</button></div>
-  <div style="margin-top:12px">${langSeg()}</div>
-  <div class="books">${list.map(({b,i})=>`<a class="bk" href="#/bible/${i}"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${esc(blang==='both'?b.en+' • ':'')}${b.ch} chapters</span></a>`).join('')}</div>${bibleRecent()}</div>`;
+  const last=LS.get('last',null),nl=blang==='en'?'en':'te';
+  const grp=BGRP.filter(g=>ot?g[2]<=39:g[1]>=39);
+  const card=i=>{const b=books[i];return `<a class="bk bk2" href="#/bible/${i}"><span class="bt"><b>${esc(blang==='en'?b.en:b.te)}</b>${blang==='both'?`<small>${esc(b.en)}</small>`:''}</span><span class="bc" title="Chapters">${b.ch}</span></a>`};
+  M.innerHTML=`<div class="view bhome"><input class="search" id="bq" type="search" value="${esc(BQ)}" placeholder="Search Bible…" aria-label="Search Bible verse" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="bres" style="padding:0"></ul>
+  ${last?`<a class="bcont" href="#/bible/${last[0]}/${last[1]}" aria-label="Continue reading"><span class="ibtn on">${ico('play')}</span><span><small>Continue</small><b>${esc(bname(books[last[0]],nl))} ${last[1]}</b></span></a>`:''}
+  <div class="btools"><div class="seg2" role="group"><button data-t="1" aria-pressed="${ot}" title="Old Testament">OT</button><button data-t="0" aria-pressed="${!ot}" title="New Testament">NT</button></div><span style="flex:1"></span>${langBtn()}<a class="ibtn" href="#/bible/mynotes" aria-label="My notes" title="My notes">${ico('star')}${mnList().length?`<span class="bdg">${mnList().length}</span>`:''}</a></div>
+  ${grp.map(([n,a,z])=>`<h3 class="bgh">${n}</h3><div class="books">${Array.from({length:z-a},(_,k)=>card(a+k)).join('')}</div>`).join('')}${bibleRecent()}</div>`;
   M.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ot=b.dataset.t==='1';bibleHome()});
-  bindSeg(bibleHome);bindRefSearch($('#bq'),$('#bres'),'web');
+  bindLang(bibleHome);bindRefSearch($('#bq'),$('#bres'),'web');
 }
 function chapters(b){
   nav('bible');const bk=books[b];if(!bk)return bibleHome();title(blang==='en'?bk.en:bk.te);
-  M.innerHTML=`<div class="view"><a href="#/bible" style="color:var(--muted);text-decoration:none">‹ Books</a><h2>${esc(bk.te)}</h2><p class="meta">${esc(bk.en)}</p>
-  <div class="chs">${Array.from({length:bk.ch},(_,i)=>`<a href="#/bible/${b}/${i+1}">${i+1}</a>`).join('')}</div></div>`;
+  const last=LS.get('last',null),cur=last&&last[0]===b?last[1]:0,pb=b>0?`#/bible/${b-1}`:'',nb=b<books.length-1?`#/bible/${b+1}`:'';
+  M.innerHTML=`<div class="rdbar"><div class="rdnav"><a class="ibtn" href="#/bible" aria-label="All books" title="All books">${ico('grid')}</a><a class="ibtn${pb?'':' off'}" href="${pb||'#'}" aria-label="Previous book">${ico('prev')}</a><div class="rdtitle static"><span>${esc(blang==='en'?bk.en:bk.te)}</span>${blang==='both'?`<small>${esc(bk.en)}</small>`:''}</div><a class="ibtn${nb?'':' off'}" href="${nb||'#'}" aria-label="Next book">${ico('next')}</a></div></div>
+  <div class="view"><div class="chs">${Array.from({length:bk.ch},(_,i)=>`<a${cur===i+1?' class="cur"':''} href="#/bible/${b}/${i+1}">${i+1}</a>`).join('')}</div></div>`;
 }
 async function read(b,c,hv){
   nav('bible');const bk=books[b];if(!bk||c<1||c>bk.ch)return bibleHome();
@@ -1910,12 +1993,19 @@ async function read(b,c,hv){
   try{if(blang!=='en')te=(await load('te',b+1))[c-1]||[];if(blang!=='te')en=(await load('en',b+1))[c-1]||[]}catch(e){M.innerHTML='<p class="empty">This chapter could not be loaded. Check your internet connection and try again.</p>';return}
   const n=Math.max(te.length,en.length);
   const prev=c>1?`#/bible/${b}/${c-1}`:b>0?`#/bible/${b-1}/${books[b-1].ch}`:'',next=c<bk.ch?`#/bible/${b}/${c+1}`:b<books.length-1?`#/bible/${b+1}/1`:'';
-  M.innerHTML=`<div class="view"><a href="#/bible/${b}" style="color:var(--muted);text-decoration:none">‹ ${esc(blang==='en'?bk.en:bk.te)} chapters</a>
-  <h2>${esc(blang==='en'?bk.en:bk.te)} ${c}</h2>${blang==='both'?`<p class="meta">${esc(bk.en)} ${c}</p>`:''}
-  <div class="tb" style="margin-top:12px">${langSeg()}<button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Larger text">A+</button><button id="cp">Copy</button><a class="mhe" href="#/bible/mynotes" id="mynb" style="min-height:36px">★ My notes</a><button id="lsr" class="pjonly">＋ Meeting Verses</button><button id="pj1" class="pjonly">Projector</button></div>
-  
-  <div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div>
-  <div class="pn"><a class="${prev?'':'off'}" href="${prev||'#'}">‹ Previous</a><a class="${next?'':'off'}" href="${next||'#'}">Next ›</a></div></div>`;
+  const nm=blang==='en'?bk.en:bk.te;
+  M.innerHTML=`<div class="rdbar" id="rdbar"><div class="rdnav">
+    <a class="ibtn" href="#/bible" aria-label="All books" title="All books">${ico('grid')}</a>
+    <a class="ibtn${prev?'':' off'}" href="${prev||'#'}" aria-label="Previous chapter" title="Previous chapter">${ico('prev')}</a>
+    <button class="rdtitle" id="rdt" aria-expanded="false" aria-label="Choose chapter"><span>${esc(nm)} ${c}${blang==='both'?`<small>${esc(bk.en)} ${c}</small>`:''}</span><svg viewBox="0 0 24 24" aria-hidden="true">${IC.down}</svg></button>
+    <a class="ibtn${next?'':' off'}" href="${next||'#'}" aria-label="Next chapter" title="Next chapter">${ico('next')}</a></div>
+   <div class="rdpick" id="rdpick" hidden><div class="chs">${Array.from({length:bk.ch},(_,i)=>`<a${i+1===c?' class="cur"':''} href="#/bible/${b}/${i+1}">${i+1}</a>`).join('')}</div></div>
+   <div class="rdtools">${langBtn()}<button class="ibtn" id="sm" aria-label="Smaller text" title="Smaller text"><b>A−</b></button><button class="ibtn" id="lg" aria-label="Larger text" title="Larger text"><b style="font-size:1.05rem">A+</b></button><button class="ibtn" id="cp" aria-label="Copy" title="Copy">${ico('copy')}</button><a class="ibtn" href="#/bible/mynotes" id="mynb" aria-label="My notes" title="My notes">${ico('star')}</a><button class="ibtn pjonly" id="lsr" aria-label="Add to Meeting Verses" title="Add to Meeting Verses">${ico('listplus')}</button><button class="ibtn pjonly" id="pj1" aria-label="Projector" title="Projector">${ico('proj')}</button></div></div>
+  <div class="view" style="padding-top:2px"><div id="vs">${Array.from({length:n},(_,i)=>`<span class="v" data-i="${i}"><sup>${i+1}</sup>${te[i]?`<span class="te">${esc(te[i])}</span>`:''}${en[i]?`<span class="en${te[i]?'':' only'}">${esc(en[i])}</span>`:''}</span>`).join('')}</div></div>`;
+  {const bar2=$('#rdbar'),pk=$('#rdpick'),tt=$('#rdt');let ly=scrollY;
+   tt.onclick=()=>{const o=pk.hidden;pk.hidden=!o;tt.setAttribute('aria-expanded',o);bar2.classList.remove('min');if(o){const cu=pk.querySelector('.cur');if(cu)pk.scrollTop=cu.offsetTop-pk.clientHeight/2}};
+   const onS=()=>{const y=scrollY;if(!pk.hidden)return;if(y>ly+6&&y>140)bar2.classList.add('min');else if(y<ly-6||y<60)bar2.classList.remove('min');ly=y};
+   addEventListener('scroll',onS,{passive:true});addEventListener('hashchange',()=>removeEventListener('scroll',onS),{once:true})}
   window.scrollTo(0,0);
   if(hv){const [h1,h2]=String(hv).split('-').map(Number);let f=null;for(let k=h1;k<=(h2>h1?h2:h1);k++){const el=document.querySelector(`.v[data-i="${k-1}"]`);if(el){el.classList.add('sel');f=f||el}}if(f)setTimeout(()=>f.scrollIntoView({block:'center'}),50)}
   /* click = select a verse; double-click (or double-tap) = send to the presentation.
@@ -1953,7 +2043,7 @@ async function read(b,c,hv){
   const bar=()=>{const sv=selV();if(!sv.length){vb.classList.remove('on');return}const all=sv.every(v=>mnHas(b,c,v));
     vb.innerHTML=`<button class="vstar${all?' on':''}" id="vst" aria-pressed="${all}" aria-label="${all?'Remove from My notes':'Add to My notes'}" title="${all?'In My notes':'Add to My notes'}">${all?'★':'☆'}</button>${MN_COLS.map(([n,h])=>`<button class="vc" style="--c:${h}" data-col="${h}" aria-label="Highlight ${n}"></button>`).join('')}<button class="vc none" data-col="" aria-label="Remove highlight">⊘</button><button class="vx" id="vcl" aria-label="Clear selection">✕</button>`;vb.classList.add('on');place()};
   const place=()=>{const f=document.querySelector('.v.sel');if(!f||!vb.classList.contains('on'))return;const r=f.getBoundingClientRect(),h=vb.offsetHeight,w=vb.offsetWidth;
-    let top=r.top+scrollY-h-8;if(r.top-h-8<70)top=r.bottom+scrollY+8;   // above the verse; underneath when the verse is at the top of the screen
+    let top=r.top+scrollY-h-8;if(r.top-h-8<((document.getElementById('rdbar')||{getBoundingClientRect:()=>({bottom:70})}).getBoundingClientRect().bottom+6))top=r.bottom+scrollY+8;   // above the verse; underneath when the verse is at the top of the screen
     vb.style.top=top+'px';vb.style.left=Math.max(8,Math.min(scrollX+innerWidth-w-8,scrollX+innerWidth/2-w/2))+'px'};
   addEventListener('resize',place);
   vb.onclick=e=>{const sv=selV();if(!sv.length)return;
@@ -1964,7 +2054,7 @@ async function read(b,c,hv){
   addEventListener('hashchange',()=>vb.classList.remove('on'),{once:true});
   $('#lsr').onclick=()=>{if(!canEdit()){needLogin();return}const sel=[...document.querySelectorAll('.v.sel')].map(v=>+v.dataset.i+1);
     noteProj(b,c,sel.length?vsCompact(sel):'',blang);toast('Added to Meeting Verses')};
-  bindSeg(()=>read(b,c));
+  bindLang(()=>read(b,c));
 }
 
 /* ---------- Projector ---------- */
@@ -2093,7 +2183,7 @@ $('#pjg').onclick=()=>pjBg(true);
 const pjMini=on=>{const e=$('#pjmini');if(e)e.hidden=!on};
 $('#pjm-p').onclick=()=>pjShow(PJ.i-1);$('#pjm-n').onclick=()=>pjShow(PJ.i+1);
 $('#pjm-b').onclick=()=>$('#pj').classList.toggle('blank');$('#pjm-c').onclick=()=>$('#pjpc').click();$('#pjm-x').onclick=pjClose;
-const lkRow=()=>`<label class="lkrow"><input type="checkbox" class="lkonly" ${LS.get('pjlinkonly',1)?'checked':''}><span>📡 Show the projection on the preview link only <small>(do not open the projector on this device)</small></span></label>`;
+const lkRow=()=>`<label class="lkrow"><input type="checkbox" class="lkonly" ${LS.get('pjlinkonly',1)?'checked':''}><span>📡 Show the projection on the preview link only</span></label>`;
 document.addEventListener('change',e=>{if(!e.target.classList?.contains('lkonly'))return;const v=e.target.checked;LS.set('pjlinkonly',v?1:0);document.querySelectorAll('.lkonly').forEach(x=>x.checked=v);toast(v?'Projection will show on the preview link only':'Projection will open full screen on this device')});
 /* projector: remote control */
 const rmLink=()=>`${location.origin}/#/remote/${PJ.room}`,scLink=()=>`${location.origin}/#/screen/${PJ.room}`;
@@ -2288,7 +2378,7 @@ let RT=null,rmP=null;
 function remote(code){
   clearTimeout(RT);if(rmP){rmP.stop();rmP=null}nav('');title('Remote control');
   if(!/^\d{6}$/.test(code||'')){
-    M.innerHTML=`<div class="view"><h2>Remote control</h2><p class="meta">On the projector screen tap the 📱 button (or 📱 Remote on the Meeting page) to see a 6-digit code.</p>
+    M.innerHTML=`<div class="view"><h2>Remote control</h2>
     <input class="search" id="rc" inputmode="numeric" maxlength="6" placeholder="6-digit code" value="${esc(LS.get('rmcode',''))}"><div class="tb" style="margin-top:14px"><button id="rg">Connect</button></div></div>`;
     $('#rg').onclick=()=>{const v=$('#rc').value.trim();if(/^\d{6}$/.test(v)){LS.set('rmcode',v);location.hash='#/remote/'+v}else toast('Enter the 6-digit code')};return;
   }
@@ -2313,7 +2403,7 @@ function remote(code){
     document.querySelector('#rl .cur')?.scrollIntoView({block:'nearest'});
   };
   const tabNow=()=>{
-    if(closed){T.innerHTML='<p class="empty">Nothing is being presented yet. Choose from the “Meeting”, “Songs” or “Bible” tab.</p>';return}
+    if(closed){T.innerHTML='<p class="empty">Nothing is being presented yet.</p>';return}
     T.innerHTML=`<div class="rcn">${esc(ttl)}</div><div class="rp" id="rp"></div>
     <div class="tb"><button data-c="psong">⏮ Song</button><button data-c="nsong">Song ⏭</button><button data-c="pch">⏮ Chapter</button><button data-c="nch">Chapter ⏭</button><button data-c="theme">🎨</button><button data-c="bg">🖼</button><button data-c="sizedown">A−</button><button data-c="sizeup">A+</button></div>
     <div class="rcol"><label>Text<input type="color" data-cc="t" value="${hexOk(ctc)?ctc:'#ffffff'}"></label><label>Background<input type="color" data-cc="b" value="${hexOk(cbc)?cbc:'#000000'}"></label><button class="chip" data-c="creset">Reset</button></div>
@@ -2323,7 +2413,7 @@ function remote(code){
   const tabMeet=()=>{
     const l=mids.map(byId).filter(Boolean);
     T.innerHTML=`<p class="meta">${esc(ttl||'This meeting')} — ${l.length} songs</p>`+(l.length?`<div class="tb"><button data-ms="0">Present from the start</button></div>
-    <ol class="ml">${l.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><button class="mrow" data-ms="${i}">${esc(x.title)}</button><button class="add" data-m="${esc(x.id)}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="empty">No songs in the meeting. Tap ＋ on the “Songs” tab to add.</p>')
+    <ol class="ml">${l.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><button class="mrow" data-ms="${i}">${esc(x.title)}</button><button class="add" data-m="${esc(x.id)}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="empty">No songs in the meeting.</p>')
       +`<div class="mbn"><h3>📖 Meeting Verses</h3><div id="rbn"></div></div>`;
     bnWatch(()=>{if(tab==='meet'&&$('#rbn'))bnMeetDraw($('#rbn'))});bnMeetDraw($('#rbn'));
   };
@@ -2335,14 +2425,14 @@ function remote(code){
     const rows=(R.l?g.get(R.l)||[]:base);
     $('#rsl').innerHTML=rows.length?rows.map(x=>{const on=mids.includes(x.id);return `<li class="sr"><button class="mrow" data-song="${esc(x.id)}">${esc(x.title)}<small>${esc([x.title_en,x.writer].filter(Boolean).join(' • '))}</small></button><button class="add" data-m="${esc(x.id)}" aria-label="Add to meeting" aria-pressed="${on}">${on?'✓':'＋'}</button></li>`}).join(''):'<li class="empty">No songs found.</li>';
   };
-  const tabSongs=()=>{T.innerHTML=`<input class="search" id="rq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" value="${esc(R.q)}" aria-label="Search songs"><div class="letters" id="rls"></div><ul class="list" id="rsl" style="padding:0"></ul>`;
+  const tabSongs=()=>{T.innerHTML=`<input class="search" id="rq" type="search" placeholder="Search songs…" value="${esc(R.q)}" aria-label="Search songs"><div class="letters" id="rls"></div><ul class="list" id="rsl" style="padding:0"></ul>`;
     $('#rq').oninput=e=>{R.q=e.target.value;listSongs()};listSongs()};
   const tabBible=()=>{
     if(!books.length){T.innerHTML='<p class="empty">Bible data could not be loaded.</p>';return}
     const seg=`<div class="seg" style="margin:10px 0">${[['te','తె','Telugu'],['en','A','English'],['both','తె+A','Telugu and English']].map(([v,t,n])=>`<button data-l="${v}" aria-pressed="${blang===v}" aria-label="${n}" title="${n}" style="min-width:48px;font-weight:700">${t}</button>`).join('')}</div>`;
     if(R.b==null){
       const l=books.map((b,i)=>({b,i})).filter(o=>R.ot?o.i<39:o.i>=39);
-      T.innerHTML=`<input class="search" id="rbq" type="search" value="${esc(BQ)}" placeholder="Search a verse – jn 3:16, ps 23, 1 cor 13:4-7" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="rbres" style="padding:0"></ul>${seg}<div class="seg"><button data-ot="1" aria-pressed="${R.ot}">Old Testament</button><button data-ot="0" aria-pressed="${!R.ot}">New Testament</button></div>
+      T.innerHTML=`<input class="search" id="rbq" type="search" value="${esc(BQ)}" placeholder="Search verse…" autocomplete="off" autocapitalize="off"><ul class="list bqres" id="rbres" style="padding:0"></ul>${seg}<div class="seg"><button data-ot="1" aria-pressed="${R.ot}">Old Testament</button><button data-ot="0" aria-pressed="${!R.ot}">New Testament</button></div>
       <div class="books">${l.map(({b,i})=>`<button class="bk" data-bk="${i}"><b>${esc(blang==='en'?b.en:b.te)}</b><span>${b.ch} chapters</span></button>`).join('')}</div>${bibleRecent(true)}`;
       bindRefSearch($('#rbq'),$('#rbres'),'remote');
     }else{
@@ -2361,7 +2451,7 @@ function remote(code){
     bar.innerHTML=`<button class="pri" data-vgo="sel" ${n?'':'disabled'}>📽 ${n?(n===1?'Verse '+a[0]+' only':'Verses '+esc(vsLabel())):'Pick verse(s)'}</button>
       <button data-vgo="from" ${n?'':'disabled'}>${n?'From verse '+a[0]+' ›':'From verse…'}</button>
       <button data-vgo="all">Whole chapter</button>
-      <button data-vgo="rng" aria-pressed="${!!R.rng}">${R.rng?(R.anc?'Range: tap the last verse':'Range: tap the first verse'):'Range'}</button>
+      <button data-vgo="rng" aria-pressed="${!!R.rng}">${R.rng?(R.anc?'Range ›|':'Range |‹'):'Range'}</button>
       ${n?'<button data-vgo="clr">Clear</button>':''}`;
     document.querySelectorAll('#vgrid button').forEach(x=>x.setAttribute('aria-pressed',R.vs.has(+x.dataset.vn)));
     const pv=$('#vpv');if(!pv)return;
@@ -2603,7 +2693,7 @@ function miniPreview(code,box){
 /* ---------- This meeting (schedule) ---------- */
 function mrc(){
   const e=$('#mrc');if(!e)return;
-  e.innerHTML=PJ.rm?`<div class="rpanel"><b>Remote control ready</b><div class="code2">${PJ.room}</div><p>Open this link on your phone:<br>${esc(rmLink())}</p><p>Preview link (shows the projection on any screen):<br>${esc(scLink())}</p><p class="sub" id="mrs"></p>
+  e.innerHTML=PJ.rm?`<div class="rpanel"><b>Remote control ready</b><div class="code2">${PJ.room}</div><p>Remote link:<br>${esc(rmLink())}</p><p>Preview link:<br>${esc(scLink())}</p><p class="sub" id="mrs"></p>
   <div class="tb"><button id="mrcp">Copy link</button><button id="mrsh">Share</button><button id="mrfs">⛶ Full-screen preview</button><button id="mrpc">Copy preview link</button><button id="mroff">Stop</button></div></div>`:'';
   if(PJ.rm){$('#mrfs').onclick=()=>{if(mpGo)mpGo(PJ.room,true);else location.hash='#/screen/'+PJ.room};$('#mrpc').onclick=()=>$('#pjpc').click();$('#mrcp').onclick=()=>$('#pjcl').click();$('#mrsh').onclick=()=>$('#pjsh').click();$('#mroff').onclick=rmStop}
 }
@@ -2624,7 +2714,7 @@ function meeting(ids,name){
   const clean=meetList().map(x=>x.id);if(clean.length!==MT.ids.length){MT.ids=clean;mSave()}
   M.innerHTML=`<div class="view"><h2>This meeting</h2>
   <p class="mtt" id="mtt" style="font:700 1.15rem/1.4 var(--serif);margin:6px 0 2px"></p><p class="sub" id="mtn" style="margin:0 0 8px" hidden></p>
-  <input class="search" id="mn" placeholder="Meeting name (optional, e.g. Sunday worship)" value="${esc(MT.name)}" aria-label="Meeting name">
+  <input class="search" id="mn" placeholder="Meeting name" value="${esc(MT.name)}" aria-label="Meeting name">
   <p class="meta" id="mcnt"></p>
   <div class="mnote" id="mnote" hidden></div>
   <div class="tb"><button id="mp">Present</button><button id="mr">Remote</button><a class="mhe vonly" href="#/remote" style="min-height:40px;align-items:center">Remote control</a><button id="ms">🔗 Share</button><button id="mc">🗑 Clear</button></div>
@@ -2632,12 +2722,12 @@ function meeting(ids,name){
   ${lkRow()}
   <div id="mrc"></div><ol class="ml" id="ml"></ol>
   <div class="mbn"><h3>📖 Meeting Verses</h3><div id="mbnl"></div></div>
-  <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search – Telugu or English letters (e.g. yesu)…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
+  <div class="mgate"><h3>Add songs</h3><input class="search" id="mq" type="search" placeholder="Search songs…" aria-label="Search songs to add"><ul class="list" id="mres" style="padding:0"></ul></div></div>`;
   const tt=()=>{$('#mtt').textContent=dayTitle();const nm=String(MT.name||'').trim();$('#mtn').textContent=nm;$('#mtn').hidden=!nm||canEdit()};   // visitors see the name only when one is set; the input is for admin/contributors
   if(!canEdit())$('#mn').hidden=true;
   tt();
   /* live preview of the projection (with a Full screen button) – for everyone */
-  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b><p class="sub">${PJ.rm?'This device is the projector. Tap Watch to see its preview here, then ⛶ for full screen.':'Enter the 6-digit code to watch the presentation here, then tap ⛶ Full screen.'}</p>
+  $('#mnote').insertAdjacentHTML('afterend',`<div class="mpv"><b>📺 Live preview</b>
       <div class="mpvr"><input class="search" id="mpc" inputmode="numeric" maxlength="6" placeholder="6-digit code" aria-label="Preview code" value="${esc(PJ.rm&&PJ.room?PJ.room:LS.get('mpcode',''))}"><button id="mpg">Watch</button><button id="mpx" hidden>Stop</button></div>
       <div class="mpvs" id="mpvs" hidden><div class="bgi"></div><div class="mpvc"></div><div class="mpvm"></div><button class="mpvfs" id="mpfs" aria-label="Full screen">⛶ Full screen</button></div></div>`);
   const stopP=()=>{mpFullOff();svStop&&svStop();$('#mpvs').hidden=true;$('#mpx').hidden=true;$('#mpg').hidden=false};
@@ -2650,7 +2740,7 @@ function meeting(ids,name){
   $('#mbnl').onclick=e=>{const b=e.target.closest('[data-bnp]');if(!b)return;e.preventDefault();const x=bpPrune().find(n=>n.id===b.dataset.bnp);if(!x)return;startBible(x.b,x.c,['te','en','both'].includes(x.l)?x.l:'te',bnSend(x))};
   const renderML=()=>{
     const list=meetList();$('#mcnt').textContent=`${list.length} songs`;
-    $('#ml').innerHTML=list.length?list.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><a href="#/song/${encodeURIComponent(x.id)}">${esc(x.title)}</a><span class="mb"><button data-up="${i}" aria-label="Up" ${i?'':'disabled'}>▲</button><button data-dn="${i}" aria-label="Down" ${i<list.length-1?'':'disabled'}>▼</button><button data-play="${i}" aria-label="Present from here">▶</button><button data-add="${esc(x.id)}" aria-label="Remove">✕</button></span></li>`).join(''):(canEdit()?'<li class="empty">No songs added yet. Search below and tap ＋.</li>':'<li class="empty">No songs in the meeting yet.</li>');
+    $('#ml').innerHTML=list.length?list.map((x,i)=>`<li class="mi"><span class="mn">${i+1}</span><a href="#/song/${encodeURIComponent(x.id)}">${esc(x.title)}</a><span class="mb"><button data-up="${i}" aria-label="Up" ${i?'':'disabled'}>▲</button><button data-dn="${i}" aria-label="Down" ${i<list.length-1?'':'disabled'}>▼</button><button data-play="${i}" aria-label="Present from here">▶</button><button data-add="${esc(x.id)}" aria-label="Remove">✕</button></span></li>`).join(''):(canEdit()?'<li class="empty">No songs added yet.</li>':'<li class="empty">No songs in the meeting yet.</li>');
   };
   const renderPick=()=>{
     const r=songSearch(D.songs,$('#mq').value,false).slice(0,40);
@@ -2755,7 +2845,7 @@ const isLiveVid=v=>v.live==='live'||v.live==='upcoming'||v.live==='ended'||/\bli
 let smTab=LS.get('smtab','live'),smN=30;   // smN = how many videos of the open tab are listed (Show more adds 30)
 function sermons(){
   nav('sermons');title('Sermons');
-  if(!ytSet()){M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2></div><p class="empty">The YouTube channel has not been added yet.<br><small>Admin → YouTube &amp; Android App → YouTube channel link</small></p>`;return}
+  if(!ytSet()){M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2></div><p class="empty">The YouTube channel has not been added yet.</p>`;return}
   const link=D.settings.youtube||(YT&&YT.channelUrl)||'';
   M.innerHTML=`<div class="view"><h2>🎥 Sermons</h2>
   <div class="tb">${/^https?:\/\//i.test(link)?`<a class="mhe" href="${esc(link)}" target="_blank" rel="noopener">▶ Open channel</a>`:''}</div>
@@ -2830,7 +2920,7 @@ function shortsFeed(){
 }
 function shortsHome(){
   nav('shorts');title('Shorts');
-  if(!ytSet()){M.innerHTML=`<div class="view"><h2>Shorts</h2></div><p class="empty">The YouTube channel has not been added yet.<br><small>Admin → YouTube &amp; Android App → YouTube channel link</small></p>`;return}
+  if(!ytSet()){M.innerHTML=`<div class="view"><h2>Shorts</h2></div><p class="empty">The YouTube channel has not been added yet.</p>`;return}
   const cid=(SH&&SH.channelId)||(YT&&YT.channelId)||D.settings.youtube_channel_id||'',link=/^UC[\w-]{22}$/.test(cid)?`https://www.youtube.com/channel/${cid}/shorts`:'';
   M.innerHTML=`<div class="view"><h2>Shorts</h2>
   <div class="tb">${link?`<a class="mhe" href="${link}" target="_blank" rel="noopener">▶ Open Shorts on YouTube</a>`:''}</div></div><div id="shl"></div>`;
@@ -2983,7 +3073,7 @@ function apkCard(){
   return `<section class="mh"><div class="mhh"><b>Android app</b><span class="sub">${esc(meta)}</span></div>
   ${s.apk_notes?`<p style="margin:6px 0 0">${esc(s.apk_notes)}</p>`:''}
   <div class="tb" style="margin:10px 0 0"><a class="mhe dl" href="${esc(local?encodeURI(u):u)}" ${local?`download="${esc(u.split('/').pop())}"`:'rel="noopener"'} type="application/vnd.android.package-archive">Download APK</a></div>
-  <p class="sub" style="margin:8px 0 0">Open the downloaded file to install. If Android asks, allow “Install unknown apps” for your browser.</p></section>`;
+  </section>`;
 }
 function apkHome(){
   const e=$('#apkh');if(!e)return;
@@ -3040,7 +3130,7 @@ function contributors(){
   <div class="cp-h"><span>Our team</span>${names.length?`<span class="sub">${names.length}</span>`:''}</div>
   ${names.length?`<div class="cp-grid">${names.map(card).join('')}</div>`:`<div class="cp-empty">No contributors are listed yet.</div>`}
   <section class="cp-join"><b>${me?'You are logged in':'Want to help?'}</b>
-    <p>${me?`Signed in as ${esc(me.email)}. Add or edit songs and the daily verse picture right here.`:'Contributors add songs and the daily verse picture. Sign up below with your email – a one-time code confirms it and you can start right away (no admin approval).'}</p>
+    <p>${me?`Signed in as ${esc(me.email)}`:'Contributors add songs and the daily verse picture.'}</p>
     <div class="cp-btns"><a class="mhe dl" href="#/contribute">${me?'Add songs / edit verse':'Contributor login'}</a>${contact}${me?`<button class="mhe" data-idout>Log out</button>`:''}</div>
   </section></div>`;
   /* light follows the finger / pointer across each card */
@@ -3122,9 +3212,9 @@ function csSongForm(box){
   <label for="f_title_en">Title in English (optional)</label><input id="f_title_en" value="${esc(old.title_en)}" autocomplete="off">
   <label for="f_category">Category</label><select id="f_category">${opt('','— none —')}${cats.map(c=>opt(c,c)).join('')}</select>
   <label for="f_writer">Writer</label><input id="f_writer" value="${esc(old.writer)}" autocomplete="off">
-  <label for="f_scale">Scale (for example C, Dm)</label><input id="f_scale" value="${esc(old.scale)}" autocomplete="off">
-  <label for="f_lyrics">Lyrics – leave a blank line between verses</label><textarea id="f_lyrics">${esc(old.lyrics)}</textarea>
-  <label for="f_img">Or a photo of the song${old.lyrics_image?' (a photo is already saved; choose a new one to replace it)':''}</label><input id="f_img" type="file" accept="image/*">
+  <label for="f_scale">Scale</label><input id="f_scale" value="${esc(old.scale)}" autocomplete="off">
+  <label for="f_lyrics">Lyrics</label><textarea id="f_lyrics">${esc(old.lyrics)}</textarea>
+  <label for="f_img">Or a photo of the song${old.lyrics_image?' (saved)':''}</label><input id="f_img" type="file" accept="image/*">
   <label for="f_youtube">YouTube link (optional)</label><input id="f_youtube" value="${esc(old.youtube)}" autocomplete="off" inputmode="url"></div>
   <div class="cs-act"><button class="mhe" id="cscancel">Cancel</button><button class="mhe dl" id="cssave">${isNew?'Add song':'Save changes'}</button></div>`;
   $('#cscancel').onclick=()=>{if(!CS.busy){CS.edit=null;studio()}};
@@ -3166,10 +3256,9 @@ function csBulk(){
   <label>Song title (Telugu) *</label><input data-k="title" value="${esc(x.title)}" autocomplete="off">
   <label>Category</label><select data-k="category"><option value="">— none —</option>${cats.map(c=>`<option value="${esc(c)}"${x.category===c?' selected':''}>${esc(c)}</option>`).join('')}</select>
   <label>Writer</label><input data-k="writer" value="${esc(x.writer)}" autocomplete="off">
-  <label>Lyrics – leave a blank line between verses *</label><textarea data-k="lyrics" style="min-height:140px">${esc(x.lyrics)}</textarea></div>`;
+  <label>Lyrics *</label><textarea data-k="lyrics" style="min-height:140px">${esc(x.lyrics)}</textarea></div>`;
   box.innerHTML=`<div class="cs-card"><h3>Add up to ${BULK_MAX} songs at once</h3>
-  <p class="sub" style="margin:0 0 10px">Fill in the songs below, or import an XML file (same format as <a href="/sample-songs.xml" target="_blank" rel="noopener">sample-songs.xml</a>). Each song is saved separately.</p>
-  <input id="bkfile" type="file" accept=".xml,text/xml,application/xml"><p class="sub" id="bkcount" style="margin:8px 0 0"></p></div>
+    <input id="bkfile" type="file" accept=".xml,text/xml,application/xml"><p class="sub" id="bkcount" style="margin:8px 0 0"></p></div>
   <div id="bklist">${BK.map(card).join('')}</div>
   <div class="cs-act"><button class="mhe" id="bkadd">+ Add another song</button><button class="mhe dl" id="bksave"></button></div>`;
   const upd=()=>{const n=BK.length;$('#bkcount').textContent=n+' of '+BULK_MAX+' songs';$('#bkadd').disabled=n>=BULK_MAX;$('#bksave').textContent='Save '+n+(n===1?' song':' songs')};
@@ -3230,7 +3319,7 @@ async function csVerse(){
   const draw=()=>{
     box.innerHTML=`<div class="cs-card"><h3>Preview</h3><div class="cs-pv" id="v_pv"><span class="sub">Drawing the picture…</span></div>
     <div class="cs-bar"><button class="mhe" id="v_pvp" type="button" style="cursor:pointer">‹ Previous day</button><button class="mhe" id="v_pvn" type="button" style="cursor:pointer">Next day's verse ›</button><button class="mhe" id="v_pvr" type="button" style="cursor:pointer">Today</button></div>
-    <p class="sub" style="margin:10px 0 0" id="v_pvt">Shows your changes below before you save. It updates by itself a moment after you change something.</p></div>
+    <p class="sub" style="margin:10px 0 0" id="v_pvt"></p></div>
     <div class="cs-card"><h3>Daily verse picture</h3>
     <label for="v_title">Small title above the verse</label><input id="v_title" value="${esc(o.vi_title??'ఈ రోజు వాక్యం')}" autocomplete="off">
     <label for="v_ts">Verse text size</label>${sel('v_ts',o.vi_text_size||'100',[['85','Small'],['100','Normal'],['115','Large'],['130','Extra large']])}
@@ -3239,13 +3328,13 @@ async function csVerse(){
     <label for="v_hs">Highlight text size</label>${sel('v_hs',o.vi_hl_size||'100',[['100','Same as the verse'],['112','A little bigger'],['125','Bigger']])}
     <div class="cs-sw"><span>Show the pastor / church bar</span><input type="checkbox" id="v_ps"${o.vi_show_pastor!==false?' checked':''}></div>
     <label for="v_psc">Pastor photo size: <b id="v_pscv">${+o.vi_pastor_scale||100}</b>%</label><input class="cs-rng" id="v_psc" type="range" min="70" max="150" step="5" value="${+o.vi_pastor_scale||100}"></div>
-    <div class="cs-card"><h3>Greeting and date</h3><p class="sub" style="margin:0 0 12px">The greeting is written at the top of the picture (and is the title of the daily notification). The date is written under the verse reference.</p>
+    <div class="cs-card"><h3>Greeting and date</h3>
     <div class="cs-sw"><span>Show a greeting</span><input type="checkbox" id="v_gon"${o.vi_greet_on===true?' checked':''}></div>
     <label for="v_gp">Choose a greeting</label><select id="v_gp"><option value="">Write my own…</option>${GP.map(g=>`<option value="${esc(g)}"${o.vi_greet===g?' selected':''}>${esc(g)}</option>`).join('')}</select>
-    <label for="v_gt">Greeting text</label><input id="v_gt" value="${esc(o.vi_greet||'')}" placeholder="For example: Good Morning" autocomplete="off">
+    <label for="v_gt">Greeting text</label><input id="v_gt" value="${esc(o.vi_greet||'')}" placeholder="" autocomplete="off">
     <div class="cs-sw"><span>Show today's date</span><input type="checkbox" id="v_don"${o.vi_date_on===true?' checked':''}></div>
     <label for="v_dl">Date language</label>${sel('v_dl',o.vi_date_lang||'en',[['en','English'],['te','Telugu']])}</div>
-    <div class="cs-card"><h3>Pastor and church on the picture</h3><p class="sub" style="margin:0 0 12px">Leave a box empty to use what is saved in the site settings.</p>
+    <div class="cs-card"><h3>Pastor and church on the picture</h3>
     <div class="cs-pp"><img id="v_ppimg" alt="" src="${esc(viv(o,'vi_pastor_photo','pastor_photo')||'')}"><span class="sub">${o.vi_pastor_photo?'Photo chosen here':'Photo from the site settings'}</span></div>
     <label for="v_ppf">Pastor photo</label><input id="v_ppf" type="file" accept="image/*">
     <div class="cs-bar"><button class="mhe" id="v_ppu" type="button" style="cursor:pointer">Upload photo</button>${o.vi_pastor_photo?'<button class="mhe" id="v_ppd" type="button" style="cursor:pointer">Use the site photo</button>':''}</div>
@@ -3257,7 +3346,7 @@ async function csVerse(){
     <button class="mhe" id="v_addhl" type="button" style="cursor:pointer">+ Add a verse</button></div>
     <div class="cs-card"><h3>Background photos (optional)</h3><p class="sub" style="margin:0 0 12px">Every verse has a theme (love, peace, strength, faith…). Tag each photo with a theme and a verse of that theme gets one of its photos. A photo tagged "Any verse" is used when no photo has the verse's theme. With no photos at all, a painted scene in the theme's colours is used. Pick calm photos with space in the middle.</p>
     ${bgs.length?`<div class="cs-bgs">${bgs.map((x,i)=>`<div class="cs-bg"><img src="${esc(x.image)}" alt="" loading="lazy"><span>${esc(x.label)}</span><select data-th="${i}" aria-label="Theme of this photo">${THS.map(t=>`<option value="${t[0]}"${(x.theme||'')===t[0]?' selected':''}>${esc(t[1])}</option>`).join('')}</select><button type="button" data-rm="${i}" aria-label="Remove">×</button></div>`).join('')}</div>`:''}
-    <label for="v_bgn">Name</label><input id="v_bgn" placeholder="For example: Sunrise" autocomplete="off"><label for="v_bgt">Theme of the photo</label><select id="v_bgt">${THS.map(t=>`<option value="${t[0]}">${esc(t[1])}</option>`).join('')}</select><label for="v_bgf">Photo</label><input id="v_bgf" type="file" accept="image/*">
+    <label for="v_bgn">Name</label><input id="v_bgn" placeholder="" autocomplete="off"><label for="v_bgt">Theme of the photo</label><select id="v_bgt">${THS.map(t=>`<option value="${t[0]}">${esc(t[1])}</option>`).join('')}</select><label for="v_bgf">Photo</label><input id="v_bgf" type="file" accept="image/*">
     <div class="cs-bar"><button class="mhe" id="v_addbg" type="button" style="cursor:pointer">Upload photo</button></div></div>
     <div class="cs-act"><button class="mhe dl" id="v_save">Save daily verse picture</button></div>`;
     $('#v_psc').oninput=e=>{$('#v_pscv').textContent=e.target.value};
